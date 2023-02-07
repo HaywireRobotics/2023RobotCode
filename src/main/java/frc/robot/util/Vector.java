@@ -55,6 +55,11 @@ public class Vector {
     public Vector proj(Vector v){
         return this.scale(this.dot(v)/(this.dot(this)));
     }
+    public Vector normalize(){
+        double mag = this.magnitude();
+        if(mag == 0) return new Vector(0, 0);
+        return this.scale(1/mag);
+    }
 
     public String toString(){
         return "["+x+", "+y+"]";

@@ -5,24 +5,27 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.util.Vector;
 
 public class SwerveModule {
-    // In meters
-    public static final double WHEEL_DIAMETER = 0.1016; // 4 inches
-
     private int printCount = 100;
 
-    private double ROTATION_KP = 0.003;
-    private double ROTATION_KI = 0.00;  // 0.0015
+    private double ROTATION_KP = 0.0048; // 0.003
+    private double ROTATION_KI = 0.0025; //0.00  // 0.0015
     private double ROTATION_KD = 0.00001;
     private double ROTATION_KIZ = 0;
     private double ROTATION_KFF = 0;
+    private double INTEGRATOR_RANGE = 0.01;
     private double DRIVE_KP = 0.00007; //6.5e-5;
     private double DRIVE_KI = 0.0;  //5.5e-7;
     private double DRIVE_KD = 0.0; //0.001;
     private double DRIVE_KIZ = 0;
     private double DRIVE_KFF = 0;
+
+    private boolean enabled = false;
 
     private final double OFFSET;
     private double encoderOffset = 0;
@@ -53,6 +56,8 @@ public class SwerveModule {
         this.rotationMotor = rotationMotor;
         this.driveMotor = driveMotor;
         this.rotationEncoder = rotationEncoder;
+
+        rotationController.setIntegratorRange(-INTEGRATOR_RANGE, INTEGRATOR_RANGE);
         
         this.driveMotor.configurePIDFF(DRIVE_KP, DRIVE_KI, DRIVE_KD, DRIVE_KIZ, DRIVE_KFF);
         this.rotationMotor.configurePIDFF(ROTATION_KP, ROTATION_KI, ROTATION_KD, ROTATION_KIZ, ROTATION_KFF);
@@ -86,24 +91,25 @@ public class SwerveModule {
 
         // driveMotor.setVelocity(state.speedMetersPerSecond / (WHEEL_DIAMETER * Math.PI));
         // rotationMotor.setPosition(state.angle.getDegrees());
+        if( isEnabled() ){
+            double driveCalc = driveController.calculate(this.getSpeedMetersPerSecond(), state.speedMetersPerSecond / (Constants.WHEEL_DIAMETER * Math.PI));
+            driveMotor.set(driveCalc);
 
-        double driveCalc = driveController.calculate(this.getSpeed(), state.speedMetersPerSecond / (WHEEL_DIAMETER * Math.PI));
-        driveMotor.set(driveCalc);
+            // If drive is stoped, hold last angle.
+            double stateAngle = Double.isNaN(state.angle.getDegrees()) ? pRotationAngle : state.angle.getDegrees();
+            double rotationTarget = this.getRotation() + angleDifference(this.getRotation(), stateAngle);
+                
+            double rotateCalc = rotationController.calculate(this.getRotation(), rotationTarget);
+            // if (this.printCount == 0) {
+                // System.out.println(rotationMotor.getID() + "RotateCalc: " + rotateCalc + "\t" + this.getRotation() + "\t" + state.angle.getDegrees() + "\t" + encoderOffset);
+            //     this.printCount = 1000;
+            // };
+            this.printCount -= 1;
+            rotationMotor.set(-rotateCalc);
+        }
 
-        // System.out.println(driveCalc);
-        // if (state.angle.getDegrees()) {}
-        // If drive is stoped, hold last angle.
-        double stateAngle = Double.isNaN(state.angle.getDegrees()) ? pRotationAngle : state.angle.getDegrees();
-        double rotationTarget = this.getRotation() + angleDifference(this.getRotation(), stateAngle);
-            
-        // System.out.println(rotationTarget);
-        double rotateCalc = rotationController.calculate(this.getRotation(), rotationTarget);
-        // if (this.printCount == 0) {
-            // System.out.println(rotationMotor.getID() + "RotateCalc: " + rotateCalc + "\t" + this.getRotation() + "\t" + state.angle.getDegrees() + "\t" + encoderOffset);
-        //     this.printCount = 1000;
-        // };
-        this.printCount -= 1;
-        rotationMotor.set(-rotateCalc);
+        
+        SmartDashboard.putNumber("SVAngle"+rotationEncoder.getDeviceID(), getRotation());
     }
 
     public void driveDirect(double driveSpeed, double rotationSpeed) {
@@ -111,8 +117,9 @@ public class SwerveModule {
         rotationMotor.set(rotationSpeed);
     }
 
-    public double getSpeed() {
-        return ((driveMotor.getVelocity() / 60) / 6.75) * (WHEEL_DIAMETER * Math.PI);
+    public double getSpeedMetersPerSecond() {
+        // return ((driveMotor.getVelocity() / 60) / 6.75) * (Constants.WHEEL_DIAMETER * Math.PI);
+        return (driveMotor.getVelocity() / Constants.DRIVE_MOTOR_GEAR_RATIO) * (Constants.WHEEL_DIAMETER * Math.PI);
     }
 
     public double getRotationAbsolute() {
@@ -129,6 +136,7 @@ public class SwerveModule {
     public void zeroEncoders(){
         rotationMotor.setEncoder(0);
         encoderOffset = getRotationAbsolute();//-getNeoRotation();
+        rotationController.reset();
     }
 
     public static double angleDifference( double angle1, double angle2 )
@@ -147,7 +155,7 @@ public class SwerveModule {
     }
 
     public SwerveModuleState getState() {
-        return new SwerveModuleState(getSpeed(), Rotation2d.fromDegrees(getRotation()));
+        return new SwerveModuleState(getSpeedMetersPerSecond(), Rotation2d.fromDegrees(getRotation()));
     }
 
     public SwerveModuleState getDesiredState() {
@@ -169,8 +177,8 @@ public class SwerveModule {
         double speed = this.driveAngle - this.pDriveAngle;
         double direction = (this.pRotationAngle + this.driveAngle/2);
 
-        this.deltaPosition.x = Math.cos(Math.toRadians(direction))*speed;
-        this.deltaPosition.y =  Math.sin(Math.toRadians(direction))*speed;
+        this.deltaPosition.x = Math.sin(Math.toRadians(direction))*speed;
+        this.deltaPosition.y =  Math.cos(Math.toRadians(direction))*speed;
     }
 
     public Vector getDeltaPosition(){
@@ -178,6 +186,17 @@ public class SwerveModule {
     }
 
     public Vector getVelocity(){
-        return this.deltaPosition.scale(WHEEL_DIAMETER);
+        return this.deltaPosition.scale(Constants.WHEEL_DIAMETER);
+    }
+
+    public void disable(){
+        enabled = false;
+        rotationController.reset();
+    }
+    public void enable(){
+        enabled = true;
+    }
+    public boolean isEnabled(){
+        return enabled;
     }
 }

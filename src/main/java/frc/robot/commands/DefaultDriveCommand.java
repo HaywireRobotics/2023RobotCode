@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.util.Vector;
 
 
 
@@ -34,12 +35,15 @@ public class DefaultDriveCommand extends CommandBase {
         return x;
     }
 
-    private double applySmoothing(double x) {
+    private double applySmoothing1D(double x) {
         return Math.pow(x, 3);
+    }
+    private Vector applySmoothing2D(Vector p) {
+        return p.normalize().scale(applySmoothing1D(p.magnitude()));
     }
 
     private double applyAll(double x) {
-        return applyBuffer(applySmoothing(x));
+        return applySmoothing1D(applyBuffer(x));
     }
 
     @Override
@@ -49,8 +53,12 @@ public class DefaultDriveCommand extends CommandBase {
         double leftY = controller.getLeftY();
 
         rightX = applyAll(rightX);
-        leftX = applyAll(leftX);
-        leftY = applyAll(leftY);
+        leftX = applyBuffer(leftX);
+        leftY = applyBuffer(leftY);
+        Vector leftVector = applySmoothing2D(new Vector(leftX, leftY));
+        leftX = leftVector.x;
+        leftY = leftVector.y;
+        // System.out.println(leftVector.toString());
 
         m_subsystem.driveArcade(leftX, leftY, rightX);
       

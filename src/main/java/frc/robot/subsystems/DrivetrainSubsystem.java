@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.Vector;
 import frc.robot.wrappers.SwerveModule;
@@ -100,7 +101,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // System.out.println("Absolute: " + frontLeft.getRotationAbsolute()+"\t NEO"+ frontLeft.getNeoRotation()+"\t Calab"+ frontLeft.getRotation());
     }
 
-    public void driveVector(double speed, double direction, double aSpeed){
+    public void driveVector(double speed, double direction, double aSpeed) {
         double driveSpeed = speed * Constants.MAX_SPEED;
         double driveAngle = direction - getGyro();  // field-centric
 
@@ -121,6 +122,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         setFrontRight(this.addStates(frontRightDrive, frontRightRotate));
         setBackLeft(this.addStates(backLeftDrive, backLeftRotate));
         setBackRight(this.addStates(backRightDrive, backRightRotate));
+
     }
 
     public void driveArcade(double xSpeed, double ySpeed, double aSpeed){
@@ -140,7 +142,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         double speed = Math.abs(Math.hypot(xSpeed, ySpeed));
 
-        driveVector(speed, driveAngle, aSpeed);
+        // if (speed > 0) {
+            driveVector(speed, driveAngle, aSpeed);
+        // } else {
+        //     allToRestState();
+        // }
+    }
+
+    public void allToRestState() {
+        SwerveModuleState frontLeftRotate =  new SwerveModuleState(0, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
+        SwerveModuleState frontRightRotate = new SwerveModuleState(0, Rotation2d.fromDegrees(-Constants.DRIVE_THETA_OFFSET));
+        SwerveModuleState backLeftRotate =   new SwerveModuleState(0, Rotation2d.fromDegrees(-Constants.DRIVE_THETA_OFFSET));
+        SwerveModuleState backRightRotate =  new SwerveModuleState(0, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
     }
 
     public boolean toggleFieldCentricDrive() {
@@ -170,7 +183,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void resetPose(double x, double y, double a){
         this.translation.x = x;
         this.translation.y = y;
-        this.headingOffset = a-this.heading;
+        this.headingOffset = a-this.getGyro();
         this.heading = a;
     }
     public void resetPose(){
@@ -195,6 +208,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // System.out.println("FR_V: "+frontLeftVelocity.toString());
         
         heading = this.getGyro()+headingOffset;
+        SmartDashboard.putNumber("Gyro", getGyro());
         // System.out.println(this.getGyro());
 
         deltaTranslation = calculateDeltaPosition();
@@ -203,6 +217,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     private Vector calculateDeltaPosition(){
+        SmartDashboard.putNumber("A1", frontLeft.getRotation());
+        SmartDashboard.putNumber("A2", frontRight.getRotation());
+        SmartDashboard.putNumber("A3", backLeft.getRotation());
+        SmartDashboard.putNumber("A4", backLeft.getRotation());
+        SmartDashboard.putNumber("V1", frontLeft.getSpeedMetersPerSecond());
+        SmartDashboard.putNumber("V2", frontRight.getSpeedMetersPerSecond());
+        SmartDashboard.putNumber("V3", backLeft.getSpeedMetersPerSecond());
+        SmartDashboard.putNumber("V4", backLeft.getSpeedMetersPerSecond());
+
         Vector vectorSum =  frontLeftVelocity.add(
                             frontRightVelocity.add(
                             backLeftVelocity.add(
@@ -210,9 +233,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
                             ))).scale(0.25);
 
         Vector rotatedVector = vectorSum.copy();
-        rotatedVector.rotateByAngle(Math.toRadians(heading));
+        rotatedVector.rotateByAngle(Math.toRadians(-heading));
 
         return rotatedVector;
+    }
+
+    public void disable(){
+        frontLeft.disable();
+        frontRight.disable();
+        backLeft.disable();
+        backRight.disable();
+    }
+    public void enable(){
+        frontLeft.enable();
+        frontRight.enable();
+        backLeft.enable();
+        backRight.enable();
     }
 
 }

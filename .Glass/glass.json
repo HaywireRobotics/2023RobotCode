@@ -1,0 +1,16 @@
+{
+  "NetworkTables": {
+    "transitory": {
+      "drive": {
+        "open": true
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo"
+    }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "1569"
+  }
+}

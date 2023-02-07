@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -80,12 +81,22 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Back button zeros the gyroscope
+    // manages drive mode stuff
+    // A -> reset gyroscope, ie, 0 is now where you are pointing
+    // B -> reset pose, ie, you are now at (0,0)
+    // Y -> toggle field-centric, ie, if you hit it it drives like a drone
     m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::resetGyroscope));
-    m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1, 1), new Rotation2d(0))));
     m_controller.b().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
-    // new Trigger(m_controller::getBackButton).onTrue(getAutonomousCommand())(m_drivetrainSubsystem::resetGyroscope);
-  
+    m_controller.y().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
+
+    // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(0.8, 0.8), new Rotation2d(0))));
+
+    // drive using D-pad
+    m_controller.povDown().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(0))), m_drivetrainSubsystem));
+    m_controller.povUp().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(180))), m_drivetrainSubsystem));
+    m_controller.povLeft().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(270))), m_drivetrainSubsystem));
+    m_controller.povRight().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(90))), m_drivetrainSubsystem));  
   }
 
   /**
@@ -106,5 +117,12 @@ public class RobotContainer {
   }
   public void resetOdometry(){
     m_drivetrainSubsystem.resetPose();
+  }
+
+  public void disable(){
+    m_drivetrainSubsystem.disable();
+  }
+  public void enable(){
+    m_drivetrainSubsystem.enable();
   }
 }
