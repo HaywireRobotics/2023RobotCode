@@ -39,7 +39,7 @@ public final class Constants {
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 1;
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 12;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 141.4;//139.8 // 156 (1/13/23) // 23.8 (10/24/22) // 156 (11/04/22)
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 141.4; //139.8 // 156 (1/13/23) // 23.8 (10/24/22) // 156 (11/04/22)
     public static final boolean FRONT_RIGHT_REVERSE_DRIVE = false;
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 7; 

@@ -175,7 +175,7 @@ public class SwerveModule {
         this.driveAngle = this.driveMotor.getPosition();
 
         double speed = this.driveAngle - this.pDriveAngle;
-        double direction = (this.pRotationAngle + this.driveAngle/2);
+        double direction = (this.pRotationAngle/2 + this.rotationAngle/2);
 
         this.deltaPosition.x = Math.sin(Math.toRadians(direction))*speed;
         this.deltaPosition.y =  Math.cos(Math.toRadians(direction))*speed;

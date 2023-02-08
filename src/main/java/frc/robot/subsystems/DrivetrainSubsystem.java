@@ -217,14 +217,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     private Vector calculateDeltaPosition(){
-        SmartDashboard.putNumber("A1", frontLeft.getRotation());
-        SmartDashboard.putNumber("A2", frontRight.getRotation());
-        SmartDashboard.putNumber("A3", backLeft.getRotation());
-        SmartDashboard.putNumber("A4", backLeft.getRotation());
-        SmartDashboard.putNumber("V1", frontLeft.getSpeedMetersPerSecond());
-        SmartDashboard.putNumber("V2", frontRight.getSpeedMetersPerSecond());
-        SmartDashboard.putNumber("V3", backLeft.getSpeedMetersPerSecond());
-        SmartDashboard.putNumber("V4", backLeft.getSpeedMetersPerSecond());
+        // SmartDashboard.putNumber("A1", frontLeft.getRotation());
+        // SmartDashboard.putNumber("A2", frontRight.getRotation());
+        // SmartDashboard.putNumber("A3", backLeft.getRotation());
+        // SmartDashboard.putNumber("A4", backLeft.getRotation());
+        // SmartDashboard.putNumber("V1", frontLeft.getSpeedMetersPerSecond());
+        // SmartDashboard.putNumber("V2", frontRight.getSpeedMetersPerSecond());
+        // SmartDashboard.putNumber("V3", backLeft.getSpeedMetersPerSecond());
+        // SmartDashboard.putNumber("V4", backRight.getSpeedMetersPerSecond());
+
+        // SmartDashboard.putNumber("ratio", backLeft.getSpeedMetersPerSecond() / frontLeft.getSpeedMetersPerSecond());
 
         Vector vectorSum =  frontLeftVelocity.add(
                             frontRightVelocity.add(

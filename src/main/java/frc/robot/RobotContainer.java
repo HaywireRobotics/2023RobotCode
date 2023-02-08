@@ -90,7 +90,7 @@ public class RobotContainer {
     m_controller.y().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
 
     // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(0.8, 0.8), new Rotation2d(0))));
+    m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
 
     // drive using D-pad
     m_controller.povDown().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(0))), m_drivetrainSubsystem));

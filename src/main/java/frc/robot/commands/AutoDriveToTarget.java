@@ -27,13 +27,13 @@ public class AutoDriveToTarget extends CommandBase {
     private final double TRANSLATION_KP = 1.5;
     private final double TRANSLATION_KI = 0;
     private final double TRANSLATION_KD = 0.0;
-    private final double TRANSLATION_MAX_ACC = 5;
-    private final double TRANSLATION_MAX_VEL = 12;
+    private final double TRANSLATION_MAX_ACC = 4;
+    private final double TRANSLATION_MAX_VEL = 9;
     private final double HEADING_KP = 0.04;
     private final double HEADING_KI = 0;
     private final double HEADING_KD = 0;
-    private final double HEADING_MAX_ACC = 270.0;
-    private final double HEADING_MAX_VEL = 400.0;
+    private final double HEADING_MAX_ACC = 200.0;
+    private final double HEADING_MAX_VEL = 300.0;
 
     private final ProfiledPIDController translationPID;
     private final ProfiledPIDController headingPID;
@@ -58,11 +58,9 @@ public class AutoDriveToTarget extends CommandBase {
     }
     @Override
     public void execute() {
-        m_subsystem.updateOdometry();
-
         Transform2d offset = targetPose.minus(m_subsystem.getPose());
         double offset_mag = this.getPositionError();
-        double angle = Math.toDegrees(Math.atan2(offset.getY(), offset.getX()));
+        double angle = Math.toDegrees(Math.atan2(offset.getX(), offset.getY()))-m_subsystem.getPose().getRotation().getDegrees();
 
         double output_translation = translationPID.calculate(offset_mag, 0);
         // double output_translation = 0.0;
@@ -78,8 +76,8 @@ public class AutoDriveToTarget extends CommandBase {
         double currentHeading = m_subsystem.getPose().getRotation().getDegrees();
         double targetHeading = targetPose.getRotation().getDegrees();
         double angle_offset = targetHeading - currentHeading;
-        // double output_heading = headingPID.calculate(currentHeading, targetHeading);
-        double output_heading = 0.0;
+        double output_heading = headingPID.calculate(currentHeading, targetHeading);
+        // double output_heading = 0.0;
 
         SmartDashboard.putNumber("setpoint", translationPID.getSetpoint().position);
 
@@ -87,6 +85,7 @@ public class AutoDriveToTarget extends CommandBase {
 
 
         // m_subsystem.setAllToState(new SwerveModuleState(speed*Constants.MAX_SPEED, Rotation2d.fromRadians(angle)));
+        m_subsystem.updateOdometry();
     }
     @Override
     public void initialize(){
