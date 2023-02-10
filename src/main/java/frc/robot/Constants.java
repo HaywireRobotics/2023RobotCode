@@ -60,16 +60,13 @@ public final class Constants {
     public static final double WHEEL_DIAMETER = 0.1016; // 4 inches
 
     /****** Elevator ******/
-    public static final int ELEVATOR_EXTENSION_MOTOR_LEFT = 9;
-    public static final int ELEVATOR_EXTENSION_MOTOR_RIGHT = 10;
+    public static final int ELEVATOR_MOTOR = 9;
     public static final int ELEVATOR_EXTENSION_LIMIT = 1;
 
     /****** Manipulator ******/
     public static final int MANIPULATOR_ROLLER_MOTOR = 11;
 
     /****** Arm ******/
-    public static final int SHOULDER_MOTOR = 9;
-    public static final int ELBOW_MOTOR = 10;
-    public static final int SHOULDER_LIMIT = 1;
-    public static final int ELBOW_LIMIT = 2;
+    public static final int PULLEY_MOTOR = 9;
+    public static final int MANIPULATOR_HINGE_MOTOR = 10;
 }

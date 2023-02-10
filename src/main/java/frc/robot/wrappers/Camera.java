@@ -21,6 +21,10 @@ public class Camera {
         return camera.getLatestResult();
     }
 
+    public boolean hasTargets() {
+        return getResults().hasTargets();
+    }
+
     public Transform3d getTarget3D() {
         var target = camera.getLatestResult().getBestTarget();
         if(target == null) return null;

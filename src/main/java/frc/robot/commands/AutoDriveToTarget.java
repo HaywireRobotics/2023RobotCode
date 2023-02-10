@@ -79,7 +79,8 @@ public class AutoDriveToTarget extends CommandBase {
         double output_heading = headingPID.calculate(currentHeading, targetHeading);
         // double output_heading = 0.0;
 
-        SmartDashboard.putNumber("setpoint", translationPID.getSetpoint().position);
+        // Show trapezoid profile
+        // SmartDashboard.putNumber("setpoint", translationPID.getSetpoint().position);
 
         m_subsystem.driveVector(output_translation, angle, output_heading);
 

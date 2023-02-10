@@ -9,11 +9,11 @@ import frc.robot.Constants;
 import frc.robot.wrappers.NEO;
 
 public class ElevatorSybsystem extends SubsystemBase {
-    private final NEO extensionMotor;
-    private final NEO extensionMotorFollower;
-    private final PIDController extensionPID;
-    private final DigitalInput extensionLimit;
+    private final NEO elevatorMotor;
+    private final PIDController elevatorPID;
+    private final DigitalInput elevatorLimit;
 
+    // FIXME: all these values need to be recalculated
     private final double DEGREES_TO_INCHES = 1/360; // Inches of elevator movement per degree of motor rotation
     private final double MAX_EXTENSION = 30; // Inches the elevator can extend
     private final double MIN_EXTENSION = 0; // Length when fully collapsed
@@ -33,28 +33,25 @@ public class ElevatorSybsystem extends SubsystemBase {
     private boolean homing = false;
 
     public ElevatorSybsystem(){
-        extensionMotor = new NEO(Constants.ELEVATOR_EXTENSION_MOTOR_LEFT, IdleMode.kBrake);
-
-        extensionMotorFollower = new NEO(Constants.ELEVATOR_EXTENSION_MOTOR_RIGHT, IdleMode.kBrake);
-        extensionMotorFollower.follow(extensionMotor);
+        elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, IdleMode.kBrake);
         
-        extensionPID = new PIDController(EXTENSION_KP, EXTENSION_KI, EXTENSION_KD);
-        extensionPID.setTolerance(AT_SETPOINT_POSITION_TOLERANCE, AT_SETPOINT_VELOCITY_TOLERANCE);
-        extensionPID.setIntegratorRange(MAX_WINDUP_LOWER, MAX_WINDUP_UPPER);
+        elevatorPID = new PIDController(EXTENSION_KP, EXTENSION_KI, EXTENSION_KD);
+        elevatorPID.setTolerance(AT_SETPOINT_POSITION_TOLERANCE, AT_SETPOINT_VELOCITY_TOLERANCE);
+        elevatorPID.setIntegratorRange(MAX_WINDUP_LOWER, MAX_WINDUP_UPPER);
 
-        extensionLimit = new DigitalInput(Constants.ELEVATOR_EXTENSION_LIMIT);
+        elevatorLimit = new DigitalInput(Constants.ELEVATOR_EXTENSION_LIMIT);
 
     }
 
     public void periodic() {
-        if(extensionLimit.get()){
-            extensionMotor.setEncoder(MIN_EXTENSION);
+        if(elevatorLimit.get()){
+            elevatorMotor.setEncoder(MIN_EXTENSION);
             homing = false;
         }
         if(homing){
             setMotorPower(homingSpeed);
         }else{
-            double output = extensionPID.calculate(getCurrentExtension(), target);
+            double output = elevatorPID.calculate(getCurrentExtension(), target);
             setMotorPower(output);
         }
     }
@@ -62,16 +59,16 @@ public class ElevatorSybsystem extends SubsystemBase {
         homing = true;
     }
     private void setMotorPower(double power){
-        extensionMotor.set(Math.min(Math.max(power, -MAX_COLLAPSE_POWER), MAX_EXTEND_POWER));
+        elevatorMotor.set(Math.min(Math.max(power, -MAX_COLLAPSE_POWER), MAX_EXTEND_POWER));
     }
 
     public void setExtensionTarget(double length){
         target = Math.min(Math.max(length, MIN_EXTENSION), MAX_EXTENSION);
     }
     public boolean reachedTarget(){
-        return extensionPID.atSetpoint();
+        return elevatorPID.atSetpoint();
     }
     public double getCurrentExtension(){
-        return extensionMotor.getPosition()*DEGREES_TO_INCHES;
+        return elevatorMotor.getPosition()*DEGREES_TO_INCHES;
     }
 }
