@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.Statics;
@@ -34,6 +35,10 @@ public class ManipulatorSubsystem extends SubsystemBase{
         hingePID = new PIDController(MANIPULATOR_KP, MANIPULATOR_KI, MANIPULATOR_KD);
     }
 
+    public void periodic() {
+        SmartDashboard.putNumber("Manipulator Encoder", getHingeAngle());
+    }
+
     public void intakeCone(){
         rollerMotor.set(coneMotorSpeed);
     }
@@ -56,9 +61,11 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public double getHingeAngle(){
         return hingeMotor.getPosition();
     }
-    private void setHingePower(double power){
+    public void setHingePower(double power){
         double _power = Statics.clamp(power, MANIPULATOR_HINGE_MIN_POWER, MANIPULATOR_HINGE_MAX_POWER);
-        if (Statics.withinError(getHingeAngle(), hingePID.getSetpoint(), MANIPULATOR_POWER_OFF_ERROR)){
+        
+        if (Statics.withinError(getHingeAngle(), MANIPULATOR_DOWN_ANGLE, MANIPULATOR_POWER_OFF_ERROR) ||
+            Statics.withinError(getHingeAngle(), MANIPULATOR_UP_ANGLE, MANIPULATOR_POWER_OFF_ERROR)){
             _power = 0.0;
             hingePID.reset();
         }
@@ -66,5 +73,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
     public void updateHingePID() {
         setHingePower( hingePID.calculate(getHingeAngle()) );
+    }
+    public void resetPID(){
+        hingePID.reset();
     }
 }

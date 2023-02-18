@@ -6,36 +6,23 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoDriveState;
-import frc.robot.commands.AutoDriveToTarget;
-import frc.robot.commands.AutoTestDrivetrain;
-import frc.robot.commands.AutoTestModuleCommand;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.DefaultElevatorCommand;
-import frc.robot.commands.DefaultManipulatorCommand;
-import frc.robot.commands.TestModuleCommand;
+import frc.robot.commands.ManualArmCommand;
 import frc.robot.networktables.DriveOdometryTable;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElevatorSybsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
-import frc.robot.subsystems.TestModuleSubsystem;
+import frc.robot.subsystems.PulleySubsystem;
 import frc.robot.wrappers.Camera;
-
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -46,8 +33,11 @@ import org.photonvision.PhotonUtils;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  // private final ElevatorSybsystem m_elevatorSybsystem = new ElevatorSybsystem();
-  // private final ManipulatorSubsystem m_manipulatorSubsystem = new ManipulatorSubsystem();
+
+  private final ElevatorSybsystem m_elevatorSybsystem = new ElevatorSybsystem();
+  private final ManipulatorSubsystem m_manipulatorSubsystem = new ManipulatorSubsystem();
+  private final PulleySubsystem m_pulleySubsystem = new PulleySubsystem();
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_pulleySubsystem, m_elevatorSybsystem, m_manipulatorSubsystem);
 
   private final CommandXboxController m_controller = new CommandXboxController(0);
 
@@ -67,14 +57,14 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
 
+    m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller));
+
     // m_elevatorSybsystem.setDefaultCommand(new DefaultElevatorCommand(m_elevatorSybsystem, m_controller));
     // m_elevatorSybsystem.home();
 
     // m_manipulatorSubsystem.setDefaultCommand(new DefaultManipulatorCommand(m_manipulatorSubsystem, m_controller));
     // Configure the button bindings
     configureButtonBindings();
-
-    disable();
   }
 
   /**
@@ -96,10 +86,10 @@ public class RobotContainer {
     // m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
     m_controller.x().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_camera, 1, 0, 0));
     // drive using D-pad
-    m_controller.povDown().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(0))), m_drivetrainSubsystem));
-    m_controller.povUp().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(180))), m_drivetrainSubsystem));
-    m_controller.povLeft().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(270))), m_drivetrainSubsystem));
-    m_controller.povRight().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(90))), m_drivetrainSubsystem));  
+    // m_controller.povDown().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(0))), m_drivetrainSubsystem));
+    // m_controller.povUp().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(180))), m_drivetrainSubsystem));
+    // m_controller.povLeft().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(270))), m_drivetrainSubsystem));
+    // m_controller.povRight().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(90))), m_drivetrainSubsystem));  
   }
 
   /**

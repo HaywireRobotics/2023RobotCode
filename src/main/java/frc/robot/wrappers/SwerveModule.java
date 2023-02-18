@@ -5,13 +5,11 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.Vector;
 
 public class SwerveModule {
-    private int printCount = 100;
 
     private double ROTATION_KP = 0.0048; // 0.003
     private double ROTATION_KI = 0.0025; //0.00  // 0.0015
@@ -104,7 +102,6 @@ public class SwerveModule {
                 // System.out.println(rotationMotor.getID() + "RotateCalc: " + rotateCalc + "\t" + this.getRotation() + "\t" + state.angle.getDegrees() + "\t" + encoderOffset);
             //     this.printCount = 1000;
             // };
-            this.printCount -= 1;
             rotationMotor.set(-rotateCalc);
         }
 
