@@ -58,7 +58,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     
         // frontRight is a problem child and wants to have its own PID values :(
         // this.frontRight.setRotationPID(0.002, 0.000, 0.00001);
-
+        
     }
 
     public void setFrontRight(SwerveModuleState state) {
@@ -122,7 +122,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         setFrontRight(this.addStates(frontRightDrive, frontRightRotate));
         setBackLeft(this.addStates(backLeftDrive, backLeftRotate));
         setBackRight(this.addStates(backRightDrive, backRightRotate));
+    }
 
+    public void driveXY(double xSpeed, double ySpeed, double aSpeed) {
+        double speed = Math.sqrt(xSpeed*xSpeed + ySpeed*ySpeed);
+        double direction = Math.atan(ySpeed/xSpeed);
+        driveVector(speed, direction, aSpeed);
     }
 
     public void driveArcade(double xSpeed, double ySpeed, double aSpeed){

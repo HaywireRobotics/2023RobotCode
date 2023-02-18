@@ -22,7 +22,7 @@ import frc.robot.commands.AutoDriveState;
 import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.commands.AutoTestDrivetrain;
 import frc.robot.commands.AutoTestModuleCommand;
-import frc.robot.commands.CenterToAprilTag;
+import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefaultElevatorCommand;
 import frc.robot.commands.DefaultManipulatorCommand;
@@ -73,6 +73,8 @@ public class RobotContainer {
     // m_manipulatorSubsystem.setDefaultCommand(new DefaultManipulatorCommand(m_manipulatorSubsystem, m_controller));
     // Configure the button bindings
     configureButtonBindings();
+
+    disable();
   }
 
   /**
@@ -92,7 +94,7 @@ public class RobotContainer {
 
     // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     // m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
-    m_controller.x().whileTrue(new CenterToAprilTag(m_drivetrainSubsystem, m_camera));
+    m_controller.x().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_camera, 1, 0, 0));
     // drive using D-pad
     m_controller.povDown().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(0))), m_drivetrainSubsystem));
     m_controller.povUp().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(180))), m_drivetrainSubsystem));

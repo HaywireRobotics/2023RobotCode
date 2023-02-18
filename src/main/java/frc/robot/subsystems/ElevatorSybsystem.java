@@ -3,15 +3,14 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.Statics;
 import frc.robot.wrappers.NEO;
 
 public class ElevatorSybsystem extends SubsystemBase {
     private final NEO elevatorMotor;
     private final PIDController elevatorPID;
-    private final DigitalInput elevatorLimit;
 
     // FIXME: all these values need to be recalculated
     private final double DEGREES_TO_INCHES = 1/360; // Inches of elevator movement per degree of motor rotation
@@ -29,8 +28,6 @@ public class ElevatorSybsystem extends SubsystemBase {
     private final double MAX_WINDUP_LOWER = -0.1;
     private double target;
 
-    private double homingSpeed = -0.1;
-    private boolean homing = false;
 
     public ElevatorSybsystem(){
         elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, IdleMode.kBrake);
@@ -38,37 +35,28 @@ public class ElevatorSybsystem extends SubsystemBase {
         elevatorPID = new PIDController(EXTENSION_KP, EXTENSION_KI, EXTENSION_KD);
         elevatorPID.setTolerance(AT_SETPOINT_POSITION_TOLERANCE, AT_SETPOINT_VELOCITY_TOLERANCE);
         elevatorPID.setIntegratorRange(MAX_WINDUP_LOWER, MAX_WINDUP_UPPER);
-
-        elevatorLimit = new DigitalInput(Constants.ELEVATOR_EXTENSION_LIMIT);
-
     }
 
     public void periodic() {
-        if(elevatorLimit.get()){
-            elevatorMotor.setEncoder(MIN_EXTENSION);
-            homing = false;
-        }
-        if(homing){
-            setMotorPower(homingSpeed);
-        }else{
-            double output = elevatorPID.calculate(getCurrentExtension(), target);
-            setMotorPower(output);
-        }
-    }
-    public void home(){
-        homing = true;
+        double output = elevatorPID.calculate(getCurrentPosition(), target);
+        setMotorPower(output);
     }
     private void setMotorPower(double power){
-        elevatorMotor.set(Math.min(Math.max(power, -MAX_COLLAPSE_POWER), MAX_EXTEND_POWER));
+        elevatorMotor.set(Statics.clamp(power, -MAX_COLLAPSE_POWER, MAX_EXTEND_POWER));
     }
 
-    public void setExtensionTarget(double length){
-        target = Math.min(Math.max(length, MIN_EXTENSION), MAX_EXTENSION);
+    public void setTarget(double length){
+        target = Statics.clamp(length, MIN_EXTENSION, MAX_EXTENSION);
     }
+    public void setTargetArmAngle(double angle){
+        double target = Math.asin(angle)*(MAX_EXTENSION-MIN_EXTENSION) + MIN_EXTENSION; // PLZ UPDATE ME
+        setTarget(target);
+    }
+
     public boolean reachedTarget(){
         return elevatorPID.atSetpoint();
     }
-    public double getCurrentExtension(){
+    public double getCurrentPosition(){
         return elevatorMotor.getPosition()*DEGREES_TO_INCHES;
     }
 }

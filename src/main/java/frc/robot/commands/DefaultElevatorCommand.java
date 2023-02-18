@@ -21,11 +21,11 @@ public class DefaultElevatorCommand extends CommandBase {
         boolean YButton = m_controller.getYButton();
         boolean AButton = m_controller.getAButton();
         if(YButton){
-            m_subsystem.setExtensionTarget(50);
+            m_subsystem.setTarget(50);
         }else if(XButton){
-            m_subsystem.setExtensionTarget(24);
+            m_subsystem.setTarget(24);
         }else if(AButton){
-            m_subsystem.setExtensionTarget(0);
+            m_subsystem.setTarget(0);
         }
     }
 
