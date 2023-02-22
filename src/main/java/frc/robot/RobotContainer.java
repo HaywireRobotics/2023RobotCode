@@ -21,7 +21,7 @@ import frc.robot.commands.ManualArmCommand;
 import frc.robot.networktables.DriveOdometryTable;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.ElevatorSybsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.PulleySubsystem;
 import frc.robot.wrappers.Camera;
@@ -36,10 +36,10 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
-  private final ElevatorSybsystem m_elevatorSybsystem = new ElevatorSybsystem();
+  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final ManipulatorSubsystem m_manipulatorSubsystem = new ManipulatorSubsystem();
   private final PulleySubsystem m_pulleySubsystem = new PulleySubsystem();
-  private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_pulleySubsystem, m_elevatorSybsystem, m_manipulatorSubsystem);
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_pulleySubsystem, m_elevatorSubsystem, m_manipulatorSubsystem);
 
   private final CommandXboxController m_controller = new CommandXboxController(0);
   private final Joystick m_leftJoystick = new Joystick(1);
@@ -63,8 +63,8 @@ public class RobotContainer {
 
     m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller));
 
-    // m_elevatorSybsystem.setDefaultCommand(new DefaultElevatorCommand(m_elevatorSybsystem, m_controller));
-    // m_elevatorSybsystem.home();
+    // m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(m_elevatorSubsystem, m_controller));
+    // m_elevatorSubsystem.home();
 
     // m_manipulatorSubsystem.setDefaultCommand(new DefaultManipulatorCommand(m_manipulatorSubsystem, m_controller));
     // Configure the button bindings

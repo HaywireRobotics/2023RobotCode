@@ -33,6 +33,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
         
         hingeMotor = new NEO(Constants.MANIPULATOR_HINGE_MOTOR, IdleMode.kBrake);
         hingePID = new PIDController(MANIPULATOR_KP, MANIPULATOR_KI, MANIPULATOR_KD);
+        hingePID.setTolerance(MANIPULATOR_POWER_OFF_ERROR);
     }
 
     public void periodic() {
@@ -51,7 +52,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
         rollerMotor.set(0);
     }
 
-    
+    public void setHingeTarget(double angle){
+        hingePID.setSetpoint(Statics.clamp(angle, MANIPULATOR_DOWN_ANGLE, MANIPULATOR_UP_ANGLE));
+    }
     public void setHingeUp(){
         hingePID.setSetpoint(MANIPULATOR_UP_ANGLE);
     }
@@ -76,5 +79,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
     public void resetPID(){
         hingePID.reset();
+    }
+
+    public boolean isHingeAtSetpoint(){
+        return hingePID.atSetpoint();
     }
 }

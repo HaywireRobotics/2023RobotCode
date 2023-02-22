@@ -6,7 +6,7 @@ public class Bezier {
     private final Vector p2;
     private final Vector h2;
 
-    Bezier(Vector p1, Vector h1, Vector p2, Vector h2){
+    public Bezier(Vector p1, Vector h1, Vector p2, Vector h2){
         this.p1 = p1;
         this.p2 = p2;
         this.h1 = h1;
@@ -41,5 +41,16 @@ public class Bezier {
             }
         }
         return bestT;
+    }
+    public double lengthEstimate(double resolution){
+        double length = 0;
+        Vector last = at(0);
+        for(double t = resolution; t <= 1; t+=resolution){
+            Vector point = at(t);
+            Vector error = point.subtract(last);
+            length += Math.sqrt(error.x*error.x + error.y*error.y);
+            last = point;
+        }
+        return length;
     }
 }

@@ -9,7 +9,7 @@ import frc.robot.util.Vector;
 public class ArmSubsystem extends SubsystemBase {
 
     private final PulleySubsystem m_pulleySubsystem;
-    private final ElevatorSybsystem m_elevatorSybsystem;
+    private final ElevatorSubsystem m_elevatorSubsystem;
     private final ManipulatorSubsystem m_manipulatorSubsystem;
 
     private final double ARM_JOINT_Y = 29;
@@ -19,15 +19,16 @@ public class ArmSubsystem extends SubsystemBase {
 
     private Bezier targetPath;
     private double followT = 0.0;
-    private double followSpeed = 0.001;
+    private double followSpeed = 3.0; // Inches per second
+    private double tSpeed = 0.0;
 
-    public ArmSubsystem(PulleySubsystem pulleySubsystem, ElevatorSybsystem elevatorSybsystem, ManipulatorSubsystem manipulatorSubsystem){
+    public ArmSubsystem(PulleySubsystem pulleySubsystem, ElevatorSubsystem elevatorSybsystem, ManipulatorSubsystem manipulatorSubsystem){
         m_pulleySubsystem = pulleySubsystem;
-        m_elevatorSybsystem = elevatorSybsystem;
+        m_elevatorSubsystem = elevatorSybsystem;
         m_manipulatorSubsystem = manipulatorSubsystem;
 
         this.addChild(m_pulleySubsystem.getName(), m_pulleySubsystem);
-        this.addChild(m_elevatorSybsystem.getName(), m_elevatorSybsystem);
+        this.addChild(m_elevatorSubsystem.getName(), m_elevatorSubsystem);
         this.addChild(m_manipulatorSubsystem.getName(), m_manipulatorSubsystem);
     }
 
@@ -38,37 +39,42 @@ public class ArmSubsystem extends SubsystemBase {
             double t = Statics.clamp(followT, 0.0, 1.0);
             Vector target = targetPath.at(t);
             setManipulator2dPosition(target.x, target.y);
-            followT += followSpeed;
+            followT += tSpeed;
         }
     }
 
     public void followPath(Bezier path){
         targetPath = path;
         followT = path.nearestT(getManipulator2dPosition(), 0.01);
+        tSpeed = targetPath.lengthEstimate(0.01)*followSpeed;
     }
 
-    /* Raw Controlls */
+    /* Raw Controls */
     public void setPulleyPower(double power){
         m_pulleySubsystem.setMotorPower(power);
     }
     public void setElevatorPower(double power){
-        m_elevatorSybsystem.setMotorPower(power);
+        m_elevatorSubsystem.setMotorPower(power);
     }
     public void setManipulatorHingePower(double power){
         m_manipulatorSubsystem.setHingePower(power);
     }
 
-    /* PID Controlls */
+    /* PID Controls */
     public void setPulleyTarget(double length){
         m_pulleySubsystem.setTargetInches(length);
     }
 
     public void setElevatorTarget(double position){
-        m_elevatorSybsystem.setTarget(position);
+        m_elevatorSubsystem.setTarget(position);
     }
 
     public void setArmTargetAngle(double angle){
-        m_elevatorSybsystem.setTargetArmAngle(angle);
+        m_elevatorSubsystem.setTargetArmAngle(angle);
+    }
+
+    public void setManipulatorHingeTarget(double angle){
+        m_manipulatorSubsystem.setHingeTarget(angle);
     }
 
     public void setManipulator2dPosition(double x, double y){
@@ -77,34 +83,43 @@ public class ArmSubsystem extends SubsystemBase {
         double angle = Math.atan2(_y, _x);
         double length = Math.hypot(_x, _y);
 
-        m_elevatorSybsystem.setTargetArmAngle(angle);
+        m_elevatorSubsystem.setTargetArmAngle(angle);
         m_pulleySubsystem.setExtensionLengthFromJoint(length);
     }
 
     public Vector getManipulator2dPosition(){
         double radius = m_pulleySubsystem.getExtensionLengthFromJoint();
-        double theta = m_elevatorSybsystem.getArmAngle();
+        double theta = m_elevatorSubsystem.getArmAngle();
 
         // Arm space
         double x = radius*Math.cos(Math.toRadians(theta));
         double y = radius*Math.cos(Math.toRadians(theta));
 
         // Robot Space
-        Vector postion = new Vector(x+ARM_JOINT_X, y+ARM_JOINT_Y);
-        return postion;
+        Vector position = new Vector(x+ARM_JOINT_X, y+ARM_JOINT_Y);
+        return position;
     }
 
     public void updateAllPID(){
         if(isEnabled()){
-            m_elevatorSybsystem.updatePID();
+            m_elevatorSubsystem.updatePID();
             m_manipulatorSubsystem.updateHingePID();
             m_pulleySubsystem.updatePID();
         }
     }
+    public boolean isArmAtSetpoint(){
+        return m_elevatorSubsystem.isAtSetpoint() && m_pulleySubsystem.isAtSetpoint();
+    }
+    public boolean isManipulatorAtSetpoint(){
+        return m_manipulatorSubsystem.isHingeAtSetpoint();
+    }
+    public boolean isAllAtSetpoint(){
+        return isArmAtSetpoint() && isManipulatorAtSetpoint();
+    }
 
     public void disable(){
         enabled = false;
-        m_elevatorSybsystem.resetPID();
+        m_elevatorSubsystem.resetPID();
         m_manipulatorSubsystem.resetPID();
         m_pulleySubsystem.resetPID();
     }

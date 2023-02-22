@@ -24,6 +24,9 @@ public class PulleySubsystem extends SubsystemBase{
     private final double PULLEY_DEGREES_TO_INCHES = 2.5*2*Math.PI/360;
     private final double PULLEY_LENGTH_COLLAPSED_INCHES = 31;
 
+    private final double PULLEY_SETPOINT_POSITION_ERROR = 5;
+    private final double PULLEY_SETPOINT_VELOCITY_ERROR = 5;
+
     /*
      * Min Length is about 31" <- update this
      * Max Length from hinge is 6'
@@ -33,6 +36,7 @@ public class PulleySubsystem extends SubsystemBase{
     public PulleySubsystem(){
         pulleyMotor = new NEO(Constants.PULLEY_MOTOR, IdleMode.kBrake);
         pulleyPID = new PIDController(PULLEY_KP, PULLEY_KI, PULLEY_KD);
+        pulleyPID.setTolerance(PULLEY_SETPOINT_POSITION_ERROR, PULLEY_SETPOINT_VELOCITY_ERROR);
     }
 
     public void periodic() {
@@ -74,5 +78,9 @@ public class PulleySubsystem extends SubsystemBase{
     }
     public void resetPID(){
         pulleyPID.reset();
+    }
+
+    public boolean isAtSetpoint(){
+        return pulleyPID.atSetpoint();
     }
 }

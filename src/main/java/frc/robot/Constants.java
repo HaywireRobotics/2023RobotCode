@@ -8,7 +8,11 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.util.ArmAutoPath;
+import frc.robot.util.ArmSetpoint;
+import frc.robot.util.Bezier;
 import frc.robot.util.Statics;
+import frc.robot.util.Vector;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -90,4 +94,44 @@ public final class Constants {
     };
 
     public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(6, 12, 14), new Rotation3d()));
+
+    /****** Arm Auto Paths ******/
+    // public static enum ArmSetpoints {
+    //     CONE_HEIGH,
+    //     CONE_MID,
+    //     CUBE_HIGH,
+    //     CUBE_LOW,
+    //     SUBSTATION,
+    //     GROUND
+    // }
+    public static final class ArmSetpoints {
+        public static final ArmSetpoint CONE_HEIGH = new ArmSetpoint(new Vector(0, 0), 0);
+        public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(0, 0), 0);
+        public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(0, 0), 0);
+        public static final ArmSetpoint CUBE_LOW = new ArmSetpoint(new Vector(0, 0), 0);
+        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(0, 0), 0);
+        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(0, 0), 0);
+    }
+    public static final class ArmSetpointPaths {
+        public static final ArmAutoPath CONE_HEIGH = new ArmAutoPath(new Bezier(ArmSetpoints.GROUND.armPosition, new Vector(0, 0),
+                                                                     new Vector(0, 0), ArmSetpoints.GROUND.armPosition),
+                                                                     ArmSetpoints.GROUND.manipulatorAngle);
+        public static final ArmAutoPath CONE_MID = new ArmAutoPath(new Bezier(ArmSetpoints.GROUND.armPosition, new Vector(0, 0),
+                                                                        new Vector(0, 0), ArmSetpoints.GROUND.armPosition),
+                                                                        ArmSetpoints.GROUND.manipulatorAngle);
+        public static final ArmAutoPath CUBE_HIGH = new ArmAutoPath(new Bezier(ArmSetpoints.GROUND.armPosition, new Vector(0, 0),
+                                                                        new Vector(0, 0), ArmSetpoints.GROUND.armPosition),
+                                                                        ArmSetpoints.GROUND.manipulatorAngle);
+        public static final ArmAutoPath CUBE_LOW = new ArmAutoPath(new Bezier(ArmSetpoints.GROUND.armPosition, new Vector(0, 0),
+                                                                        new Vector(0, 0), ArmSetpoints.GROUND.armPosition),
+                                                                        ArmSetpoints.GROUND.manipulatorAngle);
+        public static final ArmAutoPath SUBSTATION = new ArmAutoPath(new Bezier(ArmSetpoints.GROUND.armPosition, new Vector(0, 0),
+                                                                        new Vector(0, 0), ArmSetpoints.GROUND.armPosition),
+                                                                        ArmSetpoints.GROUND.manipulatorAngle);
+        
+        public static final ArmAutoPath GROUND = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HEIGH.armPosition, new Vector(0, 0),
+                                                                        new Vector(0, 0), ArmSetpoints.GROUND.armPosition),
+                                                                        ArmSetpoints.GROUND.manipulatorAngle);
+        
+    }
 }

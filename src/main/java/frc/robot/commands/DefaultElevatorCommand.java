@@ -3,13 +3,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ElevatorSybsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class DefaultElevatorCommand extends CommandBase {
-    private final ElevatorSybsystem m_subsystem;
+    private final ElevatorSubsystem m_subsystem;
     private final Joystick m_joystick;
     
-    public DefaultElevatorCommand(ElevatorSybsystem subsystem, Joystick joystick){
+    public DefaultElevatorCommand(ElevatorSubsystem subsystem, Joystick joystick){
         m_subsystem = subsystem;
         m_joystick = joystick;
 

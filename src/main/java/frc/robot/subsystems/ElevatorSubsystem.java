@@ -9,7 +9,7 @@ import frc.robot.Constants;
 import frc.robot.util.Statics;
 import frc.robot.wrappers.NEO;
 
-public class ElevatorSybsystem extends SubsystemBase {
+public class ElevatorSubsystem extends SubsystemBase {
     private final NEO elevatorMotor;
     private final PIDController elevatorPID;
 
@@ -35,7 +35,7 @@ public class ElevatorSybsystem extends SubsystemBase {
     private double target;
 
 
-    public ElevatorSybsystem(){
+    public ElevatorSubsystem(){
         elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, IdleMode.kBrake);
         
         elevatorPID = new PIDController(EXTENSION_KP, EXTENSION_KI, EXTENSION_KD);
@@ -77,7 +77,7 @@ public class ElevatorSybsystem extends SubsystemBase {
         return -theta+PIVOT_TO_TOP_ANGLE;
     }
 
-    public boolean reachedTarget(){
+    public boolean isAtSetpoint(){
         return elevatorPID.atSetpoint();
     }
     public double getCurrentPosition(){
