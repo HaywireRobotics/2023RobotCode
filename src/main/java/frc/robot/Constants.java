@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.util.Statics;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -69,4 +75,19 @@ public final class Constants {
     /****** Arm ******/
     public static final int PULLEY_MOTOR = 9;
     public static final int MANIPULATOR_HINGE_MOTOR = 10;
+
+    /****** April Tags ******/
+    //These need to be updated (and in meters)
+    public static AprilTag[] aprilTags = {
+        new AprilTag(1, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 42.19, 18.22), new Rotation3d(0, 0, Math.PI)))),
+        new AprilTag(2, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 108.19, 18.22), new Rotation3d(0, 0, Math.PI)))),
+        new AprilTag(3, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 174.19, 18.22), new Rotation3d(0, 0, Math.PI)))),
+        new AprilTag(4, Statics.poseToMeters(new Pose3d(new Translation3d(636.96, 265.74, 27.38), new Rotation3d(0, 0, Math.PI)))),
+        new AprilTag(5, Statics.poseToMeters(new Pose3d(new Translation3d(14.25, 265.74, 27.38), new Rotation3d(0, 0, 0)))),
+        new AprilTag(6, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 147.19, 18.22), new Rotation3d(0, 0, 0)))),
+        new AprilTag(7, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 108.19, 18.22), new Rotation3d(0, 0, 0)))),
+        new AprilTag(8, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 42.19, 18.22), new Rotation3d(0, 0, 0))))
+    };
+
+    public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(6, 12, 14), new Rotation3d()));
 }
