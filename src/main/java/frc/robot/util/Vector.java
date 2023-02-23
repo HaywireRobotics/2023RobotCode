@@ -2,6 +2,8 @@ package frc.robot.util;
 
 import java.lang.Math;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 public class Vector {
     public double x;
     public double y;
@@ -63,5 +65,13 @@ public class Vector {
 
     public String toString(){
         return "["+x+", "+y+"]";
+    }
+
+
+    public static Vector fromArray(double[] arr){
+        return new Vector(arr[0], arr[1]);
+    }
+    public static Vector fromTranslation(Translation2d t){
+        return new Vector(t.getX(), t.getY());
     }
 }

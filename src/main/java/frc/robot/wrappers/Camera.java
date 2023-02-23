@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.Statics;
 
@@ -97,13 +98,15 @@ public class Camera {
     private void addConfidence(PhotonTrackedTarget target, Pose3d estimatedRobotPose){
         int confidenceIndex = target.getFiducialId()-1;
 
-        double confidence = CONFIDENCE_LINEAR*dt;
-        confidence -= Math.abs(estimatedRobotPose.getZ())*CONFIDENCE_ALTITUDE;
+        double confidence = CONFIDENCE_LINEAR*dt;  SmartDashboard.putNumber("Camera: Linear", CONFIDENCE_LINEAR*dt);
+        confidence -= Math.abs(estimatedRobotPose.getZ())*CONFIDENCE_ALTITUDE; SmartDashboard.putNumber("Camera: Altitude", Math.abs(estimatedRobotPose.getZ())*CONFIDENCE_ALTITUDE);
 
         // V Better safe than sorry!
-        if(target.getArea() != 0) confidence -= CONFIDENCE_DISTANCE/target.getArea();
+        if(target.getArea() != 0) confidence -= CONFIDENCE_DISTANCE/target.getArea(); SmartDashboard.putNumber("Camera: Distance", CONFIDENCE_DISTANCE/target.getArea());
 
-        confidence -= target.getPoseAmbiguity()*CONFIDENCE_AMBIGUITY;
+        confidence -= target.getPoseAmbiguity()*CONFIDENCE_AMBIGUITY; SmartDashboard.putNumber("Camera: Ambiguity", target.getPoseAmbiguity()*CONFIDENCE_AMBIGUITY);
+
+        SmartDashboard.putNumber("Camera: Total Confidence", confidence);
 
         tagConfidence[confidenceIndex] = Math.min(confidenceIndex+confidence, 1.0);
     }

@@ -5,8 +5,11 @@
 package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.util.ArmAutoPath;
 import frc.robot.util.ArmSetpoint;
@@ -93,7 +96,7 @@ public final class Constants {
         new AprilTag(8, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 42.19, 18.22), new Rotation3d(0, 0, 0))))
     };
 
-    public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(6, 12, 14), new Rotation3d()));
+    public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(10, 5, 24), new Rotation3d()));
 
     /****** Arm Auto Paths ******/
     // public static enum ArmSetpoints {
@@ -105,12 +108,12 @@ public final class Constants {
     //     GROUND
     // }
     public static final class ArmSetpoints {
-        public static final ArmSetpoint CONE_HEIGH = new ArmSetpoint(new Vector(0, 0), 0);
-        public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(0, 0), 0);
-        public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(0, 0), 0);
-        public static final ArmSetpoint CUBE_LOW = new ArmSetpoint(new Vector(0, 0), 0);
-        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(0, 0), 0);
-        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(0, 0), 0);
+        public static final ArmSetpoint CONE_HEIGH = new ArmSetpoint(new Vector(0, 46), 0);
+        public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(0, 34), 0);
+        public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(0, 35), 0);
+        public static final ArmSetpoint CUBE_LOW = new ArmSetpoint(new Vector(0, 23), 0);
+        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(0, 37), 0);
+        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(0, 6), 0);
     }
     public static final class ArmSetpointPaths {
         public static final ArmAutoPath CONE_HEIGH = new ArmAutoPath(new Bezier(ArmSetpoints.GROUND.armPosition, new Vector(0, 0),
@@ -133,5 +136,94 @@ public final class Constants {
                                                                         new Vector(0, 0), ArmSetpoints.GROUND.armPosition),
                                                                         ArmSetpoints.GROUND.manipulatorAngle);
         
+        public static ArmAutoPath getPathForScorePosition(ScorePositions scorePosition) {
+            switch (scorePosition) {
+                case CONE_HEIGH:
+                    return CONE_HEIGH;
+                case CUBE_HIGH:
+                    return CUBE_HIGH;
+                case CONE_MID:
+                    return CONE_MID;
+                case CUBE_MID:
+                    return CUBE_LOW;
+                case GROUND:
+                    return GROUND;
+                default:
+                    return GROUND;
+            }
+        }
+    }
+
+    /*
+     * node y positions relative center of the field
+     * 38.5
+     * -5.5
+     * -27.5
+     * -71.5
+     * -93.5
+     * -137.5 (20.19 in frc coordinates)
+     * frc system coordinates are 
+     * 196.19
+     * 152.19
+     * 130.19
+     * 86.19
+     * 64.19
+     * 20.19
+     */
+
+    public static enum Alliances {
+        BLUE,
+        RED
+    }
+    public static enum ScorePositions {
+        CONE_HEIGH,
+        CONE_MID,
+        CUBE_HIGH,
+        CUBE_MID,
+        GROUND
+    }
+
+    public static final class DriveSetpoints {
+        private static final double scoringDistance = 24;
+        private static final double substationDistance = 24;
+        public static final Pose2d[] BlueGrid = {
+            Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 196.19), new Rotation2d(Math.PI))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 152.19), new Rotation2d(Math.PI))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 130.19), new Rotation2d(Math.PI))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 86.19), new Rotation2d(Math.PI))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 64.19), new Rotation2d(Math.PI))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 20.19), new Rotation2d(Math.PI)))
+        };
+        public static final Pose2d[] RedGrid = {
+            Statics.poseToMeters(new Pose2d(new Translation2d(651-scoringDistance, 196.19), new Rotation2d(0))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(651-scoringDistance, 152.19), new Rotation2d(0))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(651-scoringDistance, 130.19), new Rotation2d(0))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(651-scoringDistance, 86.19), new Rotation2d(0))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(651-scoringDistance, 64.19), new Rotation2d(0))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(651-scoringDistance, 20.19), new Rotation2d(0)))
+        };
+
+        public static final Pose2d[] BlueSubstation = {
+            Statics.poseToMeters(new Pose2d(new Translation2d(14+substationDistance, 296), new Rotation2d(Math.PI))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(14+substationDistance, 232), new Rotation2d(Math.PI))),
+        };
+        public static final Pose2d[] RedSubstation = {
+            Statics.poseToMeters(new Pose2d(new Translation2d(637-substationDistance, 296), new Rotation2d(0))),
+            Statics.poseToMeters(new Pose2d(new Translation2d(637-substationDistance, 232), new Rotation2d(0))),
+        };
+
+        public static Pose2d getGridTargetPose(Alliances alliance, int column){
+            if(alliance == Alliances.BLUE){
+                return BlueGrid[column];
+            } else {
+                return RedGrid[column];
+            }
+        }
+    }
+
+    public static enum GamePieces {
+        CONE,
+        CUBE,
+        NONE
     }
 }

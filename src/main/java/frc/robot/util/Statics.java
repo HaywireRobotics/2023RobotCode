@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -52,13 +53,11 @@ public final class Statics {
         return output;
     }
     public static Pose3d sumPoses(Pose3d pose1, Pose3d pose2){
-        return new Pose3d(sumTranslation(pose1.getTranslation(), pose2.getTranslation()),
-         sumRotations(pose1.getRotation(), pose2.getRotation()));
+        return new Pose3d(pose1.getTranslation().plus(pose2.getTranslation()),
+         pose1.getRotation().plus(pose2.getRotation()));
     }
-    public static Rotation3d sumRotations(Rotation3d r1, Rotation3d r2){
-        return new Rotation3d(r1.getX()+r2.getX(), r1.getY()+r2.getY(), r1.getZ()+r2.getZ());
-    }
-    public static Translation3d sumTranslation(Translation3d t1, Translation3d t2){
-        return new Translation3d(t1.getX()+t2.getX(), t1.getY()+t2.getY(), t1.getZ()+t2.getZ());
+    public static Pose2d sumPoses(Pose2d pose1, Pose2d pose2){
+        return new Pose2d(pose1.getTranslation().plus(pose2.getTranslation()),
+         pose1.getRotation().plus(pose2.getRotation()));
     }
 }

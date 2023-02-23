@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoDriveState;
+import frc.robot.commands.AutoScore;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ManualArmCommand;
@@ -104,6 +105,8 @@ public class RobotContainer {
     // m_controller.povLeft().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(270))), m_drivetrainSubsystem));
     // m_controller.povRight().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(90))), m_drivetrainSubsystem));  
     
+    // Uncomment to test auto scoring.
+    // m_controller.leftBumper().whileTrue(AutoScore.autoScoreCommand(m_drivetrainSubsystem, m_armSubsystem, Constants.Alliances.BLUE, Constants.ScorePositions.CONE_HEIGH, 0));
   }
 
   /**
@@ -120,6 +123,9 @@ public class RobotContainer {
   }
   public void updateCamera(){
     m_camera.update();
+  }
+  public void mergeCameraPose(){
+    m_drivetrainSubsystem.mergeCameraPose(m_camera.getRobotPose2d(), m_camera.getPoseConfidence());
   }
 
   public void updateLEDs(){

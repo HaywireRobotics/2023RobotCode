@@ -4,8 +4,13 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.GamePieces;
 import frc.robot.util.Statics;
 import frc.robot.wrappers.NEO;
 
@@ -14,6 +19,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     private final double coneMotorSpeed = 0.1;
     private final double cubeMotorSpeed = -0.1;
+    private final double dropMotorSpeed = 0.5;
 
     private final NEO hingeMotor;
     private final PIDController hingePID;
@@ -27,6 +33,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final double MANIPULATOR_POWER_OFF_ERROR = 5;
     private final double MANIPULATOR_HINGE_MAX_POWER = 0.5;
     private final double MANIPULATOR_HINGE_MIN_POWER = -0.2;
+
+    private GamePieces gamePiece = GamePieces.NONE;
 
     public ManipulatorSubsystem(){
         rollerMotor = new NEO(Constants.MANIPULATOR_ROLLER_MOTOR, IdleMode.kBrake);
@@ -42,10 +50,34 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public void intakeCone(){
         rollerMotor.set(coneMotorSpeed);
+        gamePiece = GamePieces.CONE;
+    }
+    public void dropCone(){
+        rollerMotor.set(-dropMotorSpeed);
+        gamePiece = GamePieces.NONE;
     }
 
     public void intakeCube(){
         rollerMotor.set(cubeMotorSpeed);
+        gamePiece = GamePieces.CUBE;
+    }
+    public void dropCube(){
+        rollerMotor.set(dropMotorSpeed);
+        gamePiece = GamePieces.NONE;
+    }
+    public GamePieces getGamePiece(){
+        return gamePiece;
+    }
+    public void clearGamePiece(){
+        gamePiece = GamePieces.NONE;
+    }
+
+    public void smartDrop(){
+        if (gamePiece == GamePieces.CONE){
+            dropCone();
+        } else if (gamePiece == GamePieces.CUBE){
+            dropCube();
+        }
     }
 
     public void stop(){
@@ -83,5 +115,43 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     public boolean isHingeAtSetpoint(){
         return hingePID.atSetpoint();
+    }
+
+
+    /* Commands */
+    public Command intakeConeCommand(){
+        return Commands.sequence(
+            new InstantCommand(this::intakeCone, this),
+            new WaitCommand(2),
+            new InstantCommand(this::stop, this)
+            );
+    }
+    public Command intakeCubeCommand(){
+        return Commands.sequence(
+            new InstantCommand(this::intakeCube, this),
+            new WaitCommand(2),
+            new InstantCommand(this::stop, this)
+            );
+    }
+    public Command dropConeCommand(){
+        return Commands.sequence(
+            new InstantCommand(this::dropCone, this),
+            new WaitCommand(2),
+            new InstantCommand(this::stop, this)
+            );
+    }
+    public Command dropCubeCommand(){
+        return Commands.sequence(
+            new InstantCommand(this::dropCube, this),
+            new WaitCommand(2),
+            new InstantCommand(this::stop, this)
+            );
+    }
+    public Command smartDropCommand(){
+        return Commands.sequence(
+            new InstantCommand(this::smartDrop, this),
+            new WaitCommand(2),
+            new InstantCommand(this::stop, this)
+            );
     }
 }

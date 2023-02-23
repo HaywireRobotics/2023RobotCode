@@ -15,15 +15,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // FIXME: all these values need to be recalculated
     private final double DEGREES_TO_INCHES = 1/360; // Inches of elevator movement per degree of motor rotation
-    private final double MAX_EXTENSION = 21; // Inches the elevator can extend
+    private final double MAX_EXTENSION = 24; // Inches the elevator can extend
     private final double MIN_EXTENSION = 0; // Length when fully collapsed
     private final double MAX_EXTEND_POWER = 1;
     private final double MAX_COLLAPSE_POWER = 0.5;
 
     // Update all these:
-    private final double PIVOT_TO_TOP_SPROCKET = 24.0;
-    private final double PIVOT_TO_CHAIN_ATTACHMENT = 24.0;
-    private final double PIVOT_TO_TOP_ANGLE = 20.0;
+    private final double PIVOT_TO_TOP_SPROCKET = 23.75;
+    private final double PIVOT_TO_CHAIN_ATTACHMENT = 23.5;
+    private final double PIVOT_TO_TOP_ANGLE = 40.7;
+    private final double CHAIN_WHEN_AT_TOP = 4;
 
     private final double EXTENSION_KP = 0.04;
     private final double EXTENSION_KI = 0;
@@ -65,13 +66,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         double a = PIVOT_TO_TOP_SPROCKET;
         double b = PIVOT_TO_CHAIN_ATTACHMENT;
         double c = Math.sqrt(a*a+b*b-a*b*Math.cos(theta));
-        double target = c;//Math.asin(angle)*(MAX_EXTENSION-MIN_EXTENSION) + MIN_EXTENSION; // PLZ UPDATE ME
+        double target = MAX_EXTENSION - (c-CHAIN_WHEN_AT_TOP);//Math.asin(angle)*(MAX_EXTENSION-MIN_EXTENSION) + MIN_EXTENSION; // PLZ UPDATE ME
         setTarget(target);
     }
     public double getArmAngle(){
         double a = PIVOT_TO_TOP_SPROCKET;
         double b = PIVOT_TO_CHAIN_ATTACHMENT;
-        double c = getPosition();
+        double c = MAX_EXTENSION - getPosition() + CHAIN_WHEN_AT_TOP;
 
         double theta = Math.acos((c*c-a*a-a*a)/(2*a*b));
         return -theta+PIVOT_TO_TOP_ANGLE;

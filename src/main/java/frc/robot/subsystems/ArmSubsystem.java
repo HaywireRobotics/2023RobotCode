@@ -8,9 +8,9 @@ import frc.robot.util.Vector;
 
 public class ArmSubsystem extends SubsystemBase {
 
-    private final PulleySubsystem m_pulleySubsystem;
-    private final ElevatorSubsystem m_elevatorSubsystem;
-    private final ManipulatorSubsystem m_manipulatorSubsystem;
+    public final PulleySubsystem m_pulleySubsystem;
+    public final ElevatorSubsystem m_elevatorSubsystem;
+    public final ManipulatorSubsystem m_manipulatorSubsystem;
 
     private final double ARM_JOINT_Y = 29;
     private final double ARM_JOINT_X = -14;

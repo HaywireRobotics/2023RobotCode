@@ -47,6 +47,8 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     m_robotContainer.updateNetworkTables();
     m_robotContainer.updateLEDs();
+    m_robotContainer.updateCamera();
+    //m_robotContainer.mergeCameraPose();
 
     // var result = m_robotContainer.m_camera.getTarget2D();
     // System.out.println(result);

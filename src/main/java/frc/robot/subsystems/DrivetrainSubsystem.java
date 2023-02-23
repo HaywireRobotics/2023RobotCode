@@ -245,6 +245,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return rotatedVector;
     }
 
+    public void mergeCameraPose(Pose2d cameraPose, double confidence){
+        Vector newTranslation = translation.scale( 1-confidence ).add(
+                      Vector.fromTranslation(cameraPose.getTranslation().times( confidence )));
+        
+        double headingConfidence = confidence * 0.01;
+        double newHeading  = ( heading * (1.0-headingConfidence) ) + ( cameraPose.getRotation().getDegrees() * headingConfidence );
+
+        resetPose(newTranslation.x, newTranslation.y, newHeading);
+    }
+
     public void disable(){
         frontLeft.disable();
         frontRight.disable();

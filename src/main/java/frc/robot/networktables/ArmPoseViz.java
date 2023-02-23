@@ -1,7 +1,5 @@
 package frc.robot.networktables;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -53,7 +51,21 @@ public class ArmPoseViz {
     public void update(){
         arm.setAngle(m_armSubsystem.getArmAngle());
         arm.setLength(m_armSubsystem.getArmLength());
-        manipulator.setAngle(m_armSubsystem.getManipulatorHingeAngle());
         elevator.setLength(m_armSubsystem.getElevatorPosition());
+        manipulator.setAngle(m_armSubsystem.getManipulatorHingeAngle());
+
+        // manipulator gamePiece Cone: Yellow, manipulator gamePiece Cube: Purple gamePiece: None, white
+        switch(m_armSubsystem.m_manipulatorSubsystem.getGamePiece()){
+            case NONE:
+                manipulator.setColor(new Color8Bit(Color.kWhite));
+                break;
+            case CUBE:
+                manipulator.setColor(new Color8Bit(Color.kPurple));
+                break;
+            case CONE:
+                manipulator.setColor(new Color8Bit(Color.kYellow));
+                break;
+        }
+        
     }
 }
