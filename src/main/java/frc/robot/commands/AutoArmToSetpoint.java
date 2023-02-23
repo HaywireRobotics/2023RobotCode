@@ -1,13 +1,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.Constants.ArmSetpointPaths;
-import frc.robot.Constants.ArmSetpoints;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.util.ArmAutoPath;
 import frc.robot.util.Bezier;
-import frc.robot.util.Vector;
 
 public class AutoArmToSetpoint extends CommandBase{
 

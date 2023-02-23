@@ -107,6 +107,23 @@ public class ArmSubsystem extends SubsystemBase {
             m_pulleySubsystem.updatePID();
         }
     }
+
+    public double getArmAngle(){
+        return m_elevatorSubsystem.getArmAngle();
+    }
+    public double getElevatorPosition(){
+        return m_elevatorSubsystem.getPosition();
+    }
+    public double getArmLength(){
+        return m_pulleySubsystem.getExtensionLengthFromJoint();
+    }
+    public double getManipulatorHingeAngle(){
+        return m_manipulatorSubsystem.getHingeAngle();
+    }
+
+
+
+
     public boolean isArmAtSetpoint(){
         return m_elevatorSubsystem.isAtSetpoint() && m_pulleySubsystem.isAtSetpoint();
     }

@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -18,6 +19,8 @@ import frc.robot.commands.AutoDriveState;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ManualArmCommand;
+import frc.robot.networktables.ArmPoseViz;
+import frc.robot.networktables.ArmTable;
 import frc.robot.networktables.DriveOdometryTable;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -25,6 +28,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.PulleySubsystem;
 import frc.robot.wrappers.Camera;
+import frc.robot.wrappers.LEDs;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -41,14 +45,19 @@ public class RobotContainer {
   private final PulleySubsystem m_pulleySubsystem = new PulleySubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_pulleySubsystem, m_elevatorSubsystem, m_manipulatorSubsystem);
 
+  private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
+
   private final CommandXboxController m_controller = new CommandXboxController(0);
-  private final Joystick m_leftJoystick = new Joystick(1);
-  private final Joystick m_right_Joystick = new Joystick(2);
+  // private final Joystick m_leftJoystick = new Joystick(1);
+  // private final Joystick m_right_Joystick = new Joystick(2);
 
   private final NetworkTableInstance m_networkTable = NetworkTableInstance.getDefault();
-  private final DriveOdometryTable m_drivetrainTable = new DriveOdometryTable(m_networkTable);
+  private final DriveOdometryTable m_drivetrainTable = new DriveOdometryTable(m_networkTable, m_drivetrainSubsystem);
+  private final ArmTable m_armTable = new ArmTable(m_networkTable, m_armSubsystem);
 
   public final Camera m_camera = new Camera(m_networkTable);
+
+  public final LEDs m_leds = new LEDs(9, 60);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -109,9 +118,28 @@ public class RobotContainer {
     // return new InstantCommand();
     
   }
+  public void updateCamera(){
+    m_camera.update();
+  }
+
+  public void updateLEDs(){
+    if(m_armSubsystem.isAllAtSetpoint()){
+      m_leds.setSolid(Color.kGreen);
+    } if(m_camera.getPoseConfidence() < 0.25){
+      m_leds.setSolid(Color.kRed);
+    } if(m_camera.getPoseConfidence() < 0.75){
+      Color[] c = {Color.kRed, Color.kGreen};
+      m_leds.setCycle(c, 0.5);
+    }else {
+      m_leds.setSolid(Color.kYellow);
+    }
+    m_leds.update();
+  }
 
   public void updateNetworkTables(){
-    m_drivetrainTable.publishPose(m_drivetrainSubsystem.getPose());
+    m_drivetrainTable.publishData();
+    m_armPoseViz.update();
+    m_armTable.publishData();
   }
   public void resetOdometry(){
     m_drivetrainSubsystem.resetPose();

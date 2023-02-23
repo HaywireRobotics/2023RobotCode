@@ -41,6 +41,7 @@ public class Camera {
 
     public Camera(NetworkTableInstance nt) {
         camera = new PhotonCamera("OV5647");
+        timer.start();
     }
 
     public PhotonPipelineResult getResults() {

@@ -44,13 +44,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void periodic() {
-        SmartDashboard.putNumber("Elevator Height", getCurrentPosition());
+        SmartDashboard.putNumber("Elevator Height", getPosition());
         SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getPosition());
         SmartDashboard.putNumber("Elevator Arm Angle", elevatorMotor.getTargetPosition());
     }
     public void setMotorPower(double power){
         double _power = Statics.clamp(power, -MAX_COLLAPSE_POWER, MAX_EXTEND_POWER);
-        double currentPosition = getCurrentPosition();
+        double currentPosition = getPosition();
         if(currentPosition >= MAX_EXTENSION) _power = Math.min(_power, 0.0);
         if(currentPosition <= MIN_EXTENSION) _power = Math.max(_power, 0.0);
         elevatorMotor.set(_power);
@@ -71,7 +71,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public double getArmAngle(){
         double a = PIVOT_TO_TOP_SPROCKET;
         double b = PIVOT_TO_CHAIN_ATTACHMENT;
-        double c = getCurrentPosition();
+        double c = getPosition();
 
         double theta = Math.acos((c*c-a*a-a*a)/(2*a*b));
         return -theta+PIVOT_TO_TOP_ANGLE;
@@ -80,12 +80,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     public boolean isAtSetpoint(){
         return elevatorPID.atSetpoint();
     }
-    public double getCurrentPosition(){
+    public double getPosition(){
         return elevatorMotor.getPosition()*DEGREES_TO_INCHES;
     }
 
     public void updatePID(){
-        double output = elevatorPID.calculate(getCurrentPosition(), target);
+        double output = elevatorPID.calculate(getPosition(), target);
         setMotorPower(output);
     }
     public void resetPID(){

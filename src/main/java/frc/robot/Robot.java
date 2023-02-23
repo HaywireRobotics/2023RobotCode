@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     m_robotContainer.updateNetworkTables();
+    m_robotContainer.updateLEDs();
 
     // var result = m_robotContainer.m_camera.getTarget2D();
     // System.out.println(result);
