@@ -57,7 +57,7 @@ public class RobotContainer {
 
   public final Camera m_camera = new Camera(m_networkTable);
 
-  public final LEDs m_leds = new LEDs(9, 60);
+  public final LEDs m_leds = new LEDs(9);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -124,14 +124,14 @@ public class RobotContainer {
 
   public void updateLEDs(){
     if(m_armSubsystem.isAllAtSetpoint()){
-      m_leds.setSolid(Color.kGreen);
+      m_leds.setSolid(LEDs.Colors.GREEN);
     } if(m_camera.getPoseConfidence() < 0.25){
-      m_leds.setSolid(Color.kRed);
+      m_leds.setSolid(LEDs.Colors.RED);
     } if(m_camera.getPoseConfidence() < 0.75){
-      Color[] c = {Color.kRed, Color.kGreen};
+      LEDs.Colors[] c = {LEDs.Colors.RED, LEDs.Colors.GREEN};
       m_leds.setCycle(c, 0.5);
     }else {
-      m_leds.setSolid(Color.kYellow);
+      m_leds.setSolid(LEDs.Colors.YELLOW);
     }
     m_leds.update();
   }
