@@ -38,7 +38,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     public ElevatorSubsystem(){
-        elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, IdleMode.kBrake);
+        elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, true, IdleMode.kBrake);
         
         elevatorPID = new PIDController(EXTENSION_KP, EXTENSION_KI, EXTENSION_KD);
         elevatorPID.setTolerance(AT_SETPOINT_POSITION_TOLERANCE, AT_SETPOINT_VELOCITY_TOLERANCE);
@@ -53,8 +53,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void setMotorPower(double power){
         double _power = Statics.clamp(power, -MAX_COLLAPSE_POWER, MAX_EXTEND_POWER);
         double currentPosition = getPosition();
-        if(currentPosition >= MAX_EXTENSION) _power = Math.min(_power, 0.0);
-        if(currentPosition <= MIN_EXTENSION) _power = Math.max(_power, 0.0);
+        // if(currentPosition >= MAX_EXTENSION) _power = Math.min(_power, 0.0);
+        // if(currentPosition <= MIN_EXTENSION) _power = Math.max(_power, 0.0);
         elevatorMotor.set(_power);
     }
 
@@ -92,5 +92,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     public void resetPID(){
         elevatorPID.reset();
+    }
+    public void resetEncoder(){
+        elevatorMotor.setEncoder(0);
     }
 }

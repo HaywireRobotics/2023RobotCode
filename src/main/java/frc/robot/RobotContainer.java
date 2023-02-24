@@ -98,7 +98,7 @@ public class RobotContainer {
 
     // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     // m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
-    m_controller.x().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_camera, 1, 0, 0));
+    // m_controller.x().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_camera, 1, 0, 0));
     // drive using D-pad
     // m_controller.povDown().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(0))), m_drivetrainSubsystem));
     // m_controller.povUp().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState(300, Rotation2d.fromDegrees(180))), m_drivetrainSubsystem));
@@ -156,5 +156,6 @@ public class RobotContainer {
   }
   public void enable(){
     m_drivetrainSubsystem.enable();
+    m_armSubsystem.resetEncoders();
   }
 }

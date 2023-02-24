@@ -67,8 +67,8 @@ public class PulleySubsystem extends SubsystemBase{
     public void setMotorPower(double power){
         double _power = power;
         double currentPosition = getPositionDegrees();
-        if(currentPosition >= PULLEY_MAX_EXTENSION_DEGREES) _power = Math.min(_power, 0.0);
-        if(currentPosition <= PULLEY_MIN_EXTENSION_DEGREES) _power = Math.max(_power, 0.0);
+        // if(currentPosition >= PULLEY_MAX_EXTENSION_DEGREES) _power = Math.min(_power, 0.0);
+        // if(currentPosition <= PULLEY_MIN_EXTENSION_DEGREES) _power = Math.max(_power, 0.0);
 
         pulleyMotor.set(_power);
     }
@@ -82,5 +82,9 @@ public class PulleySubsystem extends SubsystemBase{
 
     public boolean isAtSetpoint(){
         return pulleyPID.atSetpoint();
+    }
+
+    public void resetEncoder(){
+        pulleyMotor.setEncoder(0);
     }
 }

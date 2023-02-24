@@ -134,6 +134,12 @@ public class ArmSubsystem extends SubsystemBase {
         return isArmAtSetpoint() && isManipulatorAtSetpoint();
     }
 
+    public void resetEncoders(){
+        m_elevatorSubsystem.resetEncoder();
+        m_pulleySubsystem.resetEncoder();
+        m_manipulatorSubsystem.resetEncoder();
+    }
+
     public void disable(){
         enabled = false;
         m_elevatorSubsystem.resetPID();

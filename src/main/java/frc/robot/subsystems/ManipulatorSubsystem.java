@@ -118,6 +118,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public boolean isHingeAtSetpoint(){
         return hingePID.atSetpoint();
     }
+    public void resetEncoder(){
+        hingeMotor.setEncoder(0);
+    }
 
 
     /* Commands */

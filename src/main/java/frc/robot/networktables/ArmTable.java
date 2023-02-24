@@ -18,7 +18,7 @@ public class ArmTable {
     private ArmSubsystem m_armSubsystem;
 
     public ArmTable(NetworkTableInstance networkTableInstance, ArmSubsystem armSubsystem) {
-        table = networkTableInstance.getTable("drive");
+        table = networkTableInstance.getTable("Arm");
         m_armSubsystem = armSubsystem;
 
         xPositionPublisher = table.getDoubleTopic("positionX").publish();
