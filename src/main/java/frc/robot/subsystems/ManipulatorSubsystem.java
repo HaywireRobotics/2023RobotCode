@@ -34,6 +34,8 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final double MANIPULATOR_HINGE_MAX_POWER = 0.5;
     private final double MANIPULATOR_HINGE_MIN_POWER = -0.2;
 
+    private final double MANIPULATOR_HINGE_GEAR_RATIO = 1.0/1.0;
+
     private GamePieces gamePiece = GamePieces.NONE;
 
     public ManipulatorSubsystem(){
@@ -94,7 +96,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
         hingePID.setSetpoint(MANIPULATOR_DOWN_ANGLE);
     }
     public double getHingeAngle(){
-        return hingeMotor.getPosition();
+        return hingeMotor.getPosition()*MANIPULATOR_HINGE_GEAR_RATIO;
     }
     public void setHingePower(double power){
         double _power = Statics.clamp(power, MANIPULATOR_HINGE_MIN_POWER, MANIPULATOR_HINGE_MAX_POWER);

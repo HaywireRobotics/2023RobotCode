@@ -14,6 +14,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final PIDController elevatorPID;
 
     // FIXME: all these values need to be recalculated
+    private final double ELEVATOR_GEAR_RATIO = 1.0/1.0; // Gear ratio of the elevator
     private final double DEGREES_TO_INCHES = 1/360; // Inches of elevator movement per degree of motor rotation
     private final double MAX_EXTENSION = 24; // Inches the elevator can extend
     private final double MIN_EXTENSION = 0; // Length when fully collapsed
@@ -82,7 +83,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return elevatorPID.atSetpoint();
     }
     public double getPosition(){
-        return elevatorMotor.getPosition()*DEGREES_TO_INCHES;
+        return elevatorMotor.getPosition()*ELEVATOR_GEAR_RATIO*DEGREES_TO_INCHES;
     }
 
     public void updatePID(){

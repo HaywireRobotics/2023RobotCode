@@ -18,7 +18,7 @@ public class PulleySubsystem extends SubsystemBase{
     private final double PULLEY_KI = 0;
     private final double PULLEY_KD = 0;
 
-    private final double PULLEY_GEAR_REDUCTION = 1 / 84;
+    private final double PULLEY_GEAR_RATIO = 1 / 84;
     private final double PULLEY_MAX_EXTENSION_DEGREES = 940;
     private final double PULLEY_MIN_EXTENSION_DEGREES = 0.0;
     private final double PULLEY_DEGREES_TO_INCHES = 2.5*2*Math.PI/360;
@@ -45,7 +45,7 @@ public class PulleySubsystem extends SubsystemBase{
     }
 
     public double getPositionDegrees(){
-        return pulleyMotor.getPosition()*PULLEY_GEAR_REDUCTION;
+        return pulleyMotor.getPosition()*PULLEY_GEAR_RATIO;
     }
     public double getPositionInches(){
         return getPositionDegrees() * PULLEY_DEGREES_TO_INCHES;
