@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.wrappers.NEO;
@@ -86,5 +88,13 @@ public class PulleySubsystem extends SubsystemBase{
 
     public void resetEncoder(){
         pulleyMotor.setEncoder(0);
+    }
+
+    /* Commands */
+    public Command extendCommand(){
+        return Commands.startEnd(() -> setMotorPower(1.0), () -> setMotorPower(0), this);
+    }
+    public Command retractCommand(){
+        return Commands.startEnd(() -> setMotorPower(-1.0), () -> setMotorPower(0), this);
     }
 }

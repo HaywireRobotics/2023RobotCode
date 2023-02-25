@@ -1,57 +1,40 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class ManualArmCommand extends CommandBase {
 
     private final ArmSubsystem m_armSubsystem;
-    private final CommandXboxController m_controller;
+    private final CommandJoystick m_controller;
 
-    public ManualArmCommand(ArmSubsystem subsystem, CommandXboxController xboxController){
+    public ManualArmCommand(ArmSubsystem subsystem, CommandJoystick xboxController){
         m_armSubsystem = subsystem;
         m_controller = xboxController;
 
         addRequirements(subsystem);
+
+        configureButtonBindings();
     }
 
+    private void configureButtonBindings(){
+        m_controller.button(0).whileTrue(m_armSubsystem.m_pulleySubsystem.extendCommand());
+        m_controller.button(1).whileTrue(m_armSubsystem.m_pulleySubsystem.retractCommand());
+
+        m_controller.button(2).whileTrue(m_armSubsystem.m_manipulatorSubsystem.rawUpCommand());
+        m_controller.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.rawDownCommand());
+
+        m_controller.button(4).onTrue(m_armSubsystem.m_manipulatorSubsystem.intakeConeCommand());
+        m_controller.button(5).onTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCubeCommand());
+        m_controller.button(6).onTrue(m_armSubsystem.m_manipulatorSubsystem.smartDropCommand());
+    }
     @Override
     public void execute() {
-        boolean upButton = m_controller.povUp().getAsBoolean();
-        boolean downButton = m_controller.povDown().getAsBoolean();
-        boolean leftButton = m_controller.povLeft().getAsBoolean();
-        boolean rightButton = m_controller.povRight().getAsBoolean();
 
-        boolean leftBumper = m_controller.leftBumper().getAsBoolean();
-        boolean leftTrigger = m_controller.leftTrigger().getAsBoolean();
-        boolean rightTrigger = m_controller.leftTrigger().getAsBoolean();
+        double yAxis = m_controller.getY();
 
-        if(upButton){
-            m_armSubsystem.setElevatorPower(0.2);
-        }else if(downButton){
-            m_armSubsystem.setElevatorPower(-0.2);
-        }else{
-            m_armSubsystem.setElevatorPower(0);
-        }
-
-        if(leftButton){
-            m_armSubsystem.setPulleyPower(0.2);
-        }else if(rightButton){
-            m_armSubsystem.setPulleyPower(-0.2);
-        }else{
-            m_armSubsystem.setPulleyPower(0);
-        }
-
-        if(leftBumper){
-            m_armSubsystem.m_manipulatorSubsystem.intakeCone();
-        }else if(leftTrigger){
-            m_armSubsystem.m_manipulatorSubsystem.intakeCone();
-        }else if(rightTrigger){
-            m_armSubsystem.m_manipulatorSubsystem.smartDrop();
-        }else{
-            m_armSubsystem.m_manipulatorSubsystem.stop();
-        }
+        m_armSubsystem.setElevatorPower(-yAxis);
     }
 
     @Override

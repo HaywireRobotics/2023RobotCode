@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.Statics;
@@ -96,4 +98,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void resetEncoder(){
         elevatorMotor.setEncoder(0);
     }
+
+    /* Commands */
+    public Command raiseArm(){
+        return Commands.startEnd(() -> setMotorPower(MAX_EXTEND_POWER), () -> setMotorPower(0), this);
+    }
+    public Command lowerArm(){
+        return Commands.startEnd(() -> setMotorPower(-MAX_COLLAPSE_POWER), () -> setMotorPower(0), this);
+    }
+    
 }
