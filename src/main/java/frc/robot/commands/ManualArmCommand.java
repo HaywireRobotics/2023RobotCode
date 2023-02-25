@@ -23,6 +23,10 @@ public class ManualArmCommand extends CommandBase {
         boolean leftButton = m_controller.povLeft().getAsBoolean();
         boolean rightButton = m_controller.povRight().getAsBoolean();
 
+        boolean leftBumper = m_controller.leftBumper().getAsBoolean();
+        boolean leftTrigger = m_controller.leftTrigger().getAsBoolean();
+        boolean rightTrigger = m_controller.leftTrigger().getAsBoolean();
+
         if(upButton){
             m_armSubsystem.setElevatorPower(0.2);
         }else if(downButton){
@@ -37,6 +41,16 @@ public class ManualArmCommand extends CommandBase {
             m_armSubsystem.setPulleyPower(-0.2);
         }else{
             m_armSubsystem.setPulleyPower(0);
+        }
+
+        if(leftBumper){
+            m_armSubsystem.m_manipulatorSubsystem.intakeCone();
+        }else if(leftTrigger){
+            m_armSubsystem.m_manipulatorSubsystem.intakeCone();
+        }else if(rightTrigger){
+            m_armSubsystem.m_manipulatorSubsystem.smartDrop();
+        }else{
+            m_armSubsystem.m_manipulatorSubsystem.stop();
         }
     }
 

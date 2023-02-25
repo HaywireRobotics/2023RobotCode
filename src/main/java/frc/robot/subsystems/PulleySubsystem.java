@@ -18,18 +18,18 @@ public class PulleySubsystem extends SubsystemBase{
     private final double PULLEY_KI = 0;
     private final double PULLEY_KD = 0;
 
-    private final double PULLEY_GEAR_RATIO = 1 / 84;
-    private final double PULLEY_MAX_EXTENSION_DEGREES = 940;
-    private final double PULLEY_MIN_EXTENSION_DEGREES = 0.0;
-    private final double PULLEY_DEGREES_TO_INCHES = 2.5*2*Math.PI/360;
+    private final double PULLEY_GEAR_RATIO = 84.0 / 1.0;
+    private final double PULLEY_DEGREES_TO_INCHES = 2.5*2*Math.PI;
+    private final double PULLEY_MAX_EXTENSION_DEGREES = PULLEY_DEGREES_TO_INCHES*55.5;
+    private final double PULLEY_MIN_EXTENSION_DEGREES = PULLEY_DEGREES_TO_INCHES*35.0;
     private final double PULLEY_LENGTH_COLLAPSED_INCHES = 31;
 
     private final double PULLEY_SETPOINT_POSITION_ERROR = 5;
     private final double PULLEY_SETPOINT_VELOCITY_ERROR = 5;
 
     /*
-     * Min Length is about 31" <- update this
-     * Max Length from hinge is 6'
+     * Min Length is about 35" <- update this
+     * Max Length from hinge is 55.5"
      * Pully is 2.5" <- verify this!
      */
 
@@ -45,7 +45,7 @@ public class PulleySubsystem extends SubsystemBase{
     }
 
     public double getPositionDegrees(){
-        return pulleyMotor.getPosition()*PULLEY_GEAR_RATIO;
+        return pulleyMotor.getPosition()/PULLEY_GEAR_RATIO;
     }
     public double getPositionInches(){
         return getPositionDegrees() * PULLEY_DEGREES_TO_INCHES;

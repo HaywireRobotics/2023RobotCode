@@ -36,8 +36,8 @@ public class ArmPoseViz {
         manipulator = arm.append(new MechanismLigament2d("Intake", 36, 0));
 
 
-        elevatorRoot = mechanism2d.getRoot("elevatorRoot", screenWidth/2-20, robotYOffset);
-        elevator = elevatorRoot.append(new MechanismLigament2d("Elevator", 36, 90));
+        elevatorRoot = mechanism2d.getRoot("elevatorRoot", screenWidth/2-14, robotYOffset);
+        elevator = elevatorRoot.append(new MechanismLigament2d("Elevator", 29, 90));
 
         arch.setColor(new Color8Bit(Color.kWhite));
         arm.setColor(new Color8Bit(Color.kCyan));
