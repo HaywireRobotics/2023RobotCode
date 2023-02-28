@@ -38,7 +38,7 @@ public class PulleySubsystem extends SubsystemBase{
      */
 
     public PulleySubsystem(){
-        pulleyMotor = new NEO(Constants.PULLEY_MOTOR, IdleMode.kBrake);
+        pulleyMotor = new NEO(Constants.PULLEY_MOTOR, false, IdleMode.kBrake);
         pulleyLimitSwitch = new DigitalInput(Constants.PULLEY_RETRACTED_LIMIT_SWITCH);
 
         pulleyPID = new PIDController(PULLEY_KP, PULLEY_KI, PULLEY_KD);

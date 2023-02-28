@@ -43,7 +43,7 @@ public final class Constants {
      */
     // public static final double DRIVETRAIN_WHEELBASE_METERS = 0.48895;
 
-    public static final int MAX_SPEED = 1000;
+    public static final int MAX_SPEED = 1500;
     // OFFSET values changed on 1/14/23 to fix widebot conumdrum
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 3;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 4;
@@ -52,8 +52,8 @@ public final class Constants {
     public static final boolean FRONT_LEFT_REVERSE_DRIVE = true;
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 13;
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 17;
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 17;
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 12;
     public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 141.4; //139.8 // 156 (1/13/23) // 23.8 (10/24/22) // 156 (11/04/22)
     public static final boolean FRONT_RIGHT_REVERSE_DRIVE = false;
 

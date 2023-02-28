@@ -42,7 +42,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     public ElevatorSubsystem(){
-        elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, true, IdleMode.kBrake);
+        elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, false, IdleMode.kBrake);
         topLimitSwitch = new DigitalInput(Constants.ELEVATOR_TOP_LIMIT_SWITCH);
         
         elevatorPID = new PIDController(EXTENSION_KP, EXTENSION_KI, EXTENSION_KD);

@@ -86,7 +86,7 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
 
-    m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_auxJoystick1, m_auxJoystick2));
+    m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller, m_auxJoystick1, m_auxJoystick2));
     // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
     m_auto_chooser.setDefaultOption("Simple Auto", m_auto_commands[0]);
@@ -111,7 +111,7 @@ public class RobotContainer {
     // A -> reset gyroscope, ie, 0 is now where you are pointing
     // B -> reset pose, ie, you are now at (0,0)
     // Y -> toggle field-centric, ie, if you hit it it drives like a drone
-    // m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::resetGyroscope));
+    m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::resetGyroscope));
     // m_controller.b().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
     m_controller.back().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
     m_controller.start().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
@@ -120,7 +120,7 @@ public class RobotContainer {
     // m_controller.b().whileTrue(smartSetpointCommand(Constants.ScoreRows.MID));
     // m_controller.a().whileTrue(smartSetpointCommand(Constants.ScoreRows.LOW));
 
-    m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
+    m_controller.leftStick().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
 
     // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     // m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
@@ -203,9 +203,9 @@ public class RobotContainer {
   public void zeroGyro(){
     m_drivetrainSubsystem.resetGyroscope();
   }
-  public void resetGyroFromMag(){
-    m_drivetrainSubsystem.gyroFromMag(Constants.fieldHeadingMag);
-  }
+  // public void resetGyroFromMag(){
+  //   m_drivetrainSubsystem.gyroFromMag(Constants.fieldHeadingMag);
+  // }
 
   public void disable(){
     m_drivetrainSubsystem.disable();
