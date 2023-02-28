@@ -64,11 +64,14 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // m_robotContainer.resetGyroFromMag();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.zeroGyro();
     m_robotContainer.enable();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 

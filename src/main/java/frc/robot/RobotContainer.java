@@ -5,21 +5,26 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.ArmSetpointPaths;
+import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.commands.AutoDriveState;
+import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.commands.AutoScore;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ManualArmCommand;
+import frc.robot.commands.ManualBalanceDrive;
 import frc.robot.networktables.ArmPoseViz;
 import frc.robot.networktables.ArmTable;
 import frc.robot.networktables.DriveOdometryTable;
@@ -28,6 +33,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.PulleySubsystem;
+import frc.robot.util.ArmAutoPath;
 import frc.robot.wrappers.Camera;
 import frc.robot.wrappers.LEDs;
 
@@ -49,12 +55,18 @@ public class RobotContainer {
   private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
 
   private final CommandXboxController m_controller = new CommandXboxController(0);
-  // private final Joystick m_leftJoystick = new Joystick(1);
+  private final CommandJoystick m_auxJoystick = new CommandJoystick(1);
   // private final Joystick m_right_Joystick = new Joystick(2);
 
   private final NetworkTableInstance m_networkTable = NetworkTableInstance.getDefault();
   private final DriveOdometryTable m_drivetrainTable = new DriveOdometryTable(m_networkTable, m_drivetrainSubsystem);
   private final ArmTable m_armTable = new ArmTable(m_networkTable, m_armSubsystem);
+
+  SendableChooser<Command> m_auto_chooser = new SendableChooser<>();
+
+  private final Command[] m_auto_commands = {
+    new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(3.0, 0.0), new Rotation2d(0))),
+  };
 
   public final Camera m_camera = new Camera(m_networkTable);
 
@@ -71,7 +83,11 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
 
-    m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller));
+    m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_auxJoystick));
+    // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
+
+    m_auto_chooser.setDefaultOption("Simple Auto", m_auto_commands[0]);
+    // m_auto_chooser.addOption("Complex Auto", m_complexAuto);
 
     // m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(m_elevatorSubsystem, m_controller));
     // m_elevatorSubsystem.home();
@@ -92,9 +108,16 @@ public class RobotContainer {
     // A -> reset gyroscope, ie, 0 is now where you are pointing
     // B -> reset pose, ie, you are now at (0,0)
     // Y -> toggle field-centric, ie, if you hit it it drives like a drone
-    m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::resetGyroscope));
-    m_controller.b().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
-    m_controller.y().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
+    // m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::resetGyroscope));
+    // m_controller.b().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
+    m_controller.back().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
+    m_controller.start().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
+
+    // m_controller.y().whileTrue(smartSetpointCommand(Constants.ScoreRows.HIGH));
+    // m_controller.b().whileTrue(smartSetpointCommand(Constants.ScoreRows.MID));
+    // m_controller.a().whileTrue(smartSetpointCommand(Constants.ScoreRows.LOW));
+
+    m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
 
     // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     // m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
@@ -120,6 +143,30 @@ public class RobotContainer {
     return new AutoDriveState(m_drivetrainSubsystem, new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
     // return new InstantCommand();
     
+  }
+  public Command smartSetpointCommand(Constants.ScoreRows row){
+    Constants.GamePieces gamePiece = m_manipulatorSubsystem.getGamePiece();
+    ArmAutoPath path;
+    Constants.ScorePositions scorePosition = Constants.ScorePositions.GROUND;
+
+    if(row == Constants.ScoreRows.HIGH){
+      if(gamePiece == Constants.GamePieces.CUBE){
+        scorePosition = Constants.ScorePositions.CUBE_HIGH;
+      } else {
+        scorePosition = Constants.ScorePositions.CONE_HEIGH;
+      }
+    } else if (row == Constants.ScoreRows.MID){
+      if(gamePiece == Constants.GamePieces.CUBE){
+        scorePosition = Constants.ScorePositions.CUBE_MID;
+      } else {
+        scorePosition = Constants.ScorePositions.CONE_MID;
+      }
+    }else{
+      scorePosition = Constants.ScorePositions.GROUND;
+    }
+
+    path = Constants.ArmSetpointPaths.getPathForScorePosition(scorePosition);
+    return new AutoArmToSetpoint(m_armSubsystem, path);
   }
   public void updateCamera(){
     m_camera.update();
@@ -149,6 +196,12 @@ public class RobotContainer {
   }
   public void resetOdometry(){
     m_drivetrainSubsystem.resetPose();
+  }
+  public void zeroGyro(){
+    m_drivetrainSubsystem.resetGyroscope();
+  }
+  public void resetGyroFromMag(){
+    m_drivetrainSubsystem.gyroFromMag(Constants.fieldHeadingMag);
   }
 
   public void disable(){

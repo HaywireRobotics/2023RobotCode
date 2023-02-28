@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants;
 import frc.robot.Constants.GamePieces;
 import frc.robot.util.Statics;
@@ -17,24 +18,24 @@ import frc.robot.wrappers.NEO;
 public class ManipulatorSubsystem extends SubsystemBase{
     private final NEO rollerMotor;
 
-    private final double coneMotorSpeed = 0.1;
-    private final double cubeMotorSpeed = -0.1;
-    private final double dropMotorSpeed = 0.5;
+    private final double coneMotorSpeed = -0.6;
+    private final double cubeMotorSpeed = 0.6;
+    private final double dropMotorSpeed = 0.75;
 
     private final NEO hingeMotor;
     private final PIDController hingePID;
 
-    private final double MANIPULATOR_KP = 0.04;
-    private final double MANIPULATOR_KI = 0;
-    private final double MANIPULATOR_KD = 0;
+    private final double MANIPULATOR_KP = 0.015;
+    private final double MANIPULATOR_KI = 0.0001;
+    private final double MANIPULATOR_KD = 0.00005;
 
-    private final double MANIPULATOR_UP_ANGLE = 90;
-    private final double MANIPULATOR_DOWN_ANGLE = 0;
+    private final double MANIPULATOR_UP_ANGLE = 0;
+    private final double MANIPULATOR_DOWN_ANGLE = 70;
     private final double MANIPULATOR_POWER_OFF_ERROR = 5;
     private final double MANIPULATOR_HINGE_MAX_POWER = 0.5;
     private final double MANIPULATOR_HINGE_MIN_POWER = -0.2;
 
-    private final double MANIPULATOR_HINGE_GEAR_RATIO = 12.0/1.0;
+    private final double MANIPULATOR_HINGE_GEAR_RATIO = 84.0/1.0;
 
     private GamePieces gamePiece = GamePieces.NONE;
 
@@ -96,16 +97,17 @@ public class ManipulatorSubsystem extends SubsystemBase{
         hingePID.setSetpoint(MANIPULATOR_DOWN_ANGLE);
     }
     public double getHingeAngle(){
-        return hingeMotor.getPosition()/MANIPULATOR_HINGE_GEAR_RATIO;
+        return hingeMotor.getPosition()/MANIPULATOR_HINGE_GEAR_RATIO*360;
     }
     public void setHingePower(double power){
         double _power = Statics.clamp(power, MANIPULATOR_HINGE_MIN_POWER, MANIPULATOR_HINGE_MAX_POWER);
+        SmartDashboard.putNumber("Hinge Power", _power);
         
-        if (Statics.withinError(getHingeAngle(), MANIPULATOR_DOWN_ANGLE, MANIPULATOR_POWER_OFF_ERROR) ||
-            Statics.withinError(getHingeAngle(), MANIPULATOR_UP_ANGLE, MANIPULATOR_POWER_OFF_ERROR)){
-            _power = 0.0;
-            hingePID.reset();
-        }
+        // if (Statics.withinError(getHingeAngle(), MANIPULATOR_DOWN_ANGLE, MANIPULATOR_POWER_OFF_ERROR) ||
+        //     Statics.withinError(getHingeAngle(), MANIPULATOR_UP_ANGLE, MANIPULATOR_POWER_OFF_ERROR)){
+        //     _power = 0.0;
+        //     hingePID.reset();
+        // }
         hingeMotor.set(_power);
     }
     public void updateHingePID() {
@@ -125,32 +127,32 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     /* Commands */
     public Command intakeConeCommand(){
-        return Commands.sequence(
-            new InstantCommand(this::intakeCone, this),
-            new WaitCommand(2),
-            new InstantCommand(this::stop, this)
-            );
+        return Commands.startEnd(
+            this::intakeCone,
+            this::stop,
+            this
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
     public Command intakeCubeCommand(){
-        return Commands.sequence(
-            new InstantCommand(this::intakeCube, this),
-            new WaitCommand(2),
-            new InstantCommand(this::stop, this)
-            );
+        return Commands.startEnd(
+            this::intakeCube,
+            this::stop,
+            this
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
     public Command dropConeCommand(){
         return Commands.sequence(
             new InstantCommand(this::dropCone, this),
             new WaitCommand(2),
             new InstantCommand(this::stop, this)
-            );
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
     public Command dropCubeCommand(){
         return Commands.sequence(
             new InstantCommand(this::dropCube, this),
             new WaitCommand(2),
             new InstantCommand(this::stop, this)
-            );
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
     public Command smartDropCommand(){
         return Commands.sequence(
@@ -165,5 +167,12 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
     public Command rawDownCommand(){
         return Commands.startEnd(() -> setHingePower(MANIPULATOR_HINGE_MIN_POWER), () -> setHingePower(0), this);
+    }
+
+    public Command setHingeUpCommand(){
+        return new InstantCommand(() -> setHingeUp());
+    }
+    public Command setHingeDownCommand(){
+        return new InstantCommand(() -> setHingeDown());
     }
 }

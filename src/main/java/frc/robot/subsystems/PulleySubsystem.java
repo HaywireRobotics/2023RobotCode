@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,19 +16,20 @@ import frc.robot.util.Statics;
 public class PulleySubsystem extends SubsystemBase{
     private final NEO pulleyMotor;
     private final PIDController pulleyPID;
+    private final DigitalInput pulleyLimitSwitch;
 
     private final double PULLEY_KP = 0.04;
     private final double PULLEY_KI = 0;
     private final double PULLEY_KD = 0;
 
-    private final double PULLEY_GEAR_RATIO = 84.0 / 1.0;
-    private final double PULLEY_DEGREES_TO_INCHES = 2.5*2*Math.PI;
-    private final double PULLEY_MAX_EXTENSION_DEGREES = PULLEY_DEGREES_TO_INCHES*55.5;
-    private final double PULLEY_MIN_EXTENSION_DEGREES = PULLEY_DEGREES_TO_INCHES*35.0;
+    private final double PULLEY_GEAR_RATIO = 84.0 / 1.0 * 26/18;
+    private final double PULLEY_ROTATIONS_TO_INCHES = 2.5*Math.PI;
+    private final double PULLEY_MAX_EXTENSION_INCHES = 20.0; //PULLEY_DEGREES_TO_INCHES*55.5;
+    private final double PULLEY_MIN_EXTENSION_INCHES = 0.0; //PULLEY_DEGREES_TO_INCHES*35.0;
     private final double PULLEY_LENGTH_COLLAPSED_INCHES = 31;
 
-    private final double PULLEY_SETPOINT_POSITION_ERROR = 5;
-    private final double PULLEY_SETPOINT_VELOCITY_ERROR = 5;
+    private final double PULLEY_SETPOINT_POSITION_ERROR = 1.0;
+    private final double PULLEY_SETPOINT_VELOCITY_ERROR = 1.0;
 
     /*
      * Min Length is about 35" <- update this
@@ -37,27 +39,22 @@ public class PulleySubsystem extends SubsystemBase{
 
     public PulleySubsystem(){
         pulleyMotor = new NEO(Constants.PULLEY_MOTOR, IdleMode.kBrake);
+        pulleyLimitSwitch = new DigitalInput(Constants.PULLEY_RETRACTED_LIMIT_SWITCH);
+
         pulleyPID = new PIDController(PULLEY_KP, PULLEY_KI, PULLEY_KD);
         pulleyPID.setTolerance(PULLEY_SETPOINT_POSITION_ERROR, PULLEY_SETPOINT_VELOCITY_ERROR);
     }
 
     public void periodic() {
         SmartDashboard.putNumber("Pulley Length", getPositionInches());
-        SmartDashboard.putNumber("Pulley Encoder", getPositionDegrees());
-    }
-
-    public double getPositionDegrees(){
-        return pulleyMotor.getPosition()/PULLEY_GEAR_RATIO;
+        SmartDashboard.putNumber("Pulley Encoder", pulleyMotor.getPosition()/PULLEY_GEAR_RATIO);
     }
     public double getPositionInches(){
-        return getPositionDegrees() * PULLEY_DEGREES_TO_INCHES;
-    }
-    public void setTargetDegrees(double angle){
-        double _angle = Statics.clamp(angle, PULLEY_MIN_EXTENSION_DEGREES, PULLEY_MAX_EXTENSION_DEGREES);
-        pulleyPID.setSetpoint(_angle);
+        return pulleyMotor.getPosition()/PULLEY_GEAR_RATIO*PULLEY_ROTATIONS_TO_INCHES;
     }
     public void setTargetInches(double length){
-        setTargetDegrees(length / PULLEY_DEGREES_TO_INCHES);
+        double _length = Statics.clamp(length, PULLEY_MIN_EXTENSION_INCHES, PULLEY_MAX_EXTENSION_INCHES);
+        pulleyPID.setSetpoint(_length);
     }
     public void setExtensionLengthFromJoint(double length){
         setTargetInches(length - PULLEY_LENGTH_COLLAPSED_INCHES);
@@ -68,15 +65,29 @@ public class PulleySubsystem extends SubsystemBase{
 
     public void setMotorPower(double power){
         double _power = power;
-        double currentPosition = getPositionDegrees();
-        // if(currentPosition >= PULLEY_MAX_EXTENSION_DEGREES) _power = Math.min(_power, 0.0);
-        // if(currentPosition <= PULLEY_MIN_EXTENSION_DEGREES) _power = Math.max(_power, 0.0);
+        double currentPosition = getPositionInches();
+        if(getLimitSwitch()){
+            if(_power < 0) _power = 0;
+            resetEncoder(currentPosition);
+            // resetPID();
+        }
+        if(currentPosition >= PULLEY_MAX_EXTENSION_INCHES && _power > 0) {
+            _power = 0.0;
+            // resetPID();
+        }
+        if(currentPosition <= PULLEY_MIN_EXTENSION_INCHES && _power < 0){
+            _power = 0.0;
+            // resetPID();
+        }
 
         pulleyMotor.set(_power);
     }
+    private boolean getLimitSwitch(){
+        return !pulleyLimitSwitch.get();
+    }
 
     public void updatePID(){
-        setMotorPower(pulleyPID.calculate(getPositionDegrees()));
+        setMotorPower(pulleyPID.calculate(getPositionInches()));
     }
     public void resetPID(){
         pulleyPID.reset();
@@ -84,6 +95,10 @@ public class PulleySubsystem extends SubsystemBase{
 
     public boolean isAtSetpoint(){
         return pulleyPID.atSetpoint();
+    }
+
+    public void resetEncoder(double inches){
+        pulleyMotor.setEncoder(inches/PULLEY_ROTATIONS_TO_INCHES*PULLEY_GEAR_RATIO);
     }
 
     public void resetEncoder(){

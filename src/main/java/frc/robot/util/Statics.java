@@ -2,9 +2,6 @@ package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 
@@ -59,5 +56,19 @@ public final class Statics {
     public static Pose2d sumPoses(Pose2d pose1, Pose2d pose2){
         return new Pose2d(pose1.getTranslation().plus(pose2.getTranslation()),
          pose1.getRotation().plus(pose2.getRotation()));
+    }
+
+    public static double applyDeadband(double size, double x) {
+        double _x = Math.abs(x);
+        double s1 = 1/(1-size);
+        _x = _x*s1 - size*s1;
+        return Math.max(_x + size, 0) * Math.signum(x);
+    }
+
+    public static double applySmoothing1D(double x, double s, double t) {
+        return Math.pow(x, 3)*(t+s-2)+Math.pow(x, 2)*(-2*s-t+3)+s*x;
+    }
+    public static Vector applySmoothing2D(Vector p, double s, double t) {
+        return p.normalize().scale(applySmoothing1D(p.magnitude(), s, t));
     }
 }
