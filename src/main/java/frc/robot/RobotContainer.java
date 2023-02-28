@@ -35,6 +35,7 @@ import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.PulleySubsystem;
 import frc.robot.util.ArmAutoPath;
 import frc.robot.wrappers.Camera;
+import frc.robot.wrappers.DriverCamera;
 import frc.robot.wrappers.LEDs;
 
 /**
@@ -55,7 +56,8 @@ public class RobotContainer {
   private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
 
   private final CommandXboxController m_controller = new CommandXboxController(0);
-  private final CommandJoystick m_auxJoystick = new CommandJoystick(1);
+  private final CommandJoystick m_auxJoystick1 = new CommandJoystick(1);
+  private final CommandJoystick m_auxJoystick2 = new CommandJoystick(2);
   // private final Joystick m_right_Joystick = new Joystick(2);
 
   private final NetworkTableInstance m_networkTable = NetworkTableInstance.getDefault();
@@ -68,7 +70,8 @@ public class RobotContainer {
     new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(3.0, 0.0), new Rotation2d(0))),
   };
 
-  public final Camera m_camera = new Camera(m_networkTable);
+  public final Camera m_limelight = new Camera(m_networkTable);
+  public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
 
   public final LEDs m_leds = new LEDs(9);
 
@@ -83,7 +86,7 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
 
-    m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_auxJoystick));
+    m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_auxJoystick1, m_auxJoystick2));
     // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
     m_auto_chooser.setDefaultOption("Simple Auto", m_auto_commands[0]);
@@ -140,7 +143,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return new AutoTestModuleCommand(m_drivetrainSubsystem.frontLeftState);
     // return new AutoTestDrivetrain(m_drivetrainSubsystem);
-    return new AutoDriveState(m_drivetrainSubsystem, new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+    return m_auto_chooser.getSelected();
     // return new InstantCommand();
     
   }
@@ -169,18 +172,18 @@ public class RobotContainer {
     return new AutoArmToSetpoint(m_armSubsystem, path);
   }
   public void updateCamera(){
-    m_camera.update();
+    m_limelight.update();
   }
   public void mergeCameraPose(){
-    m_drivetrainSubsystem.mergeCameraPose(m_camera.getRobotPose2d(), m_camera.getPoseConfidence());
+    m_drivetrainSubsystem.mergeCameraPose(m_limelight.getRobotPose2d(), m_limelight.getPoseConfidence());
   }
 
   public void updateLEDs(){
     if(m_armSubsystem.isAllAtSetpoint()){
       m_leds.setSolid(LEDs.Colors.GREEN);
-    } if(m_camera.getPoseConfidence() < 0.25){
+    } if(m_limelight.getPoseConfidence() < 0.25){
       m_leds.setSolid(LEDs.Colors.RED);
-    } if(m_camera.getPoseConfidence() < 0.75){
+    } if(m_limelight.getPoseConfidence() < 0.75){
       LEDs.Colors[] c = {LEDs.Colors.RED, LEDs.Colors.GREEN};
       m_leds.setCycle(c, 0.5);
     }else {
