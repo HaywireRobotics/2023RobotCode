@@ -164,10 +164,10 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public Command rawUpCommand(){
-        return Commands.startEnd(() -> setHingePower(MANIPULATOR_HINGE_MAX_POWER), () -> setHingePower(0), this);
+        return Commands.startEnd(() -> setHingePower(-MANIPULATOR_HINGE_MAX_POWER), () -> setHingePower(0), this);
     }
     public Command rawDownCommand(){
-        return Commands.startEnd(() -> setHingePower(MANIPULATOR_HINGE_MIN_POWER), () -> setHingePower(0), this);
+        return Commands.startEnd(() -> setHingePower(-MANIPULATOR_HINGE_MIN_POWER), () -> setHingePower(0), this);
     }
 
     public Command setHingeUpCommand(){

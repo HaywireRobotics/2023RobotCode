@@ -207,11 +207,17 @@ public class RobotContainer {
   //   m_drivetrainSubsystem.gyroFromMag(Constants.fieldHeadingMag);
   // }
 
+  public void resetEncoders(){
+    m_armSubsystem.m_elevatorSubsystem.resetEncoder();
+    m_armSubsystem.m_manipulatorSubsystem.resetEncoder();
+    m_armSubsystem.m_pulleySubsystem.resetEncoder(3.5);
+  }
+
   public void disable(){
     m_drivetrainSubsystem.disable();
   }
   public void enable(){
     m_drivetrainSubsystem.enable();
-    m_armSubsystem.resetEncoders();
+    // m_armSubsystem.resetEncoders();
   }
 }

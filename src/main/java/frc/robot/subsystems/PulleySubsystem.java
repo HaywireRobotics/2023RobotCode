@@ -38,7 +38,7 @@ public class PulleySubsystem extends SubsystemBase{
      */
 
     public PulleySubsystem(){
-        pulleyMotor = new NEO(Constants.PULLEY_MOTOR, false, IdleMode.kBrake);
+        pulleyMotor = new NEO(Constants.PULLEY_MOTOR, true, IdleMode.kBrake);
         pulleyLimitSwitch = new DigitalInput(Constants.PULLEY_RETRACTED_LIMIT_SWITCH);
 
         pulleyPID = new PIDController(PULLEY_KP, PULLEY_KI, PULLEY_KD);
@@ -66,16 +66,16 @@ public class PulleySubsystem extends SubsystemBase{
     public void setMotorPower(double power){
         double _power = power;
         double currentPosition = getPositionInches();
-        if(getLimitSwitch()){
-            if(_power < 0) _power = 0;
-            resetEncoder(currentPosition);
-            // resetPID();
-        }
-        if(currentPosition >= PULLEY_MAX_EXTENSION_INCHES && _power > 0) {
+        // if(getLimitSwitch()){
+        //     if(_power < 0) _power = 0;
+        //     resetEncoder(currentPosition);
+        //     // resetPID();
+        // }
+        if(currentPosition >= PULLEY_MAX_EXTENSION_INCHES && _power >= 0) {
             _power = 0.0;
             // resetPID();
         }
-        if(currentPosition <= PULLEY_MIN_EXTENSION_INCHES && _power < 0){
+        if(currentPosition <= PULLEY_MIN_EXTENSION_INCHES && _power <= 0){
             _power = 0.0;
             // resetPID();
         }
@@ -83,7 +83,8 @@ public class PulleySubsystem extends SubsystemBase{
         pulleyMotor.set(_power);
     }
     private boolean getLimitSwitch(){
-        return !pulleyLimitSwitch.get();
+        // return !pulleyLimitSwitch.get();
+        return false;
     }
 
     public void updatePID(){

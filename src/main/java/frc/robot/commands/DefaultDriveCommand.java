@@ -37,10 +37,14 @@ public class DefaultDriveCommand extends CommandBase {
         double leftX = controller.getLeftX();
         double leftY = controller.getLeftY();
 
-        rightX = applyAll(rightX);
-        leftX = Statics.applyDeadband(leftX, JOYSTICK_DEADBAND);
-        leftY = Statics.applyDeadband(leftY, JOYSTICK_DEADBAND);
-        Vector leftVector = Statics.applySmoothing2D(new Vector(leftX, leftY), JOYSTICK_S, JOYSTICK_T);
+        // rightX = applyAll(rightX);
+        // leftX = Statics.applyDeadband(leftX, JOYSTICK_DEADBAND);
+        // leftY = Statics.applyDeadband(leftY, JOYSTICK_DEADBAND);
+        // rightX = applyAll(rightX);
+        rightX = Statics.applyDeadband(JOYSTICK_DEADBAND, rightX);
+        leftX = Statics.applyDeadband(JOYSTICK_DEADBAND, leftX);
+        leftY = Statics.applyDeadband(JOYSTICK_DEADBAND, leftY);
+        Vector leftVector = new Vector(leftX, leftY);//Statics.applySmoothing2D(new Vector(leftX, leftY), JOYSTICK_S, JOYSTICK_T);
         leftX = leftVector.x;
         leftY = leftVector.y;
         // System.out.println(leftVector.toString());

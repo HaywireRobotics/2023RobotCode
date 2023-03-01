@@ -20,7 +20,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // FIXME: all these values need to be recalculated
     private final double ELEVATOR_GEAR_RATIO = 36.0/1.0; // Gear ratio of the elevator
     private final double DEGREES_TO_INCHES = 1.5 * Math.PI; // Inches of elevator movement per degree of motor rotation
-    private final double MAX_HEIGHT = 32; // Inches the elevator can extend
+    private final double MAX_HEIGHT = 20; // Inches the elevator can extend
     private final double MIN_HEIGHT = 0; // Length when fully collapsed
     private final double MAX_RAISE_POWER = 1;
     private final double MAX_LOWER_POWER = 0.5;
@@ -42,7 +42,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     public ElevatorSubsystem(){
-        elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, false, IdleMode.kBrake);
+        elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, true, IdleMode.kBrake);
         topLimitSwitch = new DigitalInput(Constants.ELEVATOR_TOP_LIMIT_SWITCH);
         
         elevatorPID = new PIDController(EXTENSION_KP, EXTENSION_KI, EXTENSION_KD);
@@ -55,11 +55,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getPosition());
         SmartDashboard.putNumber("Elevator Arm Angle", elevatorMotor.getTargetPosition());
         SmartDashboard.putBoolean("Elevator Limit", getLimitSwitch());
+
+        if(getLimitSwitch()){
+            resetEncoder(MAX_HEIGHT);
+        }
     }
     public void setMotorPower(double power){
         double _power = Statics.clamp(power, -MAX_LOWER_POWER, MAX_RAISE_POWER);
         if(getLimitSwitch()){
-            resetEncoder(MAX_HEIGHT);
             _power = Math.min(_power, 0.0);
         }
         double currentPosition = getPosition();
@@ -75,7 +78,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private boolean getLimitSwitch(){
-        return !topLimitSwitch.get();
+        return topLimitSwitch.get();
     }
 
     public void setTarget(double length){

@@ -35,8 +35,8 @@ public class ManualArmCommand extends CommandBase {
         m_aux_controller1.button(3).whileTrue(rawManipulatorUp());
         m_aux_controller1.button(2).whileTrue(rawManipulatorDown());
 
-        m_aux_controller2.button(3).whileTrue(pidManipulatorUp());
-        m_aux_controller2.button(2).whileTrue(pidManipulatorDown());
+        // m_aux_controller2.button(3).whileTrue(pidManipulatorUp());
+        // m_aux_controller2.button(2).whileTrue(pidManipulatorDown());
 
         // m_controller1.button(3).onTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeUpCommand());
         // m_controller1.button(2).onTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeDownCommand());
@@ -44,8 +44,8 @@ public class ManualArmCommand extends CommandBase {
         m_aux_controller1.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeConeCommand());
         m_aux_controller1.button(5).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCubeCommand());
 
-        m_aux_controller2.button(4).whileTrue(pidIntakeCone());
-        m_aux_controller2.button(5).whileTrue(pidIntakeCube());
+        // m_aux_controller2.button(4).whileTrue(pidIntakeCone());
+        // m_aux_controller2.button(5).whileTrue(pidIntakeCube());
         // m_aux_controller1.button(1).onTrue(m_armSubsystem.m_manipulatorSubsystem.smartDropCommand());
 
         m_drive_controller.leftBumper().whileTrue(m_armSubsystem.m_elevatorSubsystem.raiseArm());
@@ -59,26 +59,38 @@ public class ManualArmCommand extends CommandBase {
         if(hingePIDEnabled){
             m_armSubsystem.m_manipulatorSubsystem.updateHingePID();
         }
+
+        if (m_aux_controller1.button(1).getAsBoolean()) {
+            pulleyJoystick();
+        } else {
+            m_armSubsystem.setPulleyPower(0);
+        }
+
+        if (m_aux_controller2.button(1).getAsBoolean()) {
+            elevatorJoystick();
+        } else {
+            m_armSubsystem.setElevatorPower(0);
+        }
     }
-    public Command elevatorJoystickCommand(){
-        return new RunCommand(this::elevatorJoystick , m_armSubsystem.m_pulleySubsystem).andThen(
-                new InstantCommand(()-> m_armSubsystem.setPulleyPower(0), m_armSubsystem.m_pulleySubsystem)
-            );
-    }
+    // public Command elevatorJoystickCommand(){
+    //     return new RunCommand(this::elevatorJoystick , m_armSubsystem.m_pulleySubsystem).andThen(
+    //             new InstantCommand(()-> m_armSubsystem.setPulleyPower(0), m_armSubsystem.m_pulleySubsystem)
+    //         ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+    // }
     private void elevatorJoystick(){
         double yAxis2 = m_aux_controller2.getY();
         if(yAxis2 < 0.05 && yAxis2 > -0.05) yAxis2 = 0;
         m_armSubsystem.setElevatorPower(yAxis2);
     }
-    public Command pulleyJoystickCommand(){
-        return new RunCommand(this::pulleyJoystick , m_armSubsystem.m_pulleySubsystem).andThen(
-                new InstantCommand(()-> m_armSubsystem.setPulleyPower(0), m_armSubsystem.m_pulleySubsystem)
-            );
-    }
+    // public Command pulleyJoystickCommand(){
+    //     return new RunCommand(this::pulleyJoystick , m_armSubsystem.m_pulleySubsystem).andThen(
+    //             new InstantCommand(()-> m_armSubsystem.setPulleyPower(0), m_armSubsystem.m_pulleySubsystem)
+    //         ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+    // }
     private void pulleyJoystick(){
         double yAxis1 = m_aux_controller1.getY();
         if(yAxis1 < 0.05 && yAxis1 > -0.05) yAxis1 = 0;
-        m_armSubsystem.setPulleyPower(yAxis1);
+        m_armSubsystem.setPulleyPower(-yAxis1);
     }
 
     private Command rawManipulatorUp(){
