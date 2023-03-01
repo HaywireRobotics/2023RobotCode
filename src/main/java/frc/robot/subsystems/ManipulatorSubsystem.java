@@ -18,9 +18,10 @@ import frc.robot.wrappers.NEO;
 public class ManipulatorSubsystem extends SubsystemBase{
     private final NEO rollerMotor;
 
-    private final double coneMotorSpeed = -0.6;
-    private final double cubeMotorSpeed = 0.6;
-    private final double dropMotorSpeed = 0.75;
+    private final double CONE_MOTOR_SPEED = -0.6;
+    private final double CUBE_MOTOR_SPEED = 0.6;
+    private final double DROP_MOTOR_SPEED = 0.75;
+    private final double DROP_TIME = 1.5;
 
     private final NEO hingeMotor;
     private final PIDController hingePID;
@@ -30,7 +31,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final double MANIPULATOR_KD = 0.00005;
 
     private final double MANIPULATOR_UP_ANGLE = 0;
-    private final double MANIPULATOR_DOWN_ANGLE = 70;
+    private final double MANIPULATOR_DOWN_ANGLE = 100;
     private final double MANIPULATOR_POWER_OFF_ERROR = 5;
     private final double MANIPULATOR_HINGE_MAX_POWER = 0.5;
     private final double MANIPULATOR_HINGE_MIN_POWER = -0.2;
@@ -40,9 +41,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private GamePieces gamePiece = GamePieces.NONE;
 
     public ManipulatorSubsystem(){
-        rollerMotor = new NEO(Constants.MANIPULATOR_ROLLER_MOTOR, IdleMode.kBrake);
+        rollerMotor = new NEO(Constants.MANIPULATOR_ROLLER_MOTOR, false, IdleMode.kBrake);
         
-        hingeMotor = new NEO(Constants.MANIPULATOR_HINGE_MOTOR, IdleMode.kBrake);
+        hingeMotor = new NEO(Constants.MANIPULATOR_HINGE_MOTOR, false, IdleMode.kBrake);
         hingePID = new PIDController(MANIPULATOR_KP, MANIPULATOR_KI, MANIPULATOR_KD);
         hingePID.setTolerance(MANIPULATOR_POWER_OFF_ERROR);
     }
@@ -52,20 +53,20 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public void intakeCone(){
-        rollerMotor.set(coneMotorSpeed);
+        rollerMotor.set(CONE_MOTOR_SPEED);
         gamePiece = GamePieces.CONE;
     }
     public void dropCone(){
-        rollerMotor.set(-dropMotorSpeed);
+        rollerMotor.set(-DROP_MOTOR_SPEED);
         gamePiece = GamePieces.NONE;
     }
 
     public void intakeCube(){
-        rollerMotor.set(cubeMotorSpeed);
+        rollerMotor.set(CUBE_MOTOR_SPEED);
         gamePiece = GamePieces.CUBE;
     }
     public void dropCube(){
-        rollerMotor.set(dropMotorSpeed);
+        rollerMotor.set(DROP_MOTOR_SPEED);
         gamePiece = GamePieces.NONE;
     }
     public GamePieces getGamePiece(){
@@ -143,21 +144,21 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public Command dropConeCommand(){
         return Commands.sequence(
             new InstantCommand(this::dropCone, this),
-            new WaitCommand(2),
+            new WaitCommand(DROP_TIME),
             new InstantCommand(this::stop, this)
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
     public Command dropCubeCommand(){
         return Commands.sequence(
             new InstantCommand(this::dropCube, this),
-            new WaitCommand(2),
+            new WaitCommand(DROP_TIME),
             new InstantCommand(this::stop, this)
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
     public Command smartDropCommand(){
         return Commands.sequence(
             new InstantCommand(this::smartDrop, this),
-            new WaitCommand(2),
+            new WaitCommand(DROP_TIME),
             new InstantCommand(this::stop, this)
             );
     }

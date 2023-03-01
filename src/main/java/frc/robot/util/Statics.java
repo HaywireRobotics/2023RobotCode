@@ -66,7 +66,9 @@ public final class Statics {
     }
 
     public static double applySmoothing1D(double x, double s, double t) {
-        return Math.pow(x, 3)*(t+s-2)+Math.pow(x, 2)*(-2*s-t+3)+s*x;
+        double _x = Math.abs(x);
+        double _xp = Math.pow(_x, 3)*(t+s-2)+Math.pow(_x, 2)*(-2*s-t+3)+s*_x;
+        return _xp*Math.signum(x);
     }
     public static Vector applySmoothing2D(Vector p, double s, double t) {
         return p.normalize().scale(applySmoothing1D(p.magnitude(), s, t));
