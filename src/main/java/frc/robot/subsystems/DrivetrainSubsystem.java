@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.Vector;
 import frc.robot.wrappers.SwerveModule;
-import com.kauailabs.navx.frc.AHRS;
+// import com.kauailabs.navx.frc.AHRS;
 
 public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule frontRight;
@@ -29,9 +29,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleState backLeftState = new SwerveModuleState(0, Rotation2d.fromDegrees(backLeftDefault));
 
     public ADXRS450_Gyro m_gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+    public double gyroOffset = 0;
     // public AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
-    private boolean field_centric_drive = true;
+    public boolean field_centric_drive = true;
 
     /* Odometry */
     public Vector frontLeftVelocity = new Vector();
@@ -88,12 +89,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_gyro.reset();
     }
 
+    public void setGyroOffset(double x) {
+        gyroOffset = x;
+    }
+
     // public void gyroFromMag(double zeroHeading) {
     //     m_gyro.setAngleAdjustment(m_gyro.getCompassHeading() - zeroHeading - m_gyro.getYaw());
     // }
 
     public double getGyro() {
-        return m_gyro.getAngle();
+        return m_gyro.getAngle() + gyroOffset;
     } 
 
     public void periodic() {

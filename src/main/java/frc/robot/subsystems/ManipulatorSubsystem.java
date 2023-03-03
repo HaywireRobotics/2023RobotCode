@@ -20,6 +20,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
     private final double CONE_MOTOR_SPEED = -0.6;
     private final double CUBE_MOTOR_SPEED = 0.6;
+    private final double SHOOT_CUBE_SPEED = -1.0;
     private final double DROP_MOTOR_SPEED = 0.75;
     private final double DROP_TIME = 1.5;
 
@@ -31,10 +32,10 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final double MANIPULATOR_KD = 0.00005;
 
     private final double MANIPULATOR_UP_ANGLE = 0;
-    private final double MANIPULATOR_DOWN_ANGLE = 100;
+    private final double MANIPULATOR_DOWN_ANGLE = 105;
     private final double MANIPULATOR_POWER_OFF_ERROR = 5;
-    private final double MANIPULATOR_HINGE_MAX_POWER = 0.5;
-    private final double MANIPULATOR_HINGE_MIN_POWER = -0.2;
+    private final double MANIPULATOR_HINGE_MAX_POWER = 0.75;
+    private final double MANIPULATOR_HINGE_MIN_POWER = -0.1;
 
     private final double MANIPULATOR_HINGE_GEAR_RATIO = 84.0/1.0;
 
@@ -65,6 +66,11 @@ public class ManipulatorSubsystem extends SubsystemBase{
         rollerMotor.set(CUBE_MOTOR_SPEED);
         gamePiece = GamePieces.CUBE;
     }
+    public void shootCube() {
+        rollerMotor.set(SHOOT_CUBE_SPEED);
+        gamePiece = GamePieces.NONE;
+    }
+
     public void dropCube(){
         rollerMotor.set(DROP_MOTOR_SPEED);
         gamePiece = GamePieces.NONE;
@@ -89,7 +95,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public void setHingeTarget(double angle){
-        hingePID.setSetpoint(Statics.clamp(angle, MANIPULATOR_DOWN_ANGLE, MANIPULATOR_UP_ANGLE));
+        hingePID.setSetpoint(Statics.clamp(angle, MANIPULATOR_UP_ANGLE, MANIPULATOR_DOWN_ANGLE));
     }
     public void setHingeUp(){
         hingePID.setSetpoint(MANIPULATOR_UP_ANGLE);
@@ -141,6 +147,13 @@ public class ManipulatorSubsystem extends SubsystemBase{
             this
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
+    public Command shootCubeCommand(){
+        return Commands.startEnd(
+            this::shootCube,
+            this::stop,
+            this
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+    }
     public Command dropConeCommand(){
         return Commands.sequence(
             new InstantCommand(this::dropCone, this),
@@ -164,10 +177,16 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public Command rawUpCommand(){
-        return Commands.startEnd(() -> setHingePower(-MANIPULATOR_HINGE_MAX_POWER), () -> setHingePower(0), this);
+        return Commands.startEnd(this::rawUp, () -> setHingePower(0), this);
+    }
+    public void rawUp() {
+        setHingePower(-MANIPULATOR_HINGE_MAX_POWER);
     }
     public Command rawDownCommand(){
-        return Commands.startEnd(() -> setHingePower(-MANIPULATOR_HINGE_MIN_POWER), () -> setHingePower(0), this);
+        return Commands.startEnd(this::rawDown, () -> setHingePower(0), this);
+    }
+    public void rawDown() {
+        setHingePower(-MANIPULATOR_HINGE_MIN_POWER);
     }
 
     public Command setHingeUpCommand(){

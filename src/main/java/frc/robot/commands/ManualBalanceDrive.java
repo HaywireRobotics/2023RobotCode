@@ -14,7 +14,7 @@ public class ManualBalanceDrive extends CommandBase{
 
     //the buffer not only affects the "deadzone", 
     // but also prohibits small angles near the x/y axis
-    private static final double JOYSTICK_DEADBAND = 0.05;
+    private static final double JOYSTICK_DEADBAND = 0.2;
     private static final double JOYSTICK_S = 0.1;
     private static final double JOYSTICK_T = 2.6;
     private static final double SPEED_SCALE = 0.25;
@@ -36,17 +36,27 @@ public class ManualBalanceDrive extends CommandBase{
         double leftX = controller.getLeftX()*SPEED_SCALE;
         double leftY = controller.getLeftY()*SPEED_SCALE;
 
-        rightX = applyAll(rightX);
-        leftX = Statics.applyDeadband(leftX, JOYSTICK_DEADBAND);
-        leftY = Statics.applyDeadband(leftY, JOYSTICK_DEADBAND);
-        Vector leftVector = Statics.applySmoothing2D(new Vector(leftX, leftY), JOYSTICK_S, JOYSTICK_T);
+        // // rightX = applyAll(rightX);
+        // leftX = Statics.applyDeadband(leftX, JOYSTICK_DEADBAND);
+        // leftY = Statics.applyDeadband(leftY, JOYSTICK_DEADBAND);
+        // Vector leftVector = Statics.applySmoothing2D(new Vector(leftX, leftY), JOYSTICK_S, JOYSTICK_T);
+        // leftX = leftVector.x;
+        // leftY = leftVector.y;
+        // // System.out.println(leftVector.toString());
+
+        
+        rightX = Statics.applyDeadband(JOYSTICK_DEADBAND, rightX);
+        leftX = Statics.applyDeadband(JOYSTICK_DEADBAND, leftX);
+        leftY = Statics.applyDeadband(JOYSTICK_DEADBAND, leftY);
+        Vector leftVector = new Vector(leftX, leftY);
         leftX = leftVector.x;
         leftY = leftVector.y;
-        // System.out.println(leftVector.toString());
+
+        m_subsystem.driveArcade(leftX, leftY, rightX);
 
         if(leftX == 0 && leftY == 0 && rightX == 0){
             lockDrive();
-        }else{
+         }else {
             m_subsystem.driveArcade(leftX, leftY, rightX);
         };
       
@@ -54,10 +64,10 @@ public class ManualBalanceDrive extends CommandBase{
         m_subsystem.updateOdometry();
     }
     private void lockDrive(){
-        m_subsystem.setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
-        m_subsystem.setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
-        m_subsystem.setFrontLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
-        m_subsystem.setFrontRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
+        m_subsystem.setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
+        m_subsystem.setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
+        m_subsystem.setFrontLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
+        m_subsystem.setFrontRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
     }
 
     @Override

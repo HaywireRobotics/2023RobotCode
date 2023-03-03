@@ -27,8 +27,8 @@ public class AutoDriveToTarget extends CommandBase {
     private final double TRANSLATION_KP = 1.5;
     private final double TRANSLATION_KI = 0;
     private final double TRANSLATION_KD = 0.0;
-    private final double TRANSLATION_MAX_ACC = 4;
-    private final double TRANSLATION_MAX_VEL = 9;
+    private final double TRANSLATION_MAX_ACC = 3;
+    private final double TRANSLATION_MAX_VEL = 7;
     private final double HEADING_KP = 0.04;
     private final double HEADING_KI = 0;
     private final double HEADING_KD = 0;

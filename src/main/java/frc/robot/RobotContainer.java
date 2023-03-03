@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,6 +23,7 @@ import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.commands.AutoDriveState;
 import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.commands.AutoScore;
+import frc.robot.commands.CoolAutoCommandCharge;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ManualArmCommand;
@@ -62,12 +65,14 @@ public class RobotContainer {
 
   private final NetworkTableInstance m_networkTable = NetworkTableInstance.getDefault();
   private final DriveOdometryTable m_drivetrainTable = new DriveOdometryTable(m_networkTable, m_drivetrainSubsystem);
-  private final ArmTable m_armTable = new ArmTable(m_networkTable, m_armSubsystem);
+  // private final ArmTable m_armTable = new ArmTable(m_networkTable, m_armSubsystem);
 
-  SendableChooser<Command> m_auto_chooser = new SendableChooser<>();
+  SendableChooser<Command> m_auto_chooser;
 
   private final Command[] m_auto_commands = {
-    new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(3.0, 0.0), new Rotation2d(0))),
+    new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(0.0, 2.0), new Rotation2d(0))),
+    m_manipulatorSubsystem.shootCubeCommand(),
+    new AutoDriveState(m_drivetrainSubsystem, new SwerveModuleState(500.0, 0.0)).withTimeout(2)
   };
 
   public final Camera m_limelight = new Camera(m_networkTable);
@@ -89,11 +94,14 @@ public class RobotContainer {
     m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller, m_auxJoystick1, m_auxJoystick2));
     // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
-    m_auto_chooser.setDefaultOption("Simple Auto", m_auto_commands[0]);
-    // m_auto_chooser.addOption("Complex Auto", m_complexAuto);
-
+    m_auto_chooser = new SendableChooser<>();
+    m_auto_chooser.setDefaultOption("NO Auto", new InstantCommand(() -> {m_drivetrainSubsystem.setGyroOffset(180);}));
+    m_auto_chooser.addOption("Cool Auto", m_auto_commands[1]);
+    m_auto_chooser.addOption("Simple Auto", m_auto_commands[2]);
     // m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(m_elevatorSubsystem, m_controller));
     // m_elevatorSubsystem.home();
+
+    SmartDashboard.putData(m_auto_chooser);
 
     // m_manipulatorSubsystem.setDefaultCommand(new DefaultManipulatorCommand(m_manipulatorSubsystem, m_controller));
     // Configure the button bindings
@@ -120,7 +128,7 @@ public class RobotContainer {
     // m_controller.b().whileTrue(smartSetpointCommand(Constants.ScoreRows.MID));
     // m_controller.a().whileTrue(smartSetpointCommand(Constants.ScoreRows.LOW));
 
-    m_controller.leftStick().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
+    m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
 
     // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     // m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
@@ -195,7 +203,7 @@ public class RobotContainer {
   public void updateNetworkTables(){
     m_drivetrainTable.publishData();
     m_armPoseViz.update();
-    m_armTable.publishData();
+    // m_armTable.publishData();
   }
   public void resetOdometry(){
     m_drivetrainSubsystem.resetPose();
@@ -210,7 +218,7 @@ public class RobotContainer {
   public void resetEncoders(){
     m_armSubsystem.m_elevatorSubsystem.resetEncoder();
     m_armSubsystem.m_manipulatorSubsystem.resetEncoder();
-    m_armSubsystem.m_pulleySubsystem.resetEncoder(3.5);
+    m_armSubsystem.m_pulleySubsystem.resetEncoder(0.5 );
   }
 
   public void disable(){
@@ -218,6 +226,8 @@ public class RobotContainer {
   }
   public void enable(){
     m_drivetrainSubsystem.enable();
+    m_drivetrainSubsystem.resetGyroscope();
+    m_drivetrainSubsystem.resetPose();
     // m_armSubsystem.resetEncoders();
   }
 }

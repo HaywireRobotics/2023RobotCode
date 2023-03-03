@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -41,8 +42,10 @@ public class ManualArmCommand extends CommandBase {
         // m_controller1.button(3).onTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeUpCommand());
         // m_controller1.button(2).onTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeDownCommand());
 
-        m_aux_controller1.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeConeCommand());
-        m_aux_controller1.button(5).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCubeCommand());
+        m_aux_controller2.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeConeCommand());
+        m_aux_controller2.button(5).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCubeCommand());
+
+        m_aux_controller2.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.shootCubeCommand());
 
         // m_aux_controller2.button(4).whileTrue(pidIntakeCone());
         // m_aux_controller2.button(5).whileTrue(pidIntakeCube());
@@ -94,10 +97,29 @@ public class ManualArmCommand extends CommandBase {
     }
 
     private Command rawManipulatorUp(){
-        return m_armSubsystem.m_manipulatorSubsystem.rawUpCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = false;}));
+        // return Commands.startEnd(m_armSubsystem.m_manipulatorSubsystem.rawUpCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = false;})),
+        //                         stablizeManipulator());
+        // return (m_armSubsystem.m_manipulatorSubsystem.rawUpCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = false;}))
+        return Commands.startEnd(this::rawManipulatorUpRunnable, this::stablizeManipulator, m_armSubsystem.m_manipulatorSubsystem);
+    }
+    private void rawManipulatorUpRunnable() {
+        m_armSubsystem.m_manipulatorSubsystem.rawUp();
+        hingePIDEnabled = false;
     }
     private Command rawManipulatorDown(){
-        return m_armSubsystem.m_manipulatorSubsystem.rawDownCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = false;}));
+        // return Commands.(m_armSubsystem.m_manipulatorSubsystem.rawDownCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = false;})),
+        //                         stablizeManipulator(),
+        //                         m_armSubsystem);
+        return Commands.startEnd(this::rawManipulatorDownRunnable, this::stablizeManipulator, m_armSubsystem.m_manipulatorSubsystem);
+    }
+    private void rawManipulatorDownRunnable() {
+        m_armSubsystem.m_manipulatorSubsystem.rawDown();
+        hingePIDEnabled = false;
+    }
+    private void stablizeManipulator() {
+        double currentAngle = m_armSubsystem.getManipulatorHingeAngle();
+        m_armSubsystem.m_manipulatorSubsystem.setHingeTarget(currentAngle);
+        hingePIDEnabled = true;
     }
     private Command pidManipulatorUp(){
         return m_armSubsystem.m_manipulatorSubsystem.setHingeUpCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = true;}));
