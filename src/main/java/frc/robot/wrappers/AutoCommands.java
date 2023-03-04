@@ -19,19 +19,20 @@ public final class AutoCommands {
     }
 
     public Command resetGyroCommand() {
-        return new InstantCommand(() -> {m_drivetrainSubsystem.setGyroOffset(180);});
+        // return new InstantCommand(() -> {m_drivetrainSubsystem.setGyroOffset(180);});
+        return m_drivetrainSubsystem.flipGyroCommand();
     }
 
     public Command NoDriveCubeCommand() {
         return Commands.sequence(
-            resetGyroCommand(),
+            m_drivetrainSubsystem.flipGyroCommand(),
             m_armSubsystem.m_manipulatorSubsystem.shootCubeCommand().withTimeout(2)
         );
     }
 
     public Command DriveNoCubeCommand(double speed, double angle, double time) {
         return Commands.sequence(
-            resetGyroCommand(),
+            m_drivetrainSubsystem.flipGyroCommand(),
             // new InstantCommand(() -> {m_drivetrainSubsystem.driveVector(speed, angle, 0);}),
             m_drivetrainSubsystem.driveVectorCommand(speed, angle, 0).withTimeout(time)
             // new WaitCommand(time),
@@ -43,7 +44,7 @@ public final class AutoCommands {
 
     public Command LeaveCommunityNoCubeCommand() {
         return Commands.sequence(
-            resetGyroCommand(),
+            m_drivetrainSubsystem.flipGyroCommand(),
             DriveNoCubeCommand(0.25, 180, 5)
         );
     }
@@ -57,7 +58,7 @@ public final class AutoCommands {
 
     public Command DockNoCubeCommand() {
         return Commands.sequence(
-            resetGyroCommand(),
+            m_drivetrainSubsystem.flipGyroCommand(),
             DriveNoCubeCommand(0.25, 180, 3.5),
             new InstantCommand(m_drivetrainSubsystem::lockDrive)
         );

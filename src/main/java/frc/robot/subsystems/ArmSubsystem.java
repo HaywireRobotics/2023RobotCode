@@ -126,11 +126,11 @@ public class ArmSubsystem extends SubsystemBase {
         return m_manipulatorSubsystem.getHingeAngle();
     }
 
-    public Command CollapseArmCommand() {
+    public Command collapseArmCommand() {
         return Commands.parallel(
-            new InstantCommand(() -> setPulleyTarget(6)),
-            new InstantCommand(() -> setElevatorTarget(6)),
-            m_manipulatorSubsystem.setHingeTargetCommand(10)
+            new InstantCommand(() -> setPulleyTarget(0)),
+            new InstantCommand(() -> setElevatorTarget(1.5)),
+            m_manipulatorSubsystem.setHingeTargetCommand(5)
         );
     }
 

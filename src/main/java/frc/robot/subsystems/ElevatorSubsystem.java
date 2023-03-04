@@ -23,7 +23,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final double MAX_HEIGHT = 20; // Inches the elevator can extend
     private final double MIN_HEIGHT = 0; // Length when fully collapsed
     private final double MAX_RAISE_POWER = 1;
-    private final double MAX_LOWER_POWER = 0.5;
+    private final double MAX_LOWER_POWER = 0.9;
 
     // Update all these:
     private final double PIVOT_TO_TOP_SPROCKET = 23.75;
@@ -31,9 +31,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final double PIVOT_TO_TOP_ANGLE = 40.7;
     private final double CHAIN_WHEN_AT_TOP = 4;
 
-    private final double EXTENSION_KP = 0.01;
-    private final double EXTENSION_KI = 0;
-    private final double EXTENSION_KD = 0.0005;
+    private final double EXTENSION_KP = 0.1;
+    private final double EXTENSION_KI = 0.005;
+    private final double EXTENSION_KD = 0.001;
     private final double AT_SETPOINT_POSITION_TOLERANCE = 1.5;
     private final double AT_SETPOINT_VELOCITY_TOLERANCE = 0.5;
     private final double MAX_WINDUP_UPPER = 1.0;

@@ -18,9 +18,9 @@ public class PulleySubsystem extends SubsystemBase{
     private final PIDController pulleyPID;
     private final DigitalInput pulleyLimitSwitch;
 
-    private final double PULLEY_KP = 0.01;
-    private final double PULLEY_KI = 0;
-    private final double PULLEY_KD = 0.0005;
+    private final double PULLEY_KP = 0.7;
+    private final double PULLEY_KI = 0.01;
+    private final double PULLEY_KD = 0.001;
 
     private final double PULLEY_GEAR_RATIO = 84.0 / 1.0 * 26/18;
     private final double PULLEY_ROTATIONS_TO_INCHES = 2.5*Math.PI;

@@ -5,9 +5,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ManipulatorSubsystem;
 
 public class ManualArmCommand extends CommandBase {
 
@@ -17,6 +20,7 @@ public class ManualArmCommand extends CommandBase {
     private final CommandXboxController m_drive_controller;
 
     private boolean hingePIDEnabled = false;
+    private boolean armPIDEnabled = false;
 
     public ManualArmCommand(ArmSubsystem subsystem, CommandXboxController xbox, CommandJoystick joystick1, CommandJoystick joystick2){
         m_armSubsystem = subsystem;
@@ -37,6 +41,9 @@ public class ManualArmCommand extends CommandBase {
         m_aux_controller1.button(2).whileTrue(rawManipulatorDown());
 
         m_aux_controller1.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeTargetCommand(90));
+
+        m_aux_controller2.button(7).onTrue(pidStowArm());
+        // m_aux_controller2.button(6).onTrue(pidSubstationArm());
 
         // m_aux_controller2.button(3).whileTrue(pidManipulatorUp());
         // m_aux_controller2.button(2).whileTrue(pidManipulatorDown());
@@ -64,16 +71,19 @@ public class ManualArmCommand extends CommandBase {
         if(hingePIDEnabled){
             m_armSubsystem.m_manipulatorSubsystem.updateHingePID();
         }
-
+        if (armPIDEnabled){
+            m_armSubsystem.m_elevatorSubsystem.updatePID();
+            m_armSubsystem.m_pulleySubsystem.updatePID();
+        }
         if (m_aux_controller1.button(1).getAsBoolean()) {
             pulleyJoystick();
-        } else {
+        } else if (!armPIDEnabled){
             m_armSubsystem.setPulleyPower(0);
         }
 
         if (m_aux_controller2.button(1).getAsBoolean()) {
             elevatorJoystick();
-        } else {
+        } else if (!armPIDEnabled){
             m_armSubsystem.setElevatorPower(0);
         }
     }
@@ -86,6 +96,8 @@ public class ManualArmCommand extends CommandBase {
         double yAxis2 = m_aux_controller2.getY();
         if(yAxis2 < 0.05 && yAxis2 > -0.05) yAxis2 = 0;
         m_armSubsystem.setElevatorPower(yAxis2);
+
+        armPIDEnabled = false;
     }
     // public Command pulleyJoystickCommand(){
     //     return new RunCommand(this::pulleyJoystick , m_armSubsystem.m_pulleySubsystem).andThen(
@@ -96,6 +108,8 @@ public class ManualArmCommand extends CommandBase {
         double yAxis1 = m_aux_controller1.getY();
         if(yAxis1 < 0.05 && yAxis1 > -0.05) yAxis1 = 0;
         m_armSubsystem.setPulleyPower(-yAxis1);
+
+        armPIDEnabled = false;
     }
 
     private Command rawManipulatorUp(){
@@ -125,6 +139,20 @@ public class ManualArmCommand extends CommandBase {
     }
     private Command pidManipulatorUp(){
         return m_armSubsystem.m_manipulatorSubsystem.setHingeUpCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = true;}));
+    }
+    private Command pidStowArm(){
+        return m_armSubsystem.collapseArmCommand().andThen(new InstantCommand(() -> {armPIDEnabled = true;}));
+    }
+    private Command pidSubstationArm(){
+        return new InstantCommand(this::pidSubstationSetpoint);
+    }
+    private void pidSubstationSetpoint(){
+        m_armSubsystem.setPulleyTarget(10);
+        m_armSubsystem.setElevatorTarget(15);
+        armPIDEnabled = true;
+        hingePIDEnabled = true;
+        m_armSubsystem.setManipulatorHingeTarget(100);
+        
     }
     private Command pidManipulatorDown(){
         return m_armSubsystem.m_manipulatorSubsystem.setHingeDownCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = true;}));
