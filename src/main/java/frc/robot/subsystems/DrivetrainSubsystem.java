@@ -4,7 +4,10 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -85,7 +88,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void resetGyroscope() {
-        // m_gyro.setAngleAdjustment(0);
+        gyroOffset = 0;
         m_gyro.reset();
     }
 
@@ -135,6 +138,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         setBackLeft(this.addStates(backLeftDrive, backLeftRotate));
         setBackRight(this.addStates(backRightDrive, backRightRotate));
     }
+    public Command driveVectorCommand(double speed, double angle, double aSpeed) {
+        return Commands.startEnd(
+            () -> {this.driveVector(speed, angle, aSpeed);},
+            this::lockDrive,
+            this
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+    }
 
     public void driveXY(double xSpeed, double ySpeed, double aSpeed) {
         double speed = Math.sqrt(xSpeed*xSpeed + ySpeed*ySpeed);
@@ -166,11 +176,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // }
     }
 
-    public void allToRestState() {
-        SwerveModuleState frontLeftRotate =  new SwerveModuleState(0, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
-        SwerveModuleState frontRightRotate = new SwerveModuleState(0, Rotation2d.fromDegrees(-Constants.DRIVE_THETA_OFFSET));
-        SwerveModuleState backLeftRotate =   new SwerveModuleState(0, Rotation2d.fromDegrees(-Constants.DRIVE_THETA_OFFSET));
-        SwerveModuleState backRightRotate =  new SwerveModuleState(0, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
+    // public void allToRestState() {
+    //     SwerveModuleState frontLeftRotate =  new SwerveModuleState(0, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
+    //     SwerveModuleState frontRightRotate = new SwerveModuleState(0, Rotation2d.fromDegrees(-Constants.DRIVE_THETA_OFFSET));
+    //     SwerveModuleState backLeftRotate =   new SwerveModuleState(0, Rotation2d.fromDegrees(-Constants.DRIVE_THETA_OFFSET));
+    //     SwerveModuleState backRightRotate =  new SwerveModuleState(0, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
+    // }
+    public void lockDrive(){
+        setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
+        setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
+        setFrontLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
+        setFrontRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
     }
 
     public boolean toggleFieldCentricDrive() {

@@ -18,8 +18,8 @@ import frc.robot.wrappers.NEO;
 public class ManipulatorSubsystem extends SubsystemBase{
     private final NEO rollerMotor;
 
-    private final double CONE_MOTOR_SPEED = -0.6;
-    private final double CUBE_MOTOR_SPEED = 0.6;
+    private final double CONE_MOTOR_SPEED = -1.0;
+    private final double CUBE_MOTOR_SPEED = 1.0;
     private final double SHOOT_CUBE_SPEED = -1.0;
     private final double DROP_MOTOR_SPEED = 0.75;
     private final double DROP_TIME = 1.5;
@@ -27,15 +27,15 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final NEO hingeMotor;
     private final PIDController hingePID;
 
-    private final double MANIPULATOR_KP = 0.015;
+    private final double MANIPULATOR_KP = 0.012;
     private final double MANIPULATOR_KI = 0.0001;
-    private final double MANIPULATOR_KD = 0.00005;
+    private final double MANIPULATOR_KD = 0.0006;
 
     private final double MANIPULATOR_UP_ANGLE = 0;
-    private final double MANIPULATOR_DOWN_ANGLE = 105;
+    private final double MANIPULATOR_DOWN_ANGLE = 125;
     private final double MANIPULATOR_POWER_OFF_ERROR = 5;
-    private final double MANIPULATOR_HINGE_MAX_POWER = 0.75;
-    private final double MANIPULATOR_HINGE_MIN_POWER = -0.1;
+    private final double MANIPULATOR_HINGE_MAX_POWER = 0.85;
+    private final double MANIPULATOR_HINGE_MIN_POWER = -0.25;
 
     private final double MANIPULATOR_HINGE_GEAR_RATIO = 84.0/1.0;
 
@@ -189,6 +189,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
         setHingePower(-MANIPULATOR_HINGE_MIN_POWER);
     }
 
+    public Command setHingeTargetCommand(double angle) {
+        return new InstantCommand(() -> setHingeTarget(angle));
+    }
     public Command setHingeUpCommand(){
         return new InstantCommand(() -> setHingeUp());
     }

@@ -37,6 +37,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.PulleySubsystem;
 import frc.robot.util.ArmAutoPath;
+import frc.robot.wrappers.AutoCommands;
 import frc.robot.wrappers.Camera;
 import frc.robot.wrappers.DriverCamera;
 import frc.robot.wrappers.LEDs;
@@ -69,11 +70,12 @@ public class RobotContainer {
 
   SendableChooser<Command> m_auto_chooser;
 
-  private final Command[] m_auto_commands = {
-    new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(0.0, 2.0), new Rotation2d(0))),
-    m_manipulatorSubsystem.shootCubeCommand(),
-    new AutoDriveState(m_drivetrainSubsystem, new SwerveModuleState(500.0, 0.0)).withTimeout(2)
-  };
+  // private final Command[] m_auto_commands = {
+  //   new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(0.0, 2.0), new Rotation2d(0))),
+  //   m_manipulatorSubsystem.shootCubeCommand(),
+  //   new AutoDriveState(m_drivetrainSubsystem, new SwerveModuleState(500.0, Rotation2d.fromDegrees(0.0))).withTimeout(2)
+  // };
+  private final AutoCommands m_autoCommands = new AutoCommands(m_drivetrainSubsystem, m_armSubsystem);
 
   public final Camera m_limelight = new Camera(m_networkTable);
   public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
@@ -95,9 +97,13 @@ public class RobotContainer {
     // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
     m_auto_chooser = new SendableChooser<>();
-    m_auto_chooser.setDefaultOption("NO Auto", new InstantCommand(() -> {m_drivetrainSubsystem.setGyroOffset(180);}));
-    m_auto_chooser.addOption("Cool Auto", m_auto_commands[1]);
-    m_auto_chooser.addOption("Simple Auto", m_auto_commands[2]);
+    m_auto_chooser.setDefaultOption("Cube Auto", m_autoCommands.NoDriveCubeCommand());
+    m_auto_chooser.addOption("Leave Community Drop Cube", m_autoCommands.LeaveCommunityCubeCommand());
+    m_auto_chooser.addOption("Leave Community No Cube", m_autoCommands.LeaveCommunityNoCubeCommand());
+    m_auto_chooser.addOption("Dock Drop Cube", m_autoCommands.DockCubeCommand());
+    m_auto_chooser.addOption("Dock No Cube", m_autoCommands.DockNoCubeCommand());
+    m_auto_chooser.addOption("NO Auto", new InstantCommand(() -> {m_drivetrainSubsystem.setGyroOffset(180);}));
+    // m_auto_chooser.addOption("Drive Auto", m_auto_commands[2]);
     // m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(m_elevatorSubsystem, m_controller));
     // m_elevatorSubsystem.home();
 

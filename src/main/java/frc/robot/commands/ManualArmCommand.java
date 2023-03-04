@@ -36,6 +36,8 @@ public class ManualArmCommand extends CommandBase {
         m_aux_controller1.button(3).whileTrue(rawManipulatorUp());
         m_aux_controller1.button(2).whileTrue(rawManipulatorDown());
 
+        m_aux_controller1.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeTargetCommand(90));
+
         // m_aux_controller2.button(3).whileTrue(pidManipulatorUp());
         // m_aux_controller2.button(2).whileTrue(pidManipulatorDown());
 
