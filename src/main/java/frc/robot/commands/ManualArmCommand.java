@@ -40,9 +40,10 @@ public class ManualArmCommand extends CommandBase {
         m_aux_controller1.button(3).whileTrue(rawManipulatorUp());
         m_aux_controller1.button(2).whileTrue(rawManipulatorDown());
 
-        m_aux_controller1.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeTargetCommand(90));
+        // m_aux_controller1.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeTargetCommand(90));
+        m_aux_controller1.button(4).onTrue(pidGroundIntakeCube());
 
-        m_aux_controller2.button(7).onTrue(pidStowArm());
+        // m_aux_controller2.button(7).onTrue(pidStowArm());
         // m_aux_controller2.button(6).onTrue(pidSubstationArm());
 
         // m_aux_controller2.button(3).whileTrue(pidManipulatorUp());
@@ -60,11 +61,13 @@ public class ManualArmCommand extends CommandBase {
         // m_aux_controller2.button(5).whileTrue(pidIntakeCube());
         // m_aux_controller1.button(1).onTrue(m_armSubsystem.m_manipulatorSubsystem.smartDropCommand());
 
-        m_drive_controller.leftBumper().whileTrue(m_armSubsystem.m_elevatorSubsystem.raiseArm());
-        m_drive_controller.leftTrigger().whileTrue(m_armSubsystem.m_elevatorSubsystem.lowerArm());
+        // m_drive_controller.leftBumper().whileTrue(m_armSubsystem.m_elevatorSubsystem.raiseArm());
+        // m_drive_controller.leftTrigger().whileTrue(m_armSubsystem.m_elevatorSubsystem.lowerArm());
 
-        m_drive_controller.rightBumper().whileTrue(m_armSubsystem.m_pulleySubsystem.extendCommand());
-        m_drive_controller.rightTrigger().whileTrue(m_armSubsystem.m_pulleySubsystem.retractCommand());
+        // m_drive_controller.rightBumper().whileTrue(m_armSubsystem.m_pulleySubsystem.extendCommand());
+        // m_drive_controller.rightTrigger().whileTrue(m_armSubsystem.m_pulleySubsystem.retractCommand());
+        m_drive_controller.rightBumper().whileTrue(pidStowArm());
+        m_drive_controller.leftBumper().onTrue(pidSubstationArm());
     }
     @Override
     public void execute() {
@@ -143,15 +146,28 @@ public class ManualArmCommand extends CommandBase {
     private Command pidStowArm(){
         return m_armSubsystem.collapseArmCommand().andThen(new InstantCommand(() -> {armPIDEnabled = true;}));
     }
+    private Command pidGroundIntakeCube(){
+        return new InstantCommand(this::pidGroundIntakeCubeSetpoint);
+    }
+    private void pidGroundIntakeCubeSetpoint(){
+        // Top of cone at 50"
+        m_armSubsystem.setPulleyTarget(4.5);
+        m_armSubsystem.setElevatorTarget(1.2);
+        armPIDEnabled = true;
+        hingePIDEnabled = true;
+        m_armSubsystem.setManipulatorHingeTarget(75);
+        
+    }
     private Command pidSubstationArm(){
         return new InstantCommand(this::pidSubstationSetpoint);
     }
     private void pidSubstationSetpoint(){
-        m_armSubsystem.setPulleyTarget(10);
-        m_armSubsystem.setElevatorTarget(15);
+        // Top of cone at 50"
+        m_armSubsystem.setPulleyTarget(4.5);
+        m_armSubsystem.setElevatorTarget(18);
         armPIDEnabled = true;
         hingePIDEnabled = true;
-        m_armSubsystem.setManipulatorHingeTarget(100);
+        m_armSubsystem.setManipulatorHingeTarget(108);
         
     }
     private Command pidManipulatorDown(){

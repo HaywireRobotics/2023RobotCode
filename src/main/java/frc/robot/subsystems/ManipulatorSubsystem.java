@@ -32,7 +32,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final double MANIPULATOR_KD = 0.0006;
 
     private final double MANIPULATOR_UP_ANGLE = 0;
-    private final double MANIPULATOR_DOWN_ANGLE = 125;
+    private final double MANIPULATOR_DOWN_ANGLE = 108;
     private final double MANIPULATOR_POWER_OFF_ERROR = 5;
     private final double MANIPULATOR_HINGE_MAX_POWER = 0.85;
     private final double MANIPULATOR_HINGE_MIN_POWER = -0.25;

@@ -31,7 +31,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final double PIVOT_TO_TOP_ANGLE = 40.7;
     private final double CHAIN_WHEN_AT_TOP = 4;
 
-    private final double EXTENSION_KP = 0.1;
+    private final double EXTENSION_KP = 0.35;
     private final double EXTENSION_KI = 0.005;
     private final double EXTENSION_KD = 0.001;
     private final double AT_SETPOINT_POSITION_TOLERANCE = 1.5;

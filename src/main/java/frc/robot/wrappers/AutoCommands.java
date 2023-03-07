@@ -45,7 +45,7 @@ public final class AutoCommands {
     public Command LeaveCommunityNoCubeCommand() {
         return Commands.sequence(
             m_drivetrainSubsystem.flipGyroCommand(),
-            DriveNoCubeCommand(0.25, 180, 5)
+            DriveNoCubeCommand(0.25, 180, 4)
         );
     }
 
@@ -59,7 +59,7 @@ public final class AutoCommands {
     public Command DockNoCubeCommand() {
         return Commands.sequence(
             m_drivetrainSubsystem.flipGyroCommand(),
-            DriveNoCubeCommand(0.25, 180, 3.5),
+            DriveNoCubeCommand(0.25, 180, 5),
             new InstantCommand(m_drivetrainSubsystem::lockDrive)
         );
     }
