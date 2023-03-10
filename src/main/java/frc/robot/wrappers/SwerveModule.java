@@ -91,7 +91,6 @@ public class SwerveModule {
         // rotationMotor.setPosition(state.angle.getDegrees());
         if( isEnabled() ){
             double driveCalc = driveController.calculate(this.getSpeedMetersPerSecond(), state.speedMetersPerSecond / (Constants.WHEEL_DIAMETER * Math.PI));
-            driveMotor.set(driveCalc);
 
             // If drive is stoped, hold last angle.
             double stateAngle = Double.isNaN(state.angle.getDegrees()) ? pRotationAngle : state.angle.getDegrees();
@@ -102,6 +101,7 @@ public class SwerveModule {
                 // System.out.println(rotationMotor.getID() + "RotateCalc: " + rotateCalc + "\t" + this.getRotation() + "\t" + state.angle.getDegrees() + "\t" + encoderOffset);
             //     this.printCount = 1000;
             // };
+            driveMotor.set(driveCalc*Math.cos(Math.toRadians(rotationController.getPositionError())));
             rotationMotor.set(-rotateCalc);
         }
 

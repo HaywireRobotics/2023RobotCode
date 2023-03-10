@@ -10,9 +10,15 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,9 +46,21 @@ public class Camera {
     private Pose2d estimatedRobotPose = new Pose2d();
     private double poseConfidence = 0.0;
 
-    public Camera(NetworkTableInstance nt) {
-        camera = new PhotonCamera("OV5647");
+    
+    private NetworkTable table;
+
+    private DoublePublisher confidencePublisher;
+    private IntegerPublisher numTagsPublisher;
+    private DoubleArrayPublisher estimatedPosePublisher;
+
+    public Camera(NetworkTableInstance nt, String name) {
+        camera = new PhotonCamera(name);
         timer.start();
+
+        table = nt.getTable("AprilTagPileline");
+        confidencePublisher = table.getDoubleTopic("Total Confidence").publish();
+        numTagsPublisher = table.getIntegerTopic("NumTags").publish();
+        estimatedPosePublisher = table.getDoubleArrayTopic("Estimated Pose").publish();
     }
 
     public PhotonPipelineResult getResults() {
@@ -75,15 +93,20 @@ public class Camera {
             PhotonTrackedTarget target = targets.get(i);
 
             if(target == null) return null;
-            Transform3d cameraToTag = target.getBestCameraToTarget();
-            Transform3d robotToTag = cameraToTag.plus(
-                new Transform3d(Constants.cameraPose.getTranslation(), Constants.cameraPose.getRotation()).inverse()
-                );
-
             int tagID = target.getFiducialId();
-            Transform3d tagToRobot = robotToTag.inverse();
-            Pose3d tagFieldPosition = Constants.aprilTags[tagID-1].pose;
-            Pose3d robotPosition = tagFieldPosition.transformBy(tagToRobot);
+            if (tagID > Constants.aprilTags.length || tagID < 1) continue;
+            
+            Transform3d cameraToTag = target.getBestCameraToTarget();
+            Transform3d cameraToRobot = new Transform3d(Constants.cameraPose.getTranslation(), Constants.cameraPose.getRotation()).inverse();
+            // Transform3d robotToTag = cameraToRobot.plus(cameraToTag);
+
+            Transform3d tagToCamera = cameraToTag.inverse();
+            Pose3d tagFieldPosition = new Pose3d(new Translation3d(), new Rotation3d(0, Math.PI/2, 0)); //Constants.aprilTags[tagID-1].pose;
+            Pose3d cameraPose = tagFieldPosition.transformBy(tagToCamera);
+            Pose3d robotPosition = cameraPose.transformBy(cameraToRobot);
+
+            double[] poseArray = {robotPosition.getX(), robotPosition.getY(), robotPosition.getZ()};
+            if(!(poseArray[0] == 0 && poseArray[1] == 0 && poseArray[2] == 0 )) estimatedPosePublisher.set(poseArray, 3);
 
             robotPositions[i] = robotPosition;
             robotPoses[tagID-1] = robotPosition;
@@ -91,6 +114,8 @@ public class Camera {
             addConfidence(target, robotPosition);
                 
         }
+        
+        numTagsPublisher.set(targets.size());
 
         return robotPositions;
         
@@ -119,7 +144,9 @@ public class Camera {
         weights = Statics.normalizeSum(weights);
         
         for(int index = 0; index < tagConfidence.length; index++){
+            if(robotPoses[index] != null && tagConfidence[index] != 0){
             totalPose = Statics.sumPoses(totalPose, robotPoses[index].times(weights[index]));
+            }
         }
         return totalPose;
     }
@@ -142,6 +169,10 @@ public class Camera {
         
         dt = timer.get()-lastT;
         lastT = timer.get();
+
+        confidencePublisher.set(poseConfidence);
+        // double[] poseArray = {robotPose3d.getX(), robotPose3d.getY(), robotPose3d.getZ()};
+        // if(!(poseArray[0] == 0 && poseArray[1] == 0 && poseArray[2] == 0 )) estimatedPosePublisher.set(poseArray, 3);
     }
 
     public Pose2d getRobotPose2d(){

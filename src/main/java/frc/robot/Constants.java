@@ -89,17 +89,19 @@ public final class Constants {
     /****** April Tags ******/
     //These need to be updated (and in meters)
     public static AprilTag[] aprilTags = {
-        new AprilTag(1, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 42.19, 18.22), new Rotation3d(0, 0, Math.PI)))),
-        new AprilTag(2, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 108.19, 18.22), new Rotation3d(0, 0, Math.PI)))),
-        new AprilTag(3, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 174.19, 18.22), new Rotation3d(0, 0, Math.PI)))),
-        new AprilTag(4, Statics.poseToMeters(new Pose3d(new Translation3d(636.96, 265.74, 27.38), new Rotation3d(0, 0, Math.PI)))),
-        new AprilTag(5, Statics.poseToMeters(new Pose3d(new Translation3d(14.25, 265.74, 27.38), new Rotation3d(0, 0, 0)))),
-        new AprilTag(6, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 147.19, 18.22), new Rotation3d(0, 0, 0)))),
-        new AprilTag(7, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 108.19, 18.22), new Rotation3d(0, 0, 0)))),
-        new AprilTag(8, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 42.19, 18.22), new Rotation3d(0, 0, 0))))
+        new AprilTag(1, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 42.19, 18.22), new Rotation3d(0, Math.PI/2, Math.PI)))),
+        new AprilTag(2, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 108.19, 18.22), new Rotation3d(0, Math.PI/2, Math.PI)))),
+        new AprilTag(3, Statics.poseToMeters(new Pose3d(new Translation3d(610.77, 174.19, 18.22), new Rotation3d(0, Math.PI/2, Math.PI)))),
+        new AprilTag(4, Statics.poseToMeters(new Pose3d(new Translation3d(636.96, 265.74, 27.38), new Rotation3d(0, Math.PI/2, Math.PI)))),
+        new AprilTag(5, Statics.poseToMeters(new Pose3d(new Translation3d(14.25, 265.74, 27.38), new Rotation3d(0, Math.PI/2, 0)))),
+        new AprilTag(6, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 147.19, 18.22), new Rotation3d(0, Math.PI/2, 0)))),
+        new AprilTag(7, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 108.19, 18.22), new Rotation3d(0, Math.PI/2, 0)))),
+        new AprilTag(8, Statics.poseToMeters(new Pose3d(new Translation3d(40.45, 42.19, 18.22), new Rotation3d(0, Math.PI/2, 0))))
     };
 
-    public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(10, 5, 24), new Rotation3d()));
+    // to set y, set x, to set x set y, to set z set z
+    public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(5, 10, 24), new Rotation3d(Math.PI/2, 0, 0))); // y-up System
+    // public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(0, 60, 0), new Rotation3d(0, 0, 0))); // y-up System
 
     /****** Arm Auto Paths ******/
     // public static enum ArmSetpoints {

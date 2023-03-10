@@ -57,7 +57,7 @@ public class RobotContainer {
   private final PulleySubsystem m_pulleySubsystem = new PulleySubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_pulleySubsystem, m_elevatorSubsystem, m_manipulatorSubsystem);
 
-  private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
+  // private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
 
   private final CommandXboxController m_controller = new CommandXboxController(0);
   private final CommandJoystick m_auxJoystick1 = new CommandJoystick(1);
@@ -66,7 +66,7 @@ public class RobotContainer {
 
   private final NetworkTableInstance m_networkTable = NetworkTableInstance.getDefault();
   private final DriveOdometryTable m_drivetrainTable = new DriveOdometryTable(m_networkTable, m_drivetrainSubsystem);
-  // private final ArmTable m_armTable = new ArmTable(m_networkTable, m_armSubsystem);
+  private final ArmTable m_armTable = new ArmTable(m_networkTable, m_armSubsystem);
 
   SendableChooser<Command> m_auto_chooser;
 
@@ -77,7 +77,7 @@ public class RobotContainer {
   // };
   private final AutoCommands m_autoCommands = new AutoCommands(m_drivetrainSubsystem, m_armSubsystem);
 
-  public final Camera m_limelight = new Camera(m_networkTable);
+  public final Camera m_limelight = new Camera(m_networkTable, "OV5647");
   public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
 
   public final LEDs m_leds = new LEDs(9);
@@ -103,6 +103,7 @@ public class RobotContainer {
     m_auto_chooser.addOption("Dock Drop Cube", m_autoCommands.DockCubeCommand());
     m_auto_chooser.addOption("Dock No Cube", m_autoCommands.DockNoCubeCommand());
     m_auto_chooser.addOption("NO Auto", new InstantCommand(() -> {m_drivetrainSubsystem.setGyroOffset(180);}));
+    m_auto_chooser.addOption("testAuto", m_autoCommands.testAuto());
     // m_auto_chooser.addOption("Drive Auto", m_auto_commands[2]);
     // m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(m_elevatorSubsystem, m_controller));
     // m_elevatorSubsystem.home();
@@ -208,8 +209,8 @@ public class RobotContainer {
 
   public void updateNetworkTables(){
     m_drivetrainTable.publishData();
-    m_armPoseViz.update();
-    // m_armTable.publishData();
+    // m_armPoseViz.update();
+    m_armTable.publishData();
   }
   public void resetOdometry(){
     m_drivetrainSubsystem.resetPose();

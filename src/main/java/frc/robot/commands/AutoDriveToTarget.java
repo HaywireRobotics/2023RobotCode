@@ -1,17 +1,13 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class AutoDriveToTarget extends CommandBase {
@@ -24,9 +20,10 @@ public class AutoDriveToTarget extends CommandBase {
     // private double powerPerDegree = 1.0/180.0;
     // private double maxSpeed = 0.8;
 
-    private final double TRANSLATION_KP = 1.5;
+    private final double TRANSLATION_KP = 0.1;
     private final double TRANSLATION_KI = 0;
     private final double TRANSLATION_KD = 0.0;
+    private final double TRANSLATION_KF = 0.1;
     private final double TRANSLATION_MAX_ACC = 3;
     private final double TRANSLATION_MAX_VEL = 7;
     private final double HEADING_KP = 0.04;
@@ -37,6 +34,9 @@ public class AutoDriveToTarget extends CommandBase {
 
     private final ProfiledPIDController translationPID;
     private final ProfiledPIDController headingPID;
+
+    private final TrapezoidProfile.Constraints translationProfile;
+    private final TrapezoidProfile.Constraints headingProfile;
     
     public AutoDriveToTarget(DrivetrainSubsystem subsystem) {
         this(subsystem, new Pose2d());
@@ -45,10 +45,12 @@ public class AutoDriveToTarget extends CommandBase {
         this.m_subsystem = subsystem;
         this.targetPose = target;
         
+        translationProfile = new TrapezoidProfile.Constraints(TRANSLATION_MAX_VEL, TRANSLATION_MAX_ACC);
+        headingProfile =  new TrapezoidProfile.Constraints(HEADING_MAX_VEL, HEADING_MAX_ACC);
         this.translationPID = new ProfiledPIDController(TRANSLATION_KP, TRANSLATION_KI, TRANSLATION_KD,
-            new TrapezoidProfile.Constraints(TRANSLATION_MAX_VEL, TRANSLATION_MAX_ACC), 0.02);
+                                                        translationProfile, 0.02);
         this.headingPID = new ProfiledPIDController(HEADING_KP, HEADING_KI, HEADING_KD,
-            new TrapezoidProfile.Constraints(HEADING_MAX_VEL, HEADING_MAX_ACC), 0.02);
+                                                    headingProfile, 0.02);
 
         this.addRequirements(subsystem);
     }
@@ -62,7 +64,8 @@ public class AutoDriveToTarget extends CommandBase {
         double offset_mag = this.getPositionError();
         double angle = Math.toDegrees(Math.atan2(offset.getX(), offset.getY()))-m_subsystem.getPose().getRotation().getDegrees();
 
-        double output_translation = translationPID.calculate(offset_mag, 0);
+        double feedForward = translationPID.getSetpoint().velocity;
+        double output_translation = feedForward*TRANSLATION_KF+translationPID.calculate(offset_mag, 0);// + translationPID.calculate(offset_mag, 0)+ ;
         // double output_translation = 0.0;
 
         SmartDashboard.putNumber("Offset", offset_mag);
@@ -75,7 +78,7 @@ public class AutoDriveToTarget extends CommandBase {
         // SwerveModuleState translate = new SwerveModuleState(speed*Constants.MAX_SPEED, Rotation2d.fromRadians(angle));
         double currentHeading = m_subsystem.getPose().getRotation().getDegrees();
         double targetHeading = targetPose.getRotation().getDegrees();
-        double angle_offset = targetHeading - currentHeading;
+        // double angle_offset = targetHeading - currentHeading;
         double output_heading = headingPID.calculate(currentHeading, targetHeading);
         // double output_heading = 0.0;
 
@@ -87,6 +90,8 @@ public class AutoDriveToTarget extends CommandBase {
 
         // m_subsystem.setAllToState(new SwerveModuleState(speed*Constants.MAX_SPEED, Rotation2d.fromRadians(angle)));
         m_subsystem.updateOdometry();
+        SmartDashboard.putNumber("Profile Velocity", translationPID.getSetpoint().velocity);
+
     }
     @Override
     public void initialize(){

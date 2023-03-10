@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.Vector;
 import frc.robot.wrappers.SwerveModule;
-// import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.navx.frc.AHRS;
 
 public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule frontRight;

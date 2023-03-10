@@ -1,11 +1,15 @@
 package frc.robot.wrappers;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.commands.AutoDriveState;
+import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -30,11 +34,12 @@ public final class AutoCommands {
         );
     }
 
-    public Command DriveNoCubeCommand(double speed, double angle, double time) {
+    public Command DriveNoCubeCommand(double x, double y, double a) {
         return Commands.sequence(
             m_drivetrainSubsystem.flipGyroCommand(),
             // new InstantCommand(() -> {m_drivetrainSubsystem.driveVector(speed, angle, 0);}),
-            m_drivetrainSubsystem.driveVectorCommand(speed, angle, 0).withTimeout(time)
+            // m_drivetrainSubsystem.driveVectorCommand(speed, angle, 0).withTimeout(time)
+            new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(x, y), Rotation2d.fromDegrees(a)))
             // new WaitCommand(time),
             // new InstantCommand(m_drivetrainSubsystem::lockDrive)
             // new AutoDriveState(m_drivetrainSubsystem, new SwerveModuleState(speed, Rotation2d.fromDegrees(angle))).withTimeout(time),
@@ -45,7 +50,7 @@ public final class AutoCommands {
     public Command LeaveCommunityNoCubeCommand() {
         return Commands.sequence(
             m_drivetrainSubsystem.flipGyroCommand(),
-            DriveNoCubeCommand(0.25, 180, 4)
+            DriveNoCubeCommand(0, 3, 0)
         );
     }
 
@@ -59,7 +64,7 @@ public final class AutoCommands {
     public Command DockNoCubeCommand() {
         return Commands.sequence(
             m_drivetrainSubsystem.flipGyroCommand(),
-            DriveNoCubeCommand(0.25, 180, 5),
+            DriveNoCubeCommand(0, 2.5, 0),
             new InstantCommand(m_drivetrainSubsystem::lockDrive)
         );
     }
@@ -69,5 +74,9 @@ public final class AutoCommands {
             NoDriveCubeCommand(),
             DockNoCubeCommand()
         );
+    }
+
+    public Command testAuto(){
+        return new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(0, -10), Rotation2d.fromDegrees(0)));
     }
 }
