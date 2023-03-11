@@ -1,12 +1,27 @@
 {
   "NetworkTables": {
     "transitory": {
+      "AprilTagPipeline": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "open": true
+      },
       "drive": {
         "open": true
       }
     },
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables Settings": {

@@ -282,10 +282,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Vector newTranslation = translation.scale( 1-confidence ).add(
                       Vector.fromTranslation(cameraPose.getTranslation().times( confidence )));
         
-        double headingConfidence = confidence * 0.01;
+        double headingConfidence = confidence * 0.0001;
         double newHeading  = ( heading * (1.0-headingConfidence) ) + ( cameraPose.getRotation().getDegrees() * headingConfidence );
-
-        resetPose(newTranslation.x, newTranslation.y, newHeading);
+        // System.out.println(newTranslation.toString()+", "+newHeading);
+        if(newTranslation.x != 0) resetPose(newTranslation.x, newTranslation.y, newHeading);
     }
 
     public void disable(){

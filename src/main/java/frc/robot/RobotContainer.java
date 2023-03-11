@@ -190,7 +190,7 @@ public class RobotContainer {
     m_limelight.update();
   }
   public void mergeCameraPose(){
-    m_drivetrainSubsystem.mergeCameraPose(m_limelight.getRobotPose2d(), m_limelight.getPoseConfidence());
+    m_drivetrainSubsystem.mergeCameraPose(m_limelight.getRobotPose2d(), 1.0);//, m_limelight.getPoseConfidence());
   }
 
   public void updateLEDs(){
