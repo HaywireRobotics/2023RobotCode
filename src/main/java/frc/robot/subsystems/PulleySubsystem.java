@@ -46,6 +46,9 @@ public class PulleySubsystem extends SubsystemBase{
     }
 
     public void periodic() {
+        if(getLimitSwitch()){
+            resetEncoder(0);
+        }
         SmartDashboard.putNumber("Pulley Length", getPositionInches());
         SmartDashboard.putNumber("Pulley Encoder", pulleyMotor.getPosition()/PULLEY_GEAR_RATIO);
     }
@@ -66,11 +69,10 @@ public class PulleySubsystem extends SubsystemBase{
     public void setMotorPower(double power){
         double _power = power;
         double currentPosition = getPositionInches();
-        // if(getLimitSwitch()){
-        //     if(_power < 0) _power = 0;
-        //     resetEncoder(currentPosition);
-        //     // resetPID();
-        // }
+        if(getLimitSwitch()){
+            if(_power < 0) _power = 0;
+            // resetPID();
+        }
         if(currentPosition >= PULLEY_MAX_EXTENSION_INCHES && _power >= 0) {
             _power = 0.0;
             // resetPID();

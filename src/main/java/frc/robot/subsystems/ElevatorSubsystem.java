@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalSource;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,6 +18,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final NEO elevatorMotor;
     private final PIDController elevatorPID;
     private final DigitalInput topLimitSwitch;
+
+    private final DigitalInput elevatorEncoderInput;
+    private final DutyCycleEncoder elevatorEncoder;
 
     // FIXME: all these values need to be recalculated
     private final double ELEVATOR_GEAR_RATIO = 36.0/1.0; // Gear ratio of the elevator
@@ -44,6 +49,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     public ElevatorSubsystem(){
         elevatorMotor = new NEO(Constants.ELEVATOR_MOTOR, true, IdleMode.kBrake);
         topLimitSwitch = new DigitalInput(Constants.ELEVATOR_TOP_LIMIT_SWITCH);
+
+        elevatorEncoderInput = new DigitalInput(Constants.ELEVATOR_ENCODER);
+        elevatorEncoder = new DutyCycleEncoder(elevatorEncoderInput);
         
         elevatorPID = new PIDController(EXTENSION_KP, EXTENSION_KI, EXTENSION_KD);
         elevatorPID.setTolerance(AT_SETPOINT_POSITION_TOLERANCE, AT_SETPOINT_VELOCITY_TOLERANCE);
@@ -101,7 +109,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         double theta = Math.toDegrees(Math.acos(-(c*c-a*a-b*b)/(2*a*b)));
         return -theta+PIVOT_TO_TOP_ANGLE;
     }
-
+    private double getEncoder(){
+        return elevatorEncoder.get();
+    }
     public boolean isAtSetpoint(){
         return elevatorPID.atSetpoint();
     }
@@ -110,6 +120,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     public void resetEncoder(double inches){
         elevatorMotor.setEncoder(inches*ELEVATOR_GEAR_RATIO/DEGREES_TO_INCHES);
+        elevatorEncoder.setPositionOffset(inches*ELEVATOR_GEAR_RATIO/DEGREES_TO_INCHES-(elevatorEncoder.get()-elevatorEncoder.getPositionOffset()));
     }
 
     public void updatePID(){

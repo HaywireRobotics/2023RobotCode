@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ArmSetpointPaths;
+import frc.robot.commands.AlignSubstationAprilTag;
 import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.commands.AutoDriveState;
 import frc.robot.commands.AutoDriveToTarget;
@@ -137,6 +138,8 @@ public class RobotContainer {
 
     m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
 
+    m_controller.rightStick().whileTrue(new AlignSubstationAprilTag(m_drivetrainSubsystem, m_limelight));
+
     // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     // m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
     // m_controller.x().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_camera, 1, 0, 0));
@@ -190,7 +193,7 @@ public class RobotContainer {
     m_limelight.update();
   }
   public void mergeCameraPose(){
-    m_drivetrainSubsystem.mergeCameraPose(m_limelight.getRobotPose2d(), 1.0);//, m_limelight.getPoseConfidence());
+    m_drivetrainSubsystem.mergeCameraPose(m_limelight.getRobotPose2d(), m_limelight.getPoseConfidence()/10);//, m_limelight.getPoseConfidence());
   }
 
   public void updateLEDs(){

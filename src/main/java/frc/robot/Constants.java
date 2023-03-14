@@ -77,6 +77,7 @@ public final class Constants {
     /****** Elevator ******/
     public static final int ELEVATOR_MOTOR = 9;
     public static final int ELEVATOR_TOP_LIMIT_SWITCH = 0;
+    public static final int ELEVATOR_ENCODER = 2;
 
     /****** Manipulator ******/
     public static final int MANIPULATOR_ROLLER_MOTOR = 15;
@@ -85,6 +86,7 @@ public final class Constants {
     /****** Arm ******/
     public static final int PULLEY_MOTOR = 10;
     public static final int PULLEY_RETRACTED_LIMIT_SWITCH = 6;
+    public static final int PULLEY_LIMIT = 1;
 
     /****** April Tags ******/
     //These need to be updated (and in meters)
