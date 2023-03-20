@@ -8,13 +8,16 @@ import frc.robot.util.Bezier;
 public class AutoArmToSetpoint extends CommandBase{
 
     private final ArmSubsystem m_armSubsystem;
+    private final double flipTime;
     private final Bezier targetPath;
     private final double sweepTarget;
-
+    private final double startAngleTarget = 15;
+    
     public AutoArmToSetpoint(ArmSubsystem armSubsystem, ArmAutoPath target){
         m_armSubsystem = armSubsystem;
         targetPath = target.path;
         sweepTarget = target.manipulatorAngle;
+        flipTime = target.flipTime;
 
         addRequirements(m_armSubsystem);
     }
@@ -22,17 +25,21 @@ public class AutoArmToSetpoint extends CommandBase{
     @Override
     public void initialize(){
         m_armSubsystem.followPath(targetPath);
-        m_armSubsystem.setManipulatorHingeTarget(sweepTarget);
+        m_armSubsystem.setManipulatorHingeTarget(startAngleTarget);
     }
 
     @Override
     public void execute(){
         m_armSubsystem.updateAllPID();
+
+        if ( m_armSubsystem.followT > flipTime) {
+            m_armSubsystem.setManipulatorHingeTarget(sweepTarget);
+        }
     }
 
     @Override
     public boolean isFinished(){
-        return m_armSubsystem.isAllAtSetpoint();
+        return false;//m_armSubsystem.isAllAtSetpoint();
     }
     
 }

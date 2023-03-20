@@ -29,14 +29,14 @@ public class ArmPoseViz {
         double robotYOffset = 10;
 
         mechanism2d = new Mechanism2d(screenWidth, screenHeight);
-        armRoot = mechanism2d.getRoot("armRoot", screenWidth/2+20, robotYOffset);
+        armRoot = mechanism2d.getRoot("armRoot", 20, robotYOffset);
         armRoot.setPosition(0, 0);
         MechanismLigament2d arch =  armRoot.append(new MechanismLigament2d("ArchRear", 36, 90));
-        arm = arch.append(new MechanismLigament2d("Arm", 36, 90));
-        manipulator = arm.append(new MechanismLigament2d("Intake", 36, 0));
+        arm = arch.append(new MechanismLigament2d("Arm", 29, 90));
+        manipulator = arm.append(new MechanismLigament2d("Intake", 12, 0));
 
 
-        elevatorRoot = mechanism2d.getRoot("elevatorRoot", screenWidth/2-14, robotYOffset);
+        elevatorRoot = mechanism2d.getRoot("elevatorRoot", 21, robotYOffset);
         elevator = elevatorRoot.append(new MechanismLigament2d("Elevator", 29, 90));
 
         arch.setColor(new Color8Bit(Color.kWhite));
@@ -49,10 +49,10 @@ public class ArmPoseViz {
     }
 
     public void update(){
-        arm.setAngle(m_armSubsystem.getArmAngle());
+        arm.setAngle(m_armSubsystem.getArmAngle()-90);
         arm.setLength(m_armSubsystem.getArmLength());
         elevator.setLength(m_armSubsystem.getElevatorPosition());
-        manipulator.setAngle(m_armSubsystem.getManipulatorHingeAngle());
+        manipulator.setAngle(-m_armSubsystem.getManipulatorHingeAngle()+140);
 
         // manipulator gamePiece Cone: Yellow, manipulator gamePiece Cube: Purple gamePiece: None, white
         switch(m_armSubsystem.m_manipulatorSubsystem.getGamePiece()){

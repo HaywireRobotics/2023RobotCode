@@ -41,7 +41,7 @@ public class ManualArmCommand extends CommandBase {
         m_aux_controller1.button(2).whileTrue(rawManipulatorDown());
 
         // m_aux_controller1.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.setHingeTargetCommand(90));
-        m_aux_controller1.button(4).onTrue(pidGroundIntakeCube());
+        // m_aux_controller1.button(4).onTrue(pidGroundIntakeCube());
 
         // m_aux_controller2.button(7).onTrue(pidStowArm());
         // m_aux_controller2.button(6).onTrue(pidSubstationArm());
@@ -66,8 +66,8 @@ public class ManualArmCommand extends CommandBase {
 
         // m_drive_controller.rightBumper().whileTrue(m_armSubsystem.m_pulleySubsystem.extendCommand());
         // m_drive_controller.rightTrigger().whileTrue(m_armSubsystem.m_pulleySubsystem.retractCommand());
-        m_drive_controller.rightBumper().whileTrue(pidStowArm());
-        m_drive_controller.leftBumper().onTrue(pidSubstationArm());
+        // m_drive_controller.rightBumper().whileTrue(pidStowArm());
+        // m_drive_controller.rightTrigger().onTrue(pidSubstationArm());
     }
     @Override
     public void execute() {
@@ -163,11 +163,11 @@ public class ManualArmCommand extends CommandBase {
     }
     private void pidSubstationSetpoint(){
         // Top of cone at 50"
-        m_armSubsystem.setPulleyTarget(4.5);
-        m_armSubsystem.setElevatorTarget(18);
+        m_armSubsystem.setPulleyTarget(24);
+        m_armSubsystem.setElevatorTarget(25.5);
         armPIDEnabled = true;
         hingePIDEnabled = true;
-        m_armSubsystem.setManipulatorHingeTarget(108);
+        m_armSubsystem.setManipulatorHingeTarget(123);
         
     }
     private Command pidManipulatorDown(){

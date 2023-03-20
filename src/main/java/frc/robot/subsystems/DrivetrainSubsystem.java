@@ -153,7 +153,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public void driveXY(double xSpeed, double ySpeed, double aSpeed) {
         double speed = Math.sqrt(xSpeed*xSpeed + ySpeed*ySpeed);
-        double direction = Math.atan(ySpeed/xSpeed);
+        double direction = Math.toDegrees(Math.atan2(ySpeed, xSpeed));
         driveVector(speed, direction, aSpeed);
     }
 

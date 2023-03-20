@@ -37,6 +37,7 @@ public class Camera {
     private double CONFIDENCE_DISTANCE = 0.005; // confidence loss over area of target
     private double CONFIDENCE_AMBIGUITY = 0.1; // confidence loss for photon Ambiguity
     private double CONFIDENCE_ALTITUDE = 7.0; // confidence lost per meter the robot is above/below the ground
+    private double CONFIDENCE_PAST = 0.1;
 
     private Timer timer = new Timer();
 
@@ -128,7 +129,7 @@ public class Camera {
     private void addConfidence(PhotonTrackedTarget target, Pose3d estimatedRobotPose){
         int confidenceIndex = target.getFiducialId()-1;
 
-        double confidence = CONFIDENCE_LINEAR*dt;  SmartDashboard.putNumber("Camera: Linear", CONFIDENCE_LINEAR*dt);
+        double confidence = 1;//CONFIDENCE_LINEAR*dt;  SmartDashboard.putNumber("Camera: Linear", CONFIDENCE_LINEAR*dt);
         confidence -= Math.abs(estimatedRobotPose.getZ())*CONFIDENCE_ALTITUDE; SmartDashboard.putNumber("Camera: Altitude", Math.abs(estimatedRobotPose.getZ())*CONFIDENCE_ALTITUDE);
 
         // V Better safe than sorry!
@@ -138,7 +139,7 @@ public class Camera {
 
         SmartDashboard.putNumber("Camera: Total Confidence", confidence);
 
-        tagConfidence[confidenceIndex] = Math.min(tagConfidence[confidenceIndex]+confidence, 1.0);
+        tagConfidence[confidenceIndex] = Math.max(Math.min(tagConfidence[confidenceIndex]*CONFIDENCE_PAST+confidence, 1.0), 0.0);
     }
 
     public Pose3d calcWeightedPose(){

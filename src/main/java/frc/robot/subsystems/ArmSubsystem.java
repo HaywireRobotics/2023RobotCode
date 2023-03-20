@@ -23,8 +23,8 @@ public class ArmSubsystem extends SubsystemBase {
     private boolean enabled = false;
 
     private Bezier targetPath;
-    private double followT = 0.0;
-    private double followSpeed = 3.0; // Inches per second
+    public double followT = 0.0;
+    private double followSpeed = 0.35; // Inches per second
     private double tSpeed = 0.0;
 
     public ArmSubsystem(PulleySubsystem pulleySubsystem, ElevatorSubsystem elevatorSybsystem, ManipulatorSubsystem manipulatorSubsystem){
@@ -39,19 +39,22 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void periodic() {
         SmartDashboard.putString("Arm Position", getManipulator2dPosition().toString());
+        SmartDashboard.putNumber("Arm t", followT);
+        
 
         if(targetPath != null && followT <= 1){
             double t = Statics.clamp(followT, 0.0, 1.0);
             Vector target = targetPath.at(t);
+            SmartDashboard.putString("Arm Goal", target.toString());
             setManipulator2dPosition(target.x, target.y);
-            followT += tSpeed;
+            followT += tSpeed*(1/(getManipulator2dPosition().subtract(target).magnitude())+1);
         }
     }
 
     public void followPath(Bezier path){
         targetPath = path;
         followT = path.nearestT(getManipulator2dPosition(), 0.01);
-        tSpeed = targetPath.lengthEstimate(0.01)*followSpeed;
+        tSpeed = followSpeed/targetPath.lengthEstimate(0.01);
     }
 
     /* Raw Controls */
@@ -85,7 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
     public void setManipulator2dPosition(double x, double y){
         double _x = x-ARM_JOINT_X;
         double _y = y-ARM_JOINT_Y;
-        double angle = Math.atan2(_y, _x);
+        double angle = Math.toDegrees(Math.atan(_y/_x));
         double length = Math.hypot(_x, _y);
 
         m_elevatorSubsystem.setTargetArmAngle(angle);
@@ -98,7 +101,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         // Arm space
         double x = radius*Math.cos(Math.toRadians(theta));
-        double y = radius*Math.cos(Math.toRadians(theta));
+        double y = radius*Math.sin(Math.toRadians(theta));
 
         // Robot Space
         Vector position = new Vector(x+ARM_JOINT_X, y+ARM_JOINT_Y);
@@ -134,9 +137,16 @@ public class ArmSubsystem extends SubsystemBase {
         );
     }
 
-
-    public boolean isArmAtSetpoint(){
+    private boolean subsystemsAtSetpoints(){
         return m_elevatorSubsystem.isAtSetpoint() && m_pulleySubsystem.isAtSetpoint();
+    }
+    public boolean isArmAtSetpoint(){
+        if(targetPath != null && subsystemsAtSetpoints()){
+            return true;
+        }
+        else{
+            return subsystemsAtSetpoints();
+        }
     }
     public boolean isManipulatorAtSetpoint(){
         return m_manipulatorSubsystem.isHingeAtSetpoint();

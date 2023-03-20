@@ -24,19 +24,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // FIXME: all these values need to be recalculated
     private final double ELEVATOR_GEAR_RATIO = 36.0/1.0; // Gear ratio of the elevator
-    private final double DEGREES_TO_INCHES = 1.5 * Math.PI; // Inches of elevator movement per degree of motor rotation
-    private final double MAX_HEIGHT = 20; // Inches the elevator can extend
+    private final double DEGREES_TO_INCHES = 2 * Math.PI; //1.5 // Inches of elevator movement per degree of motor rotation
+    private final double MAX_HEIGHT = 26;//19.5; // Inches the elevator can extend
     private final double MIN_HEIGHT = 0; // Length when fully collapsed
     private final double MAX_RAISE_POWER = 1;
     private final double MAX_LOWER_POWER = 0.9;
 
     // Update all these:
-    private final double PIVOT_TO_TOP_SPROCKET = 23.75;
+    private final double PIVOT_TO_TOP_SPROCKET = 26;//23.75;
     private final double PIVOT_TO_CHAIN_ATTACHMENT = 23.5;
     private final double PIVOT_TO_TOP_ANGLE = 40.7;
-    private final double CHAIN_WHEN_AT_TOP = 4;
+    private final double CHAIN_WHEN_AT_TOP = 6;
 
-    private final double EXTENSION_KP = 0.35;
+    private final double EXTENSION_KP = 0.4;
     private final double EXTENSION_KI = 0.005;
     private final double EXTENSION_KD = 0.001;
     private final double AT_SETPOINT_POSITION_TOLERANCE = 1.5;

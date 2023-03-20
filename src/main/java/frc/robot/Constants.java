@@ -85,8 +85,7 @@ public final class Constants {
 
     /****** Arm ******/
     public static final int PULLEY_MOTOR = 10;
-    public static final int PULLEY_RETRACTED_LIMIT_SWITCH = 6;
-    public static final int PULLEY_LIMIT = 1;
+    public static final int PULLEY_RETRACTED_LIMIT_SWITCH = 1;
 
     /****** April Tags ******/
     //These need to be updated (and in meters)
@@ -115,43 +114,53 @@ public final class Constants {
     //     GROUND
     // }
     public static final class ArmSetpoints {
-        public static final ArmSetpoint CONE_HEIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+22, 46), 90);
-        public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+10, 34), 100);
+        public static final ArmSetpoint CONE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+29, 52), 90);
+        public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+10, 42), 100);
         public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 35), 90);
-        public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+12, 23), 100);
-        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance-5, 37), 100);
-        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 7.5), 70);
-        public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 7.5), 0);
+        public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
+        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 125), 140);
+        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 9), 70);
+        public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 8), 0);
+    }
+    public static final class BezierHandles{
+        public static final Vector leaveStowed = new Vector(0, 8);
+        public static final Vector leaveHigh = new Vector(-8, 5);
+        public static final Vector leaveMid = new Vector(-8, 3);
+        public static final Vector leaveSubstation = new Vector(-5, 10);
+
     }
     public static final class ArmSetpointPaths {
-        public static final ArmAutoPath CONE_HEIGH = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, new Vector(0, 0),
-                                                                     new Vector(0, 0), ArmSetpoints.CONE_HEIGH.armPosition),
-                                                                     ArmSetpoints.CONE_HEIGH.manipulatorAngle);
-        public static final ArmAutoPath CONE_MID = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, new Vector(0, 0),
-                                                                        new Vector(0, 0), ArmSetpoints.CONE_MID.armPosition),
-                                                                        ArmSetpoints.CONE_MID.manipulatorAngle);
-        public static final ArmAutoPath CUBE_HIGH = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, new Vector(0, 0),
-                                                                        new Vector(0, 0), ArmSetpoints.CUBE_HIGH.armPosition),
-                                                                        ArmSetpoints.CUBE_HIGH.manipulatorAngle);
-        public static final ArmAutoPath CUBE_MID = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, new Vector(0, 0),
-                                                                        new Vector(0, 0), ArmSetpoints.CUBE_MID.armPosition),
-                                                                        ArmSetpoints.CUBE_MID.manipulatorAngle);
-        public static final ArmAutoPath SUBSTATION = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, new Vector(0, 0),
-                                                                        new Vector(0, 0), ArmSetpoints.SUBSTATION.armPosition),
-                                                                        ArmSetpoints.SUBSTATION.manipulatorAngle);
+        public static final ArmAutoPath CONE_HIGH = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
+                                                                     ArmSetpoints.CONE_HIGH.armPosition, ArmSetpoints.CONE_HIGH.armPosition.add(BezierHandles.leaveHigh)),
+                                                                     ArmSetpoints.CONE_HIGH.manipulatorAngle, 0.5);
+        public static final ArmAutoPath CONE_MID = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
+                                                                        ArmSetpoints.CONE_MID.armPosition, ArmSetpoints.CONE_MID.armPosition.add(BezierHandles.leaveMid)),
+                                                                        ArmSetpoints.CONE_MID.manipulatorAngle, 0.5);
+        public static final ArmAutoPath CONE_HIGH_TO_MID = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HIGH.armPosition, ArmSetpoints.CONE_HIGH.armPosition.add(new Vector(-3, 6)),
+                                                                        ArmSetpoints.CONE_MID.armPosition, ArmSetpoints.CONE_MID.armPosition.add(new Vector(-2, 8))),
+                                                                        ArmSetpoints.CONE_MID.manipulatorAngle, 0.5);
+        public static final ArmAutoPath CUBE_HIGH = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
+                                                                        ArmSetpoints.CUBE_HIGH.armPosition, new Vector(0, 0)),
+                                                                        ArmSetpoints.CUBE_HIGH.manipulatorAngle, 0.5);
+        public static final ArmAutoPath CUBE_MID = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
+                                                                        ArmSetpoints.CUBE_MID.armPosition, new Vector(0, 0)),
+                                                                        ArmSetpoints.CUBE_MID.manipulatorAngle, 0.5);
+        public static final ArmAutoPath SUBSTATION = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
+                                                                        ArmSetpoints.SUBSTATION.armPosition, ArmSetpoints.SUBSTATION.armPosition.add(BezierHandles.leaveSubstation)),
+                                                                        ArmSetpoints.SUBSTATION.manipulatorAngle, 0.95);
         
-        public static final ArmAutoPath GROUND = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HEIGH.armPosition, new Vector(0, 0),
-                                                                        new Vector(0, 0), ArmSetpoints.GROUND.armPosition),
-                                                                        ArmSetpoints.GROUND.manipulatorAngle);
+        public static final ArmAutoPath GROUND = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HIGH.armPosition, ArmSetpoints.CONE_HIGH.armPosition.add(BezierHandles.leaveHigh),
+                                                                        ArmSetpoints.GROUND.armPosition, ArmSetpoints.GROUND.armPosition.add(BezierHandles.leaveStowed)),
+                                                                        ArmSetpoints.GROUND.manipulatorAngle, 0.5);
         
-        public static final ArmAutoPath STOWED = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HEIGH.armPosition, new Vector(0, 0),
-                                                                        new Vector(0, 0), ArmSetpoints.STOWED.armPosition),
+        public static final ArmAutoPath STOW = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HIGH.armPosition, ArmSetpoints.CONE_HIGH.armPosition.add(BezierHandles.leaveHigh),
+                                                                        ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed)),
                                                                         ArmSetpoints.STOWED.manipulatorAngle);
         
         public static ArmAutoPath getPathForScorePosition(ScorePositions scorePosition) {
             switch (scorePosition) {
-                case CONE_HEIGH:
-                    return CONE_HEIGH;
+                case CONE_HIGH:
+                    return CONE_HIGH;
                 case CUBE_HIGH:
                     return CUBE_HIGH;
                 case CONE_MID:
@@ -160,6 +169,10 @@ public final class Constants {
                     return CUBE_MID;
                 case GROUND:
                     return GROUND;
+                case SUBSTATION:
+                    return SUBSTATION;
+                case STOW:
+                    return STOW;
                 default:
                     return GROUND;
             }
@@ -188,21 +201,23 @@ public final class Constants {
         RED
     }
     public static enum ScorePositions {
-        CONE_HEIGH,
+        CONE_HIGH,
         CONE_MID,
         CUBE_HIGH,
         CUBE_MID,
-        GROUND
+        GROUND,
+        SUBSTATION,
+        STOW
     }
     public static enum ScoreRows {
         HIGH,
         MID,
-        LOW
+        LOW,
     }
 
     public static final class DriveSetpoints {
         private static final double scoringDistance = 24;
-        private static final double substationDistance = 24;
+        private static final double substationDistance = 42;
         public static final Pose2d[] BlueGrid = {
             Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 196.19), new Rotation2d(Math.PI))),
             Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 152.19), new Rotation2d(Math.PI))),

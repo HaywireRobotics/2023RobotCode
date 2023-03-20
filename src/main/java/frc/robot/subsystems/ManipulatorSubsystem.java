@@ -16,82 +16,37 @@ import frc.robot.util.Statics;
 import frc.robot.wrappers.NEO;
 
 public class ManipulatorSubsystem extends SubsystemBase{
-    private final NEO rollerMotor;
 
-    private final double CONE_MOTOR_SPEED = -1.0;
-    private final double CUBE_MOTOR_SPEED = 1.0;
-    private final double SHOOT_CUBE_SPEED = -1.0;
-    private final double DROP_MOTOR_SPEED = 0.75;
-    private final double DROP_TIME = 1.5;
 
     private final NEO hingeMotor;
     private final PIDController hingePID;
+    private final RollerSubsystem rollerSubsystem;
 
     private final double MANIPULATOR_KP = 0.012;
     private final double MANIPULATOR_KI = 0.0001;
     private final double MANIPULATOR_KD = 0.0006;
 
     private final double MANIPULATOR_UP_ANGLE = 0;
-    private final double MANIPULATOR_DOWN_ANGLE = 108;
+    private final double MANIPULATOR_DOWN_ANGLE = 220;
     private final double MANIPULATOR_POWER_OFF_ERROR = 5;
     private final double MANIPULATOR_HINGE_MAX_POWER = 0.85;
     private final double MANIPULATOR_HINGE_MIN_POWER = -0.25;
 
     private final double MANIPULATOR_HINGE_GEAR_RATIO = 84.0/1.0;
 
-    private GamePieces gamePiece = GamePieces.NONE;
 
     public ManipulatorSubsystem(){
-        rollerMotor = new NEO(Constants.MANIPULATOR_ROLLER_MOTOR, false, IdleMode.kBrake);
         
         hingeMotor = new NEO(Constants.MANIPULATOR_HINGE_MOTOR, false, IdleMode.kBrake);
         hingePID = new PIDController(MANIPULATOR_KP, MANIPULATOR_KI, MANIPULATOR_KD);
         hingePID.setTolerance(MANIPULATOR_POWER_OFF_ERROR);
+
+        rollerSubsystem = new RollerSubsystem();
+
     }
 
     public void periodic() {
         SmartDashboard.putNumber("Manipulator Encoder", getHingeAngle());
-    }
-
-    public void intakeCone(){
-        rollerMotor.set(CONE_MOTOR_SPEED);
-        gamePiece = GamePieces.CONE;
-    }
-    public void dropCone(){
-        rollerMotor.set(-DROP_MOTOR_SPEED);
-        gamePiece = GamePieces.NONE;
-    }
-
-    public void intakeCube(){
-        rollerMotor.set(CUBE_MOTOR_SPEED);
-        gamePiece = GamePieces.CUBE;
-    }
-    public void shootCube() {
-        rollerMotor.set(SHOOT_CUBE_SPEED);
-        gamePiece = GamePieces.NONE;
-    }
-
-    public void dropCube(){
-        rollerMotor.set(DROP_MOTOR_SPEED);
-        gamePiece = GamePieces.NONE;
-    }
-    public GamePieces getGamePiece(){
-        return gamePiece;
-    }
-    public void clearGamePiece(){
-        gamePiece = GamePieces.NONE;
-    }
-
-    public void smartDrop(){
-        if (gamePiece == GamePieces.CONE){
-            dropCone();
-        } else if (gamePiece == GamePieces.CUBE){
-            dropCube();
-        }
-    }
-
-    public void stop(){
-        rollerMotor.set(0);
     }
 
     public void setHingeTarget(double angle){
@@ -130,50 +85,50 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public void resetEncoder(){
         hingeMotor.setEncoder(0);
     }
+    public void intakeCone(){
+        rollerSubsystem.intakeCone();
+    }
+    public void dropCone(){
+        rollerSubsystem.dropCone();
+    }
+
+    public void intakeCube(){
+        rollerSubsystem.intakeCube();
+    }
+    public void shootCube() {
+        rollerSubsystem.shootCube();
+    }
+
+    public void dropCube(){
+        rollerSubsystem.dropCube();
+    }
+    
+    public GamePieces getGamePiece(){
+        return rollerSubsystem.getGamePiece();
+    }
+    public void stop(){
+        rollerSubsystem.stop();
+    }
 
 
     /* Commands */
     public Command intakeConeCommand(){
-        return Commands.startEnd(
-            this::intakeCone,
-            this::stop,
-            this
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        return rollerSubsystem.intakeConeCommand();
     }
     public Command intakeCubeCommand(){
-        return Commands.startEnd(
-            this::intakeCube,
-            this::stop,
-            this
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        return rollerSubsystem.intakeCubeCommand();
     }
     public Command shootCubeCommand(){
-        return Commands.startEnd(
-            this::shootCube,
-            this::stop,
-            this
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        return rollerSubsystem.shootCubeCommand();
     }
     public Command dropConeCommand(){
-        return Commands.sequence(
-            new InstantCommand(this::dropCone, this),
-            new WaitCommand(DROP_TIME),
-            new InstantCommand(this::stop, this)
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        return rollerSubsystem.dropConeCommand();
     }
     public Command dropCubeCommand(){
-        return Commands.sequence(
-            new InstantCommand(this::dropCube, this),
-            new WaitCommand(DROP_TIME),
-            new InstantCommand(this::stop, this)
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        return rollerSubsystem.dropCubeCommand();
     }
     public Command smartDropCommand(){
-        return Commands.sequence(
-            new InstantCommand(this::smartDrop, this),
-            new WaitCommand(DROP_TIME),
-            new InstantCommand(this::stop, this)
-            );
+        return rollerSubsystem.smartDropCommand();
     }
 
     public Command rawUpCommand(){

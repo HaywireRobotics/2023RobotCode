@@ -58,7 +58,7 @@ public class RobotContainer {
   private final PulleySubsystem m_pulleySubsystem = new PulleySubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_pulleySubsystem, m_elevatorSubsystem, m_manipulatorSubsystem);
 
-  // private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
+  private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
 
   private final CommandXboxController m_controller = new CommandXboxController(0);
   private final CommandJoystick m_auxJoystick1 = new CommandJoystick(1);
@@ -127,7 +127,7 @@ public class RobotContainer {
     // A -> reset gyroscope, ie, 0 is now where you are pointing
     // B -> reset pose, ie, you are now at (0,0)
     // Y -> toggle field-centric, ie, if you hit it it drives like a drone
-    m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::resetGyroscope));
+    // m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::resetGyroscope));
     // m_controller.b().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
     m_controller.back().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
     m_controller.start().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
@@ -136,9 +136,22 @@ public class RobotContainer {
     // m_controller.b().whileTrue(smartSetpointCommand(Constants.ScoreRows.MID));
     // m_controller.a().whileTrue(smartSetpointCommand(Constants.ScoreRows.LOW));
 
-    m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
+    m_controller.y().whileTrue(adaptiveSetpointCommand(Constants.ScorePositions.CONE_HIGH));
+    m_controller.b().whileTrue(adaptiveSetpointCommand(Constants.ScorePositions.CONE_MID));
+    m_controller.a().whileTrue(adaptiveSetpointCommand(Constants.ScorePositions.GROUND));
+    m_controller.x().whileTrue(adaptiveSetpointCommand(Constants.ScorePositions.SUBSTATION));
+    m_controller.rightBumper().whileTrue(adaptiveSetpointCommand(Constants.ScorePositions.STOW));
 
-    m_controller.rightStick().whileTrue(new AlignSubstationAprilTag(m_drivetrainSubsystem, m_limelight));
+    m_auxJoystick1.button(4).onTrue(adaptiveSetpointCommand(Constants.ScorePositions.CONE_HIGH));
+    m_auxJoystick1.button(5).onTrue(adaptiveSetpointCommand(Constants.ScorePositions.CONE_MID));
+    m_auxJoystick2.button(3).onTrue(adaptiveSetpointCommand(Constants.ScorePositions.SUBSTATION));
+
+
+    // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
+    m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
+    m_controller.rightTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0, 0, true));
+
+    // m_controller.y().whileTrue(new AlignSubstationAprilTag(m_drivetrainSubsystem, m_limelight));
 
     // AutoDriveToTarget stuff aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     // m_controller.x().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(1.0, 1.0), new Rotation2d(0))));
@@ -174,7 +187,7 @@ public class RobotContainer {
       if(gamePiece == Constants.GamePieces.CUBE){
         scorePosition = Constants.ScorePositions.CUBE_HIGH;
       } else {
-        scorePosition = Constants.ScorePositions.CONE_HEIGH;
+        scorePosition = Constants.ScorePositions.CONE_HIGH;
       }
     } else if (row == Constants.ScoreRows.MID){
       if(gamePiece == Constants.GamePieces.CUBE){
@@ -187,6 +200,16 @@ public class RobotContainer {
     }
 
     path = Constants.ArmSetpointPaths.getPathForScorePosition(scorePosition);
+    return new AutoArmToSetpoint(m_armSubsystem, path);
+  }
+  public Command adaptiveSetpointCommand(Constants.ScorePositions scorePosition){
+    ArmAutoPath path;
+    double distanceToHigh = Constants.ArmSetpoints.CONE_HIGH.armPosition.subtract(m_armSubsystem.getManipulator2dPosition()).magnitude();
+    if(scorePosition == Constants.ScorePositions.CONE_MID && distanceToHigh < 5){
+      path = Constants.ArmSetpointPaths.CONE_HIGH_TO_MID;
+    }else{
+      path = Constants.ArmSetpointPaths.getPathForScorePosition(scorePosition);
+    }
     return new AutoArmToSetpoint(m_armSubsystem, path);
   }
   public void updateCamera(){
@@ -212,7 +235,7 @@ public class RobotContainer {
 
   public void updateNetworkTables(){
     m_drivetrainTable.publishData();
-    // m_armPoseViz.update();
+    m_armPoseViz.update();
     m_armTable.publishData();
   }
   public void resetOdometry(){
@@ -228,14 +251,16 @@ public class RobotContainer {
   public void resetEncoders(){
     m_armSubsystem.m_elevatorSubsystem.resetEncoder();
     m_armSubsystem.m_manipulatorSubsystem.resetEncoder();
-    m_armSubsystem.m_pulleySubsystem.resetEncoder(0.5 );
+    m_armSubsystem.m_pulleySubsystem.resetEncoder(0.0);
   }
 
   public void disable(){
     m_drivetrainSubsystem.disable();
+    m_armSubsystem.disable();
   }
   public void enable(){
     m_drivetrainSubsystem.enable();
+    m_armSubsystem.enable();
     m_drivetrainSubsystem.resetGyroscope();
     m_drivetrainSubsystem.resetPose();
     // m_armSubsystem.resetEncoders();

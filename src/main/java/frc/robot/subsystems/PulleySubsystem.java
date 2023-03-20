@@ -24,9 +24,9 @@ public class PulleySubsystem extends SubsystemBase{
 
     private final double PULLEY_GEAR_RATIO = 84.0 / 1.0 * 26/18;
     private final double PULLEY_ROTATIONS_TO_INCHES = 2.5*Math.PI;
-    private final double PULLEY_MAX_EXTENSION_INCHES = 20.0; //PULLEY_DEGREES_TO_INCHES*55.5;
+    private final double PULLEY_MAX_EXTENSION_INCHES = 30.0; //PULLEY_DEGREES_TO_INCHES*55.5;
     private final double PULLEY_MIN_EXTENSION_INCHES = 0.0; //PULLEY_DEGREES_TO_INCHES*35.0;
-    private final double PULLEY_LENGTH_COLLAPSED_INCHES = 31;
+    private final double PULLEY_LENGTH_COLLAPSED_INCHES = 34;
 
     private final double PULLEY_SETPOINT_POSITION_ERROR = 1.0;
     private final double PULLEY_SETPOINT_VELOCITY_ERROR = 1.0;
@@ -51,6 +51,7 @@ public class PulleySubsystem extends SubsystemBase{
         }
         SmartDashboard.putNumber("Pulley Length", getPositionInches());
         SmartDashboard.putNumber("Pulley Encoder", pulleyMotor.getPosition()/PULLEY_GEAR_RATIO);
+        SmartDashboard.putBoolean("Pully Limit", getLimitSwitch());
     }
     public double getPositionInches(){
         return pulleyMotor.getPosition()/PULLEY_GEAR_RATIO*PULLEY_ROTATIONS_TO_INCHES;
@@ -85,8 +86,8 @@ public class PulleySubsystem extends SubsystemBase{
         pulleyMotor.set(_power);
     }
     private boolean getLimitSwitch(){
-        // return !pulleyLimitSwitch.get();
-        return false;
+        return pulleyLimitSwitch.get();
+        // return false;
     }
 
     public void updatePID(){
