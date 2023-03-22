@@ -1,117 +1,75 @@
 package frc.robot.wrappers;
 
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDs {
 
-    private final PWMSparkMax leds;
-
-    public static enum Modes {
-        SOLID,
-        BLINK,
-        CYCLE,
-    }
-    public static enum Colors{
-        HOT_PINK (0.75),
-        DARK_RED (0.59),
-        RED (0.61),
-        ORANGE (0.63),
-        GOLD (0.65),
-        YELLOW (0.76),
-        LAWN_GREEN (0.71),
-        LIME (0.73),
-        DARK_GREEN (0.75),
-        GREEN (0.77),
-        BLUE_GREEN (0.79),
-        AQUA (0.81),
-        SKY_BLUE (0.83),
-        DARK_BLUE (0.85),
-        BLUE (0.87),
-        BLUE_VIOLET (0.89),
-        VIOLET (0.91),
-        WHITE (0.93),
-        GRAY (0.95),
-        DARK_GRAY (0.97),
-        BLACK (0.99);
-
-        public final double pwm;
-        private Colors(double pwm) {
-            this.pwm = pwm;
-        }
-    }
-
+    private final AddressableLED leds;
+    private final AddressableLEDBuffer buffer;
     private Timer timer = new Timer();
 
-    private Modes mode = Modes.SOLID;
     private double blinkRate = 0.5;
     private double lastTime = 0.0;
-    private Colors[] cycleColors = new Colors[0];
-    private Colors staticColor = Colors.BLACK;
-
+    private Color[] cycleColors = new Color[0];
     private int colorIndex = 0;
+    // private Modes mode = Modes.SOLID;
 
-    private final int port;
+    private final int numLeds = 150;
 
-    public LEDs(int port) {
-        this.port = port;
+    public LEDs(int port){
+        leds = new AddressableLED(port);
+        buffer = new AddressableLEDBuffer(numLeds);
+        leds.setLength(buffer.getLength());
 
-        leds = new PWMSparkMax(port);
+        leds.setData(buffer);
+        leds.start();
+    }
 
-        timer.start();
+    public void setAllToColor(Color c){
+        for(int i = 0; i < buffer.getLength(); i++){
+            buffer.setLED(i, c);
+        }
+        updateLEDs();
+    }
+
+    public void setSolid(Color c){
+        setAllToColor(c);
+        cycleColors = new Color[1];
+        cycleColors[0] = c;
+    }
+
+    public void setCycle(Color[] c, double t){
+        setAllToColor(c[0]);
+        cycleColors = c;
+        blinkRate = t;
+    }
+
+    public void setBlink(Color c){
+        setAllToColor(c);
+        cycleColors = new Color[2];
+        cycleColors[0] = c;
+        cycleColors[1] = Color.kBlack;
     }
 
     public void update(){
         double currentTime = timer.get();
-        switch (mode) {
-            case SOLID:
-                setAllToColor(staticColor);
-                break;
-            case BLINK:
-                if (currentTime - lastTime > blinkRate) {
-                    if (colorIndex == 0) {
-                        setAllToColor(staticColor);
-                        colorIndex = 1;
-                    } else {
-                        setAllToColor(Colors.BLACK);
-                        colorIndex = 0;
-                    }
-                    lastTime = currentTime;
-                }
-                break;
-            case CYCLE:
-                if (currentTime - lastTime > blinkRate) {
-                    setAllToColor(cycleColors[colorIndex]);
-                    colorIndex++;
-                    if (colorIndex >= cycleColors.length) {
-                        colorIndex = 0;
-                    }
-                    lastTime = currentTime;
-                }
-                break;
+
+        if (currentTime - lastTime > blinkRate) {
+            setAllToColor(cycleColors[colorIndex]);
+            colorIndex++;
+            if (colorIndex >= cycleColors.length) {
+                colorIndex = 0;
+            }
+            lastTime = currentTime;
         }
-    }
-    
-    private void setAllToColor(Colors c) {
-        leds.set(c.pwm);
-    }
 
-    public void setSolid(Colors c) {
-        mode = Modes.SOLID;
-        staticColor = c;
-        colorIndex = 0;
+        lastTime = currentTime;
     }
-
-    public void setBlink(Colors c, double rate) {
-        mode = Modes.BLINK;
-        blinkRate = rate;
-        colorIndex = 0;
-    }
-
-    public void setCycle(Colors[] c, double rate) {
-        mode = Modes.CYCLE;
-        blinkRate = rate;
-        cycleColors = c;
-        colorIndex = 0;
+    private void updateLEDs(){
+        leds.setData(buffer);
+        leds.start();
     }
 }

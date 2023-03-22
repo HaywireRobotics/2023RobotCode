@@ -119,8 +119,8 @@ public final class Constants {
         public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 35), 90);
         public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
         public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 125), 140);
-        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 9), 70);
-        public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 8), 0);
+        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 10.5), 70);
+        public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 9.5), 0);
     }
     public static final class BezierHandles{
         public static final Vector leaveStowed = new Vector(0, 8);

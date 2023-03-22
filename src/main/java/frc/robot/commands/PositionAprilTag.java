@@ -20,13 +20,13 @@ public class PositionAprilTag extends CommandBase {
 
     private final PIDController translationPID;
 
-    private final double TRANSLATION_KP = 0.7;
+    private final double TRANSLATION_KP = 0.9;
     private final double TRANSLATION_KI = 0;
     private final double TRANSLATION_KD = 0.001;
 
     private final PIDController anglePID;
 
-    private final double ANGLE_KP = 0.7;
+    private final double ANGLE_KP = 0.05;
     private final double ANGLE_KI = 0;
     private final double ANGLE_KD = 0.001;
 

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -42,6 +43,7 @@ import frc.robot.wrappers.AutoCommands;
 import frc.robot.wrappers.Camera;
 import frc.robot.wrappers.DriverCamera;
 import frc.robot.wrappers.LEDs;
+import frc.robot.wrappers.PWMLEDs;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -82,6 +84,7 @@ public class RobotContainer {
   public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
 
   public final LEDs m_leds = new LEDs(9);
+  public Color m_ledColor = Color.kOrange;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,6 +113,8 @@ public class RobotContainer {
     // m_elevatorSubsystem.home();
 
     SmartDashboard.putData(m_auto_chooser);
+
+    m_leds.setSolid(m_ledColor);
 
     // m_manipulatorSubsystem.setDefaultCommand(new DefaultManipulatorCommand(m_manipulatorSubsystem, m_controller));
     // Configure the button bindings
@@ -150,6 +155,15 @@ public class RobotContainer {
     // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
     m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
     m_controller.rightTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0, 0, true));
+
+    m_controller.rightStick().onTrue(new InstantCommand(() -> {
+      if (m_ledColor == Color.kOrange) {
+        m_ledColor = Color.kPurple;
+      } else {
+        m_ledColor = Color.kOrange;
+      }
+      m_leds.setSolid(m_ledColor);
+    }));
 
     // m_controller.y().whileTrue(new AlignSubstationAprilTag(m_drivetrainSubsystem, m_limelight));
 
@@ -220,16 +234,17 @@ public class RobotContainer {
   }
 
   public void updateLEDs(){
-    if(m_armSubsystem.isAllAtSetpoint()){
-      m_leds.setSolid(LEDs.Colors.GREEN);
-    } if(m_limelight.getPoseConfidence() < 0.25){
-      m_leds.setSolid(LEDs.Colors.RED);
-    } if(m_limelight.getPoseConfidence() < 0.75){
-      LEDs.Colors[] c = {LEDs.Colors.RED, LEDs.Colors.GREEN};
-      m_leds.setCycle(c, 0.5);
-    }else {
-      m_leds.setSolid(LEDs.Colors.YELLOW);
-    }
+    // m_leds.setSolid(Color.kYellow);
+    // if(m_armSubsystem.isAllAtSetpoint()){
+    //   m_leds.setSolid(Color.kGreen);
+    // } if(m_limelight.getPoseConfidence() < 0.25){
+    //   m_leds.setSolid(Color.kRed);
+    // } if(m_limelight.getPoseConfidence() < 0.75){
+    //   Color[] c = {Color.kRed, Color.kGreen};
+    //   m_leds.setCycle(c, 0.5);
+    // }else {
+    //   m_leds.setSolid(Color.kYellow);
+    // }
     m_leds.update();
   }
 
