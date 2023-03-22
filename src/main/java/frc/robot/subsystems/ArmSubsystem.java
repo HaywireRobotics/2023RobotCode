@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import javax.management.InstanceAlreadyExistsException;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -7,6 +9,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.commands.AutoArmToSetpoint;
+import frc.robot.util.ArmAutoPath;
 import frc.robot.util.Bezier;
 import frc.robot.util.Statics;
 import frc.robot.util.Vector;
@@ -154,12 +159,51 @@ public class ArmSubsystem extends SubsystemBase {
     public boolean isAllAtSetpoint(){
         return isArmAtSetpoint() && isManipulatorAtSetpoint();
     }
+    public BooleanSupplier isAllAtSetpointBooleanSupplier() {
+        BooleanSupplier sup = () -> isAllAtSetpoint();
+        return sup;
+    }
 
     public void resetEncoders(){
         m_elevatorSubsystem.resetEncoder();
         m_pulleySubsystem.resetEncoder();
         m_manipulatorSubsystem.resetEncoder();
     }
+
+    public Command smartSetpointCommand(Constants.ScoreRows row){
+        Constants.GamePieces gamePiece = m_manipulatorSubsystem.getGamePiece();
+        ArmAutoPath path;
+        Constants.ScorePositions scorePosition = Constants.ScorePositions.GROUND;
+    
+        if(row == Constants.ScoreRows.HIGH){
+          if(gamePiece == Constants.GamePieces.CUBE){
+            scorePosition = Constants.ScorePositions.CUBE_HIGH;
+          } else {
+            scorePosition = Constants.ScorePositions.CONE_HIGH;
+          }
+        } else if (row == Constants.ScoreRows.MID){
+          if(gamePiece == Constants.GamePieces.CUBE){
+            scorePosition = Constants.ScorePositions.CUBE_MID;
+          } else {
+            scorePosition = Constants.ScorePositions.CONE_MID;
+          }
+        }else{
+          scorePosition = Constants.ScorePositions.GROUND;
+        }
+    
+        path = Constants.ArmSetpointPaths.getPathForScorePosition(scorePosition);
+        return new AutoArmToSetpoint(this, path);
+      }
+      public Command adaptiveSetpointCommand(Constants.ScorePositions scorePosition){
+        ArmAutoPath path;
+        double distanceToHigh = Constants.ArmSetpoints.CONE_HIGH.armPosition.subtract(this.getManipulator2dPosition()).magnitude();
+        if(scorePosition == Constants.ScorePositions.CONE_MID && distanceToHigh < 5){
+          path = Constants.ArmSetpointPaths.CONE_HIGH_TO_MID;
+        }else{
+          path = Constants.ArmSetpointPaths.getPathForScorePosition(scorePosition);
+        }
+        return new AutoArmToSetpoint(this, path);
+      }
 
     public void disable(){
         enabled = false;

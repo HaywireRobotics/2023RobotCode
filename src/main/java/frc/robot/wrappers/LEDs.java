@@ -19,6 +19,8 @@ public class LEDs {
 
     private final int numLeds = 150;
 
+    private Color ledColor = Color.kOrange;
+
     public LEDs(int port){
         leds = new AddressableLED(port);
         buffer = new AddressableLEDBuffer(numLeds);
@@ -26,6 +28,8 @@ public class LEDs {
 
         leds.setData(buffer);
         leds.start();
+
+        setSolid(ledColor);
     }
 
     public void setAllToColor(Color c){
@@ -71,5 +75,14 @@ public class LEDs {
     private void updateLEDs(){
         leds.setData(buffer);
         leds.start();
+    }
+
+    public void toggleColor() {
+        if (ledColor == Color.kOrange) {
+            ledColor = Color.kPurple;
+        } else {
+            ledColor = Color.kOrange;
+        }
+        setSolid(ledColor);
     }
 }
