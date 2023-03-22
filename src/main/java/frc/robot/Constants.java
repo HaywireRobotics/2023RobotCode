@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import frc.robot.util.ArmAutoPath;
 import frc.robot.util.ArmSetpoint;
 import frc.robot.util.Bezier;
@@ -73,6 +74,10 @@ public final class Constants {
     public static final double DRIVE_MOTOR_GEAR_RATIO = 8.14 / 1; // could potentially be 6.75:1 depending on if it is L1 of L2
                                                                   // see https://www.swervedrivespecialties.com/products/mk4-swerve-module?variant=39376675012721
     public static final double WHEEL_DIAMETER = 0.1016; // 4 inches
+
+    public static final double kMaxSpeedMetersPerSecond = 1.0;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.3;
+    public static final TrajectoryConfig TRAJECTORY_CONFIG = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,Constants.kMaxAccelerationMetersPerSecondSquared);
 
     /****** Elevator ******/
     public static final int ELEVATOR_MOTOR = 9;

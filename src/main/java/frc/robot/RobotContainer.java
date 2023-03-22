@@ -9,23 +9,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.ArmSetpointPaths;
-import frc.robot.commands.AlignSubstationAprilTag;
 import frc.robot.commands.AutoArmToSetpoint;
-import frc.robot.commands.AutoDriveState;
-import frc.robot.commands.AutoDriveToTarget;
-import frc.robot.commands.AutoScore;
-import frc.robot.commands.CoolAutoCommandCharge;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ManualArmCommand;
@@ -43,7 +33,6 @@ import frc.robot.wrappers.AutoCommands;
 import frc.robot.wrappers.Camera;
 import frc.robot.wrappers.DriverCamera;
 import frc.robot.wrappers.LEDs;
-import frc.robot.wrappers.PWMLEDs;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -86,6 +75,7 @@ public class RobotContainer {
   public final LEDs m_leds = new LEDs(9);
   public Color m_ledColor = Color.kOrange;
 
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -108,6 +98,7 @@ public class RobotContainer {
     m_auto_chooser.addOption("Dock No Cube", m_autoCommands.DockNoCubeCommand());
     m_auto_chooser.addOption("NO Auto", new InstantCommand(() -> {m_drivetrainSubsystem.setGyroOffset(180);}));
     m_auto_chooser.addOption("testAuto", m_autoCommands.testAuto());
+    m_auto_chooser.addOption("testTrajectory", m_autoCommands.testTrajectory());
     // m_auto_chooser.addOption("Drive Auto", m_auto_commands[2]);
     // m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(m_elevatorSubsystem, m_controller));
     // m_elevatorSubsystem.home();
