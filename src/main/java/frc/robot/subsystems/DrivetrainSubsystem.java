@@ -48,6 +48,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private Vector translation = new Vector();
     private double heading = 0.;
     private double headingOffset = 0.;
+
+    // used to tell when we are aligning with an AprilTag
+    public boolean aligning = false;
+    public boolean aligned = false;
     
     public DrivetrainSubsystem() {
         this.frontRight = new SwerveModule(Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR, Constants.FRONT_RIGHT_MODULE_STEER_MOTOR, 
@@ -97,10 +101,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         gyroOffset = x;
     }
 
-    // public void gyroFromMag(double zeroHeading) {
-    //     m_gyro.setAngleAdjustment(m_gyro.getCompassHeading() - zeroHeading - m_gyro.getYaw());
-    // }
-
     public double getGyro() {
         return m_gyro.getAngle() + gyroOffset;
     }
@@ -114,11 +114,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         frontLeft.setState(frontLeftState);
         backRight.setState(backRightState);
         backLeft.setState(backLeftState);
-
-        // System.out.println("FR: " + frontRight.getRotation() + "\tFL: " + frontLeft.getRotation() +
-        //                     "\tBR: " + backRight.getRotation() + "\tBL: " + backLeft.getRotation());
-
-        // System.out.println("Absolute: " + frontLeft.getRotationAbsolute()+"\t NEO"+ frontLeft.getNeoRotation()+"\t Calab"+ frontLeft.getRotation());
     }
 
     public void driveVector(double speed, double direction, double aSpeed) {
@@ -174,19 +169,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         double speed = Math.abs(Math.hypot(xSpeed, ySpeed));
 
-        // if (speed > 0) {
-            driveVector(speed, driveAngle, aSpeed);
-        // } else {
-        //     allToRestState();
-        // }
+        driveVector(speed, driveAngle, aSpeed);
     }
 
-    // public void allToRestState() {
-    //     SwerveModuleState frontLeftRotate =  new SwerveModuleState(0, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
-    //     SwerveModuleState frontRightRotate = new SwerveModuleState(0, Rotation2d.fromDegrees(-Constants.DRIVE_THETA_OFFSET));
-    //     SwerveModuleState backLeftRotate =   new SwerveModuleState(0, Rotation2d.fromDegrees(-Constants.DRIVE_THETA_OFFSET));
-    //     SwerveModuleState backRightRotate =  new SwerveModuleState(0, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
-    // }
     public void lockDrive(){
         setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
         setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));

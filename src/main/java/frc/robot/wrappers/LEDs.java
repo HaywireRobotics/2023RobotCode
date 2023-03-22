@@ -2,7 +2,9 @@ package frc.robot.wrappers;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDs {
@@ -19,6 +21,11 @@ public class LEDs {
 
     private final int numLeds = 150;
 
+    private Color gamepieceColor;
+    private final Color coneColor = Color.kOrange;
+    private final Color cubeColor = Color.kPurple;
+    private final Color allianceColor;
+
     public LEDs(int port){
         leds = new AddressableLED(port);
         buffer = new AddressableLEDBuffer(numLeds);
@@ -26,6 +33,15 @@ public class LEDs {
 
         leds.setData(buffer);
         leds.start();
+
+        if (DriverStation.getAlliance() == Alliance.Red) {
+            allianceColor = Color.kRed;
+        } else {
+            allianceColor = Color.kBlue;
+        }
+        gamepieceColor = allianceColor;
+
+        setSolid(gamepieceColor);
     }
 
     public void setAllToColor(Color c){
@@ -71,5 +87,22 @@ public class LEDs {
     private void updateLEDs(){
         leds.setData(buffer);
         leds.start();
+    }
+
+    public void toggleColor() {
+        if (gamepieceColor == coneColor) {
+            gamepieceColor = cubeColor;
+        } else {
+            gamepieceColor = coneColor;
+        }
+        setSolid(gamepieceColor);
+    }
+
+    public void setSolidGamePieceColor() {
+        setSolid(gamepieceColor);
+    }
+
+    public void blinkGamePieceColor() {
+        setBlink(gamepieceColor);
     }
 }

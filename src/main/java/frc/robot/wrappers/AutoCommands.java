@@ -1,5 +1,6 @@
 package frc.robot.wrappers;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,18 +18,20 @@ import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.commands.AutoFollowTrajectory;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.ManipulatorSubsystem;
 
 public final class AutoCommands {
     public final DrivetrainSubsystem m_drivetrainSubsystem;
     public final ArmSubsystem m_armSubsystem;
+    public final ManipulatorSubsystem m_manipulatorSubsystem;
 
-    public AutoCommands(DrivetrainSubsystem drivetrainSubsystem, ArmSubsystem armSubsystem) {
+    public AutoCommands(DrivetrainSubsystem drivetrainSubsystem, ArmSubsystem armSubsystem, ManipulatorSubsystem manipulatorSubsystem) {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_armSubsystem = armSubsystem;
+        m_manipulatorSubsystem = manipulatorSubsystem;
     }
 
     public Command resetGyroCommand() {
-        // return new InstantCommand(() -> {m_drivetrainSubsystem.setGyroOffset(180);});
         return m_drivetrainSubsystem.flipGyroCommand();
     }
 
@@ -95,5 +98,31 @@ public final class AutoCommands {
                         new Pose2d(3, 0, new Rotation2d(0)),
                         // Pass config
                         Constants.TRAJECTORY_CONFIG), 0.0);
+    }
+
+    public Command HighConeCommand() {
+        return Commands.sequence(
+            m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_HIGH)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
+            new WaitCommand(1),
+            m_manipulatorSubsystem.intakeCubeCommand()
+                .withTimeout(2),
+            new WaitCommand(1),
+            m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.STOW)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
+        );
+    }
+
+    public Command MidConeCommand() {
+        return Commands.sequence(
+            m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_MID)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
+            new WaitCommand(1),
+            m_manipulatorSubsystem.intakeCubeCommand()
+                .withTimeout(2),
+            new WaitCommand(1),
+            m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.STOW)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
+        );
     }
 }
