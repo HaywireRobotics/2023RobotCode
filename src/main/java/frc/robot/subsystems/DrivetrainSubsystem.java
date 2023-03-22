@@ -48,6 +48,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private Vector translation = new Vector();
     private double heading = 0.;
     private double headingOffset = 0.;
+
+    // used to tell when we are aligning with an AprilTag
+    public boolean aligning = false;
+    public boolean aligned = false;
     
     public DrivetrainSubsystem() {
         this.frontRight = new SwerveModule(Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR, Constants.FRONT_RIGHT_MODULE_STEER_MOTOR, 

@@ -46,6 +46,8 @@ public class PositionAprilTag extends CommandBase {
         this.angleOffset = angleOffset;
         this.onlyX = onlyX;
 
+        m_drivetrainSubsystem.aligning = true;
+
         addRequirements(drivetrainSubsystem);
     }
 
@@ -66,9 +68,10 @@ public class PositionAprilTag extends CommandBase {
             return;
         }
 
-        double yOutput;
+        double yError = 0;
+        double yOutput = 0;
         if (!onlyX) {
-            double yError = target2D.getY() - yOffset;
+            yError = target2D.getY() - yOffset;
             yOutput = translationPID.calculate(yError, 0);
         } else {
             yOutput = 0;
@@ -83,12 +86,18 @@ public class PositionAprilTag extends CommandBase {
         double angleError = target2D.getRotation().getDegrees() - angleOffset;
         double angleOutput = anglePID.calculate(angleError, 0);
 
-        m_drivetrainSubsystem.driveXY(xOutput, yOutput, angleOutput);
+        if (xError < 0.05 && yError < 0.05 && angleError < 5) {
+            m_drivetrainSubsystem.aligned = true;
+        } else {
+            m_drivetrainSubsystem.aligned = false;
+        }
 
+        m_drivetrainSubsystem.driveXY(xOutput, yOutput, angleOutput);
     }
 
     @Override
     public boolean isFinished() {
+        m_drivetrainSubsystem.aligning = false;
         return false;
     }
 }

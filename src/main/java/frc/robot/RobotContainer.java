@@ -156,11 +156,20 @@ public class RobotContainer {
         m_drivetrainSubsystem.mergeCameraPose(m_limelight.getRobotPose2d(), m_limelight.getPoseConfidence()/10);//, m_limelight.getPoseConfidence());
     }
 
-    public void updateLEDs(){
-        // m_leds.setSolid(Color.kYellow);
-        // if(m_armSubsystem.isAllAtSetpoint()){
-        //     m_leds.setSolid(Color.kGreen);
-        // } if(m_limelight.getPoseConfidence() < 0.25){
+    public void updateLEDs() {
+        if (m_drivetrainSubsystem.aligning) {
+            if (m_drivetrainSubsystem.aligned) {
+                m_leds.setSolidGamePieceColor();
+            } else {
+                m_leds.blinkGamePieceColor();
+            }
+        }
+
+        if (m_armSubsystem.isAllAtSetpoint()) {
+            m_leds.setSolid(Color.kGreen);
+        }
+
+        // if(m_limelight.getPoseConfidence() < 0.25){
         //     m_leds.setSolid(Color.kRed);
         // } if(m_limelight.getPoseConfidence() < 0.75){
         //     Color[] c = {Color.kRed, Color.kGreen};
