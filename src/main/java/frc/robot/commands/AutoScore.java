@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Alliances;
-import frc.robot.Constants.ScorePositions;
+import frc.robot.Constants.SetpointPositions;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.util.ArmAutoPath;
@@ -18,10 +18,10 @@ public class AutoScore{
     
 
     public static Command autoScoreCommand(DrivetrainSubsystem drivetrainSubsystem, ArmSubsystem armSubsystem,
-                Alliances alliance, ScorePositions scorePosition, int column, Callable<Pose2d> offset){ 
+                Alliances alliance, SetpointPositions scorePosition, int column, Callable<Pose2d> offset){ 
         
         Pose2d driveTarget = Constants.DriveSetpoints.getGridTargetPose(alliance, column);
-        ArmAutoPath armPath = Constants.ArmSetpointPaths.getPathForScorePosition(scorePosition);
+        ArmAutoPath armPath = Constants.ArmSetpointPaths.getPathForSetpointPosition(scorePosition);
         // return Commands.sequence(null)
         return Commands.parallel(
             new AutoArmToSetpoint(armSubsystem, armPath),
@@ -39,11 +39,11 @@ public class AutoScore{
         }
     }
     public static Command autoScoreCommand(DrivetrainSubsystem drivetrainSubsystem, ArmSubsystem armSubsystem,
-                Alliances alliance, ScorePositions scorePosition, int column){
+                Alliances alliance, SetpointPositions scorePosition, int column){
         return autoScoreCommand(drivetrainSubsystem, armSubsystem, alliance, scorePosition, column, new Pose2d());
     }
     public static Command autoScoreCommand(DrivetrainSubsystem drivetrainSubsystem, ArmSubsystem armSubsystem,
-                Alliances alliance, ScorePositions scorePosition, int column, Pose2d offset){
+                Alliances alliance, SetpointPositions scorePosition, int column, Pose2d offset){
         
         return autoScoreCommand(drivetrainSubsystem, armSubsystem, alliance, scorePosition, column, () -> offset);
 

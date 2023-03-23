@@ -126,13 +126,14 @@ public final class Constants {
         public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 125), 140);
         public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 10.5), 70);
         public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 9.5), 0);
+        public static final ArmSetpoint FLOOR_PICKUP = new ArmSetpoint(new Vector(21, 0), 70);
     }
     public static final class BezierHandles{
         public static final Vector leaveStowed = new Vector(0, 8);
         public static final Vector leaveHigh = new Vector(-8, 5);
         public static final Vector leaveMid = new Vector(-8, 3);
         public static final Vector leaveSubstation = new Vector(-5, 10);
-
+        public static final Vector leaveGroundPickup = new Vector(-4, 9);
     }
     public static final class ArmSetpointPaths {
         public static final ArmAutoPath CONE_HIGH = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
@@ -162,8 +163,12 @@ public final class Constants {
                                                                         ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed)),
                                                                         ArmSetpoints.STOWED.manipulatorAngle);
         
-        public static ArmAutoPath getPathForScorePosition(ScorePositions scorePosition) {
-            switch (scorePosition) {
+        public static final ArmAutoPath FLOOR_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
+                                                                        ArmSetpoints.FLOOR_PICKUP.armPosition, ArmSetpoints.FLOOR_PICKUP.armPosition.add(BezierHandles.leaveGroundPickup)),
+                                                                        ArmSetpoints.FLOOR_PICKUP.manipulatorAngle, 0.5);
+        
+        public static ArmAutoPath getPathForSetpointPosition(SetpointPositions setpointPosition) {
+            switch (setpointPosition) {
                 case CONE_HIGH:
                     return CONE_HIGH;
                 case CUBE_HIGH:
@@ -178,6 +183,8 @@ public final class Constants {
                     return SUBSTATION;
                 case STOW:
                     return STOW;
+                case FLOOR_PICKUP:
+                    return FLOOR_PICKUP;
                 default:
                     return GROUND;
             }
@@ -205,14 +212,15 @@ public final class Constants {
         BLUE,
         RED
     }
-    public static enum ScorePositions {
+    public static enum SetpointPositions {
         CONE_HIGH,
         CONE_MID,
         CUBE_HIGH,
         CUBE_MID,
         GROUND,
         SUBSTATION,
-        STOW
+        STOW,
+        FLOOR_PICKUP,
     }
     public static enum ScoreRows {
         HIGH,

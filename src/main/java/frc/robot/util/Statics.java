@@ -61,11 +61,11 @@ public final class Statics {
          pose1.getRotation().plus(pose2.getRotation()));
     }
 
-    public static double applyDeadband(double size, double x) {
+    public static double applyDeadband(double x, double size) {
         double _x = Math.abs(x);
         double s1 = 1/(1-size);
         _x = _x*s1 - size*s1;
-        return Math.max(_x + size, 0) * Math.signum(x);
+        return Math.max(_x, 0) * Math.signum(x);
     }
 
     public static double applySmoothing1D(double x, double s, double t) {

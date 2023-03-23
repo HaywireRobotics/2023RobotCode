@@ -36,21 +36,21 @@ public class ManualBalanceDrive extends CommandBase{
         double leftX = controller.getLeftX()*SPEED_SCALE;
         double leftY = controller.getLeftY()*SPEED_SCALE;
 
-        // // rightX = applyAll(rightX);
-        // leftX = Statics.applyDeadband(leftX, JOYSTICK_DEADBAND);
-        // leftY = Statics.applyDeadband(leftY, JOYSTICK_DEADBAND);
-        // Vector leftVector = Statics.applySmoothing2D(new Vector(leftX, leftY), JOYSTICK_S, JOYSTICK_T);
-        // leftX = leftVector.x;
-        // leftY = leftVector.y;
-        // // System.out.println(leftVector.toString());
-
-        
-        rightX = Statics.applyDeadband(JOYSTICK_DEADBAND, rightX);
-        leftX = Statics.applyDeadband(JOYSTICK_DEADBAND, leftX);
-        leftY = Statics.applyDeadband(JOYSTICK_DEADBAND, leftY);
-        Vector leftVector = new Vector(leftX, leftY);
+        rightX = applyAll(rightX);
+        leftX = Statics.applyDeadband(leftX, JOYSTICK_DEADBAND);
+        leftY = Statics.applyDeadband(leftY, JOYSTICK_DEADBAND);
+        Vector leftVector = Statics.applySmoothing2D(new Vector(leftX, leftY), JOYSTICK_S, JOYSTICK_T);
         leftX = leftVector.x;
         leftY = leftVector.y;
+        // System.out.println(leftVector.toString());
+
+        
+        // rightX = Statics.applyDeadband(rightX, JOYSTICK_DEADBAND);
+        // leftX = Statics.applyDeadband(leftX, JOYSTICK_DEADBAND);
+        // leftY = Statics.applyDeadband(leftY, JOYSTICK_DEADBAND);
+        // Vector leftVector = new Vector(leftX, leftY);
+        // leftX = leftVector.x;
+        // leftY = leftVector.y;
 
         m_subsystem.driveArcade(leftX, leftY, rightX);
 

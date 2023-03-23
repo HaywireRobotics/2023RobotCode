@@ -116,15 +116,15 @@ public class RobotContainer {
         m_controller.start().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
         m_controller.povDown().onTrue(new InstantCommand(()->{m_drivetrainSubsystem.resetGyroscope();}));
 
-        m_controller.y().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_HIGH));
-        m_controller.b().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_MID));
-        m_controller.a().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.GROUND));
-        m_controller.x().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.SUBSTATION));
-        m_controller.rightBumper().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.STOW));
+        m_controller.y().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
+        m_controller.b().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
+        m_controller.a().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
+        m_controller.x().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
+        m_controller.rightBumper().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW));
 
-        m_rightJoystick.button(4).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_HIGH));
-        m_rightJoystick.button(5).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_MID));
-        m_leftJoystick.button(3).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.SUBSTATION));
+        m_rightJoystick.button(4).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
+        m_rightJoystick.button(5).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
+        m_leftJoystick.button(3).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
 
 
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));

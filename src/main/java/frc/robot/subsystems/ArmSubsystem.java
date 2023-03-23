@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
-import javax.management.InstanceAlreadyExistsException;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,9 +30,9 @@ public class ArmSubsystem extends SubsystemBase {
     private double followSpeed = 0.35; // Inches per second
     private double tSpeed = 0.0;
 
-    public ArmSubsystem(PulleySubsystem pulleySubsystem, ElevatorSubsystem elevatorSybsystem, ManipulatorSubsystem manipulatorSubsystem){
+    public ArmSubsystem(PulleySubsystem pulleySubsystem, ElevatorSubsystem elevatorSubsystem, ManipulatorSubsystem manipulatorSubsystem){
         m_pulleySubsystem = pulleySubsystem;
-        m_elevatorSubsystem = elevatorSybsystem;
+        m_elevatorSubsystem = elevatorSubsystem;
         m_manipulatorSubsystem = manipulatorSubsystem;
 
         this.addChild(m_pulleySubsystem.getName(), m_pulleySubsystem);
@@ -130,6 +128,9 @@ public class ArmSubsystem extends SubsystemBase {
     public double getArmLength(){
         return m_pulleySubsystem.getExtensionLengthFromJoint();
     }
+    public double getArmRawLength(){
+        return m_pulleySubsystem.getPositionInches();
+    }
     public double getManipulatorHingeAngle(){
         return m_manipulatorSubsystem.getHingeAngle();
     }
@@ -173,34 +174,34 @@ public class ArmSubsystem extends SubsystemBase {
     public Command smartSetpointCommand(Constants.ScoreRows row){
         Constants.GamePieces gamePiece = m_manipulatorSubsystem.getGamePiece();
         ArmAutoPath path;
-        Constants.ScorePositions scorePosition = Constants.ScorePositions.GROUND;
+        Constants.SetpointPositions scorePosition = Constants.SetpointPositions.GROUND;
     
         if(row == Constants.ScoreRows.HIGH){
           if(gamePiece == Constants.GamePieces.CUBE){
-            scorePosition = Constants.ScorePositions.CUBE_HIGH;
+            scorePosition = Constants.SetpointPositions.CUBE_HIGH;
           } else {
-            scorePosition = Constants.ScorePositions.CONE_HIGH;
+            scorePosition = Constants.SetpointPositions.CONE_HIGH;
           }
         } else if (row == Constants.ScoreRows.MID){
           if(gamePiece == Constants.GamePieces.CUBE){
-            scorePosition = Constants.ScorePositions.CUBE_MID;
+            scorePosition = Constants.SetpointPositions.CUBE_MID;
           } else {
-            scorePosition = Constants.ScorePositions.CONE_MID;
+            scorePosition = Constants.SetpointPositions.CONE_MID;
           }
         }else{
-          scorePosition = Constants.ScorePositions.GROUND;
+          scorePosition = Constants.SetpointPositions.GROUND;
         }
     
-        path = Constants.ArmSetpointPaths.getPathForScorePosition(scorePosition);
+        path = Constants.ArmSetpointPaths.getPathForSetpointPosition(scorePosition);
         return new AutoArmToSetpoint(this, path);
       }
-      public Command adaptiveSetpointCommand(Constants.ScorePositions scorePosition){
+      public Command adaptiveSetpointCommand(Constants.SetpointPositions scorePosition){
         ArmAutoPath path;
         double distanceToHigh = Constants.ArmSetpoints.CONE_HIGH.armPosition.subtract(this.getManipulator2dPosition()).magnitude();
-        if(scorePosition == Constants.ScorePositions.CONE_MID && distanceToHigh < 5){
+        if(scorePosition == Constants.SetpointPositions.CONE_MID && distanceToHigh < 5){
           path = Constants.ArmSetpointPaths.CONE_HIGH_TO_MID;
         }else{
-          path = Constants.ArmSetpointPaths.getPathForScorePosition(scorePosition);
+          path = Constants.ArmSetpointPaths.getPathForSetpointPosition(scorePosition);
         }
         return new AutoArmToSetpoint(this, path);
       }

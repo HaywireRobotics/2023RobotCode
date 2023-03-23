@@ -102,26 +102,26 @@ public final class AutoCommands {
 
     public Command HighConeCommand() {
         return Commands.sequence(
-            m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_HIGH)
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
             new WaitCommand(1),
             m_manipulatorSubsystem.intakeCubeCommand()
                 .withTimeout(2),
             new WaitCommand(1),
-            m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.STOW)
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
     }
 
     public Command MidConeCommand() {
         return Commands.sequence(
-            m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_MID)
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
             new WaitCommand(1),
             m_manipulatorSubsystem.intakeCubeCommand()
                 .withTimeout(2),
             new WaitCommand(1),
-            m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.STOW)
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
     }

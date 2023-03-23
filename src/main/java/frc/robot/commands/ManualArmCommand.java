@@ -4,13 +4,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ManipulatorSubsystem;
 
 public class ManualArmCommand extends CommandBase {
 
@@ -41,6 +37,9 @@ public class ManualArmCommand extends CommandBase {
         m_leftJoystick.button(5).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCubeCommand());
 
         m_leftJoystick.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.shootCubeCommand());
+
+        m_leftJoystick.button(1).onFalse(new InstantCommand(this::stabilizeArm));
+        m_rightJoystick.button(1).onFalse(new InstantCommand(this::stabilizeArm));
     }
     @Override
     public void execute() {
@@ -92,7 +91,7 @@ public class ManualArmCommand extends CommandBase {
         // return Commands.startEnd(m_armSubsystem.m_manipulatorSubsystem.rawUpCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = false;})),
         //                         stablizeManipulator());
         // return (m_armSubsystem.m_manipulatorSubsystem.rawUpCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = false;}))
-        return Commands.startEnd(this::rawManipulatorUpRunnable, this::stablizeManipulator, m_armSubsystem.m_manipulatorSubsystem);
+        return Commands.startEnd(this::rawManipulatorUpRunnable, this::stabilizeManipulator, m_armSubsystem.m_manipulatorSubsystem);
     }
     private void rawManipulatorUpRunnable() {
         m_armSubsystem.m_manipulatorSubsystem.rawUp();
@@ -102,16 +101,27 @@ public class ManualArmCommand extends CommandBase {
         // return Commands.(m_armSubsystem.m_manipulatorSubsystem.rawDownCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = false;})),
         //                         stablizeManipulator(),
         //                         m_armSubsystem);
-        return Commands.startEnd(this::rawManipulatorDownRunnable, this::stablizeManipulator, m_armSubsystem.m_manipulatorSubsystem);
+        return Commands.startEnd(this::rawManipulatorDownRunnable, this::stabilizeManipulator, m_armSubsystem.m_manipulatorSubsystem);
     }
     private void rawManipulatorDownRunnable() {
         m_armSubsystem.m_manipulatorSubsystem.rawDown();
         hingePIDEnabled = false;
     }
-    private void stablizeManipulator() {
+    private void stabilizeManipulator() {
         double currentAngle = m_armSubsystem.getManipulatorHingeAngle();
         m_armSubsystem.m_manipulatorSubsystem.setHingeTarget(currentAngle);
         hingePIDEnabled = true;
+    }
+    private void stabilizeArm() {
+        double elevatorPosition = m_armSubsystem.getElevatorPosition();
+        double pulleyPosition = m_armSubsystem.getArmRawLength();
+        m_armSubsystem.setElevatorTarget(elevatorPosition);
+        m_armSubsystem.setPulleyTarget(pulleyPosition);
+        armPIDEnabled = true;
+    }
+    private void stabilizeAll() {
+        stabilizeManipulator();
+        stabilizeArm();
     }
     private Command pidManipulatorUp(){
         return m_armSubsystem.m_manipulatorSubsystem.setHingeUpCommand().alongWith(new InstantCommand(() -> {hingePIDEnabled = true;}));
