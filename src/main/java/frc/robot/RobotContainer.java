@@ -29,6 +29,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.PulleySubsystem;
 import frc.robot.util.ArmAutoPath;
+import frc.robot.wrappers.AdvancedSetpoints;
 import frc.robot.wrappers.AutoCommands;
 import frc.robot.wrappers.Camera;
 import frc.robot.wrappers.DriverCamera;
@@ -61,6 +62,7 @@ public class RobotContainer {
 
     SendableChooser<Command> m_auto_chooser;
     private final AutoCommands m_autoCommands = new AutoCommands(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem);
+    private final AdvancedSetpoints m_advancedSetpoints = new AdvancedSetpoints(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem);
 
     public final Camera m_limelight = new Camera(m_networkTable, "OV5647");
     public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
@@ -120,6 +122,7 @@ public class RobotContainer {
         m_controller.b().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
         m_controller.a().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
         m_controller.x().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
+        m_controller.x().onTrue(m_advancedSetpoints.substationCommand());
         m_controller.rightBumper().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW));
 
         m_rightJoystick.button(4).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));

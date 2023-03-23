@@ -80,5 +80,8 @@ public class RollerSubsystem extends SubsystemBase{
             this
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
+    public Command stopCommand(){
+        return new InstantCommand(this::stop);
+    }
 }
 

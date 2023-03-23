@@ -118,6 +118,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public Command shootCommand(){
         return rollerSubsystem.shootCommand();
     }
+    public Command stopCommand(){
+        return rollerSubsystem.stopCommand();
+    }
 
     public Command rawUpCommand(){
         return Commands.startEnd(this::rawUp, () -> setHingePower(0), this);

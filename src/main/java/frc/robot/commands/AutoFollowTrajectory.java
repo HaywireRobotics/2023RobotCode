@@ -54,17 +54,22 @@ public class AutoFollowTrajectory extends CommandBase{
     public void execute() {
         double time = Math.min(timer.get(), m_trajectory.getTotalTimeSeconds());
         Trajectory.State state = m_trajectory.sample(time);
+        
+        double velocityHeading = state.poseMeters.getRotation().getDegrees();
         double positionError = state.poseMeters.getTranslation().getDistance(m_drivetrainSubsystem.getPose().getTranslation());
-        double calculatedPower = kP * positionError + kV * state.velocityMetersPerSecond + kA * state.accelerationMetersPerSecondSq;
-        lastPower = calculatedPower;
 
-        Vector toState = Vector.fromTranslation(state.poseMeters.getTranslation().minus(m_drivetrainSubsystem.getPose().getTranslation()));
+        Vector ffVector = Vector.fromAngle(velocityHeading, kV * state.velocityMetersPerSecond + kA * state.accelerationMetersPerSecondSq);
+        Vector proportionalVector = Vector.fromTranslation(state.poseMeters.getTranslation().minus(m_drivetrainSubsystem.getPose().getTranslation())).scale(kP);
+        Vector driveVector = proportionalVector.add(ffVector);
 
         double currentHeading = m_drivetrainSubsystem.getPose().getRotation().getDegrees();
-        double outputHeading = headingPID.calculate(currentHeading, targetHeading);
-        m_drivetrainSubsystem.driveVector(calculatedPower, toState.direction(), outputHeading);
+        double headingOutput = headingPID.calculate(currentHeading, targetHeading);
 
-        SmartDashboard.putNumber("Trajectory: Heading Error", outputHeading);
+        m_drivetrainSubsystem.driveVector(driveVector.magnitude(), driveVector.direction(), headingOutput);
+
+        lastPower = driveVector.magnitude();
+
+        SmartDashboard.putNumber("Trajectory: Heading Error", headingOutput);
         SmartDashboard.putNumber("Trajectory: Position Error", positionError);
     }
 

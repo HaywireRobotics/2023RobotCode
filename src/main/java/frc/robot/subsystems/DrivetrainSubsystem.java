@@ -33,7 +33,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public SwerveModuleState backLeftState = new SwerveModuleState(0, Rotation2d.fromDegrees(backLeftDefault));
 
     public ADXRS450_Gyro m_gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
-    public double gyroOffset = 0;
     public AHRS navx = new AHRS(SPI.Port.kMXP);
 
     public boolean field_centric_drive = true;
@@ -93,16 +92,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void resetGyroscope() {
-        gyroOffset = 0;
+        headingOffset = 0;
         m_gyro.reset();
     }
 
     public void setGyroOffset(double x) {
-        gyroOffset = x;
+        headingOffset = x;
     }
 
     public double getNavx() {
-        return m_gyro.getAngle() + gyroOffset;
+        return m_gyro.getAngle() + headingOffset;
     }
 
     public double getGyroRoll() {

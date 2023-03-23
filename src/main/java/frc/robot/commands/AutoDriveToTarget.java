@@ -32,6 +32,12 @@ public class AutoDriveToTarget extends CommandBase {
     private final double HEADING_MAX_ACC = 200.0;
     private final double HEADING_MAX_VEL = 300.0;
 
+    private final double ON_TARGET_POSITION_ERROR = 0.05;
+    private final double ON_TARGET_POSITION_MAX_POWER = 0.1;
+    private final double ON_TARGET_HEADING_ERROR = 0.5;
+    private final double ON_TARGET_HEADING_MAX_POWER = 0.1;
+
+
     private final ProfiledPIDController translationPID;
     private final ProfiledPIDController headingPID;
 
@@ -51,6 +57,9 @@ public class AutoDriveToTarget extends CommandBase {
                                                         translationProfile, 0.02);
         this.headingPID = new ProfiledPIDController(HEADING_KP, HEADING_KI, HEADING_KD,
                                                     headingProfile, 0.02);
+        
+        this.translationPID.setTolerance(ON_TARGET_POSITION_ERROR, ON_TARGET_POSITION_MAX_POWER);
+        this.headingPID.setTolerance(ON_TARGET_HEADING_ERROR, ON_TARGET_HEADING_MAX_POWER);
 
         this.addRequirements(subsystem);
     }
@@ -113,6 +122,6 @@ public class AutoDriveToTarget extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return translationPID.atSetpoint() && headingPID.atSetpoint();
     }
 }

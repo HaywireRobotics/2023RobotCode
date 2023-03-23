@@ -123,7 +123,7 @@ public final class Constants {
         public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 43), 100);
         public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 35), 90);
         public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
-        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 125), 140);
+        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 125), 110); // 140
         public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 10.5), 70);
         public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 9.5), 0);
         public static final ArmSetpoint FLOOR_PICKUP = new ArmSetpoint(new Vector(21, 0), 70);
@@ -153,7 +153,7 @@ public final class Constants {
                                                                         ArmSetpoints.CUBE_MID.manipulatorAngle, 0.5);
         public static final ArmAutoPath SUBSTATION = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
                                                                         ArmSetpoints.SUBSTATION.armPosition, ArmSetpoints.SUBSTATION.armPosition.add(BezierHandles.leaveSubstation)),
-                                                                        ArmSetpoints.SUBSTATION.manipulatorAngle, 0.95);
+                                                                        ArmSetpoints.SUBSTATION.manipulatorAngle, 0.75); // .95
         
         public static final ArmAutoPath GROUND = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HIGH.armPosition, ArmSetpoints.CONE_HIGH.armPosition.add(BezierHandles.leaveHigh),
                                                                         ArmSetpoints.GROUND.armPosition, ArmSetpoints.GROUND.armPosition.add(BezierHandles.leaveStowed)),
@@ -262,6 +262,20 @@ public final class Constants {
                 return BlueGrid[column];
             } else {
                 return RedGrid[column];
+            }
+        }
+        public static Pose2d[] getSubstationTargets(Alliances alliance){
+            if(alliance == Alliances.BLUE){
+                return BlueSubstation;
+            } else {
+                return RedSubstation;
+            }
+        }
+        public static Pose2d[] getGridTargets(Alliances alliance){
+            if(alliance == Alliances.BLUE){
+                return BlueGrid;
+            } else {
+                return RedGrid;
             }
         }
     }

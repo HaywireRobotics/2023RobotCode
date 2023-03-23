@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import java.lang.Math;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class Vector {
@@ -73,5 +74,8 @@ public class Vector {
     }
     public static Vector fromTranslation(Translation2d t){
         return new Vector(t.getX(), t.getY());
+    }
+    public static Vector fromPose(Pose2d pose){
+        return new Vector(pose.getX(), pose.getY());
     }
 }
