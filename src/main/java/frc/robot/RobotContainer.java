@@ -114,6 +114,7 @@ public class RobotContainer {
         // m_controller.b().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
         m_controller.back().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
         m_controller.start().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
+        m_controller.povDown().onTrue(new InstantCommand(()->{m_drivetrainSubsystem.resetGyroscope();}));
 
         m_controller.y().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_HIGH));
         m_controller.b().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.ScorePositions.CONE_MID));
@@ -165,9 +166,9 @@ public class RobotContainer {
             }
         }
 
-        if (m_armSubsystem.isAllAtSetpoint()) {
-            m_leds.setSolid(Color.kGreen);
-        }
+        // if (m_armSubsystem.isAllAtSetpoint()) {
+        //     m_leds.setSolid(Color.kGreen);
+        // }
 
         // if(m_limelight.getPoseConfidence() < 0.25){
         //     m_leds.setSolid(Color.kRed);

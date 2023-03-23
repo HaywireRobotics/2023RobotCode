@@ -9,6 +9,9 @@ public final class Statics {
     public static double clamp(double value, double min, double max){
         return Math.min(Math.max(value, min), max);
     }
+    public static double map(double value, double oldMin, double oldMax, double newMin, double newMax) {
+        return ((value - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
+    }
 
     public static boolean withinError(double value, double target, double error){
         return value < target + error && value > target - error;

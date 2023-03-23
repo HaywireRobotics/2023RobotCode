@@ -20,15 +20,15 @@ public class PositionAprilTag extends CommandBase {
 
     private final PIDController translationPID;
 
-    private final double TRANSLATION_KP = 0.9;
+    private final double TRANSLATION_KP = 1;
     private final double TRANSLATION_KI = 0;
     private final double TRANSLATION_KD = 0.001;
 
     private final PIDController anglePID;
 
-    private final double ANGLE_KP = 0.05;
+    private final double ANGLE_KP = 0.0004;
     private final double ANGLE_KI = 0;
-    private final double ANGLE_KD = 0.001;
+    private final double ANGLE_KD = 0.0001;
 
     public PositionAprilTag(DrivetrainSubsystem drivetrainSubsystem, Camera camera, double xOffset, double yOffset, double angleOffset) {
         this(drivetrainSubsystem, camera, xOffset, yOffset, angleOffset, false);
@@ -55,16 +55,19 @@ public class PositionAprilTag extends CommandBase {
     public void execute() {
         if (!m_camera.hasTargets()) {
             System.out.println("No April Tag Detected");
+            m_drivetrainSubsystem.driveXY(0, 0, 0);
             return;
         }
         if (!m_camera.camera.isConnected()) {
             System.out.println("Camera Disconnected");
+            m_drivetrainSubsystem.driveXY(0, 0, 0);
             return; 
         }
 
         Transform2d target2D = m_camera.getTarget2D();
         if (target2D == null) {
             System.out.println("target2D is null");
+            m_drivetrainSubsystem.driveXY(0, 0, 0);
             return;
         }
 
@@ -83,7 +86,9 @@ public class PositionAprilTag extends CommandBase {
         SmartDashboard.putNumber("xError", xError);
         SmartDashboard.putNumber("xOutput", xOutput);
 
-        double angleError = target2D.getRotation().getDegrees() - angleOffset;
+        double angleRaw = target2D.getRotation().getDegrees();
+        // double angleError = 0;
+        double angleError = (target2D.getRotation().getDegrees()) - angleOffset;
         double angleOutput = anglePID.calculate(angleError, 0);
 
         if (xError < 0.05 && yError < 0.05 && angleError < 5) {
@@ -96,8 +101,12 @@ public class PositionAprilTag extends CommandBase {
     }
 
     @Override
-    public boolean isFinished() {
+    public void end(boolean interrupted) {
         m_drivetrainSubsystem.aligning = false;
+    }
+
+    @Override
+    public boolean isFinished() {
         return false;
     }
 }

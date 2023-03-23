@@ -34,7 +34,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public ADXRS450_Gyro m_gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
     public double gyroOffset = 0;
-    // public AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+    public AHRS navx = new AHRS(SPI.Port.kMXP);
 
     public boolean field_centric_drive = true;
 
@@ -101,8 +101,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         gyroOffset = x;
     }
 
-    public double getGyro() {
+    public double getNavx() {
         return m_gyro.getAngle() + gyroOffset;
+    }
+
+    public double getGyroRoll() {
+        return navx.getRoll();
     }
     
     public Command flipGyroCommand() {
@@ -118,7 +122,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public void driveVector(double speed, double direction, double aSpeed) {
         double driveSpeed = speed * Constants.MAX_SPEED;
-        double driveAngle = direction - getGyro();  // field-centric
+        double driveAngle = direction - getNavx();  // field-centric
 
         SwerveModuleState frontLeftDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
         SwerveModuleState frontRightDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
@@ -164,7 +168,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         }
 
         if (!field_centric_drive) {
-            driveAngle += getGyro();
+            driveAngle += getNavx();
         }
 
         double speed = Math.abs(Math.hypot(xSpeed, ySpeed));
@@ -206,7 +210,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void resetPose(double x, double y, double a){
         this.translation.x = x;
         this.translation.y = y;
-        this.headingOffset = a-this.getGyro();
+        this.headingOffset = a-this.getNavx();
         this.heading = a;
     }
     public void resetPose(){
@@ -230,8 +234,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         // System.out.println("FR_V: "+frontLeftVelocity.toString());
         
-        heading = this.getGyro()+headingOffset;
-        SmartDashboard.putNumber("Gyro", getGyro());
+        heading = this.getNavx()+headingOffset;
+        SmartDashboard.putNumber("Gyro", getNavx());
         // System.out.println(this.getGyro());
 
         deltaTranslation = calculateDeltaPosition();
@@ -267,7 +271,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Vector newTranslation = translation.scale( 1-confidence ).add(
                       Vector.fromTranslation(cameraPose.getTranslation().times( confidence )));
         
-        double headingConfidence = confidence * 0.0001;
+        double headingConfidence = confidence * 0; //0.5;
         double newHeading  = ( heading * (1.0-headingConfidence) ) + ( cameraPose.getRotation().getDegrees() * headingConfidence );
         // System.out.println(newTranslation.toString()+", "+newHeading);
         if(newTranslation.x != 0) resetPose(newTranslation.x, newTranslation.y, newHeading);

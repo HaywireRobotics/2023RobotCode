@@ -119,8 +119,8 @@ public final class Constants {
     //     GROUND
     // }
     public static final class ArmSetpoints {
-        public static final ArmSetpoint CONE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+29, 52), 90);
-        public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+10, 42), 100);
+        public static final ArmSetpoint CONE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 57), 90);
+        public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 43), 100);
         public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 35), 90);
         public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
         public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 125), 140);

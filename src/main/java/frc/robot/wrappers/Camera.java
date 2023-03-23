@@ -33,7 +33,7 @@ public class Camera {
     private Pose3d[] robotPoses = new Pose3d[Constants.aprilTags.length];
 
     private double CONFIDENCE_LINEAR = 4.0; // visble target raw confidence gain / second
-    private double CONFIDENCE_FORGET = 0.5; // lost target raw confidence loss / second
+    private double CONFIDENCE_FORGET = 0.1; // lost target raw confidence loss / second
     private double CONFIDENCE_DISTANCE = 0.005; // confidence loss over area of target
     private double CONFIDENCE_AMBIGUITY = 0.1; // confidence loss for photon Ambiguity
     private double CONFIDENCE_ALTITUDE = 7.0; // confidence lost per meter the robot is above/below the ground
@@ -166,7 +166,9 @@ public class Camera {
         poseConfidence = 0.0;
 
         for(int index = 0; index < tagConfidence.length; index++){
-            poseConfidence = Math.max(poseConfidence, tagConfidence[index]);
+            if(tagVisible[index]){
+                poseConfidence = Math.max(poseConfidence, tagConfidence[index]);
+            }
             tagConfidence[index] -= CONFIDENCE_FORGET*dt;
         }
 

@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,9 +21,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final DigitalInput elevatorEncoderInput;
     private final DutyCycleEncoder elevatorEncoder;
 
-    // FIXME: all these values need to be recalculated
     private final double ELEVATOR_GEAR_RATIO = 36.0/1.0; // Gear ratio of the elevator
     private final double DEGREES_TO_INCHES = 2 * Math.PI; //1.5 // Inches of elevator movement per degree of motor rotation
+    private final double ENCODER_DEGREES_TO_INCHES = -4.75 * Math.PI; //1.5 // Inches of elevator movement per degree of motor rotation
+    private final double ENCODER_ZERO_ANGLE = 0.08;
     private final double MAX_HEIGHT = 26;//19.5; // Inches the elevator can extend
     private final double MIN_HEIGHT = 0; // Length when fully collapsed
     private final double MAX_RAISE_POWER = 1;
@@ -63,6 +63,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getPosition());
         SmartDashboard.putNumber("Elevator Arm Angle", elevatorMotor.getTargetPosition());
         SmartDashboard.putBoolean("Elevator Limit", getLimitSwitch());
+        SmartDashboard.putNumber("Elevator REV Encoder", getEncoder());
 
         if(getLimitSwitch()){
             resetEncoder(MAX_HEIGHT);
@@ -110,13 +111,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         return -theta+PIVOT_TO_TOP_ANGLE;
     }
     private double getEncoder(){
-        return elevatorEncoder.get();
+        return elevatorEncoder.get()-ENCODER_ZERO_ANGLE; // -2.7
     }
     public boolean isAtSetpoint(){
         return elevatorPID.atSetpoint();
     }
     public double getPosition(){
-        return elevatorMotor.getPosition()/ELEVATOR_GEAR_RATIO*DEGREES_TO_INCHES;
+        // return elevatorMotor.getPosition()/ELEVATOR_GEAR_RATIO*DEGREES_TO_INCHES;
+        return getEncoder() * ENCODER_DEGREES_TO_INCHES;
     }
     public void resetEncoder(double inches){
         elevatorMotor.setEncoder(inches*ELEVATOR_GEAR_RATIO/DEGREES_TO_INCHES);
