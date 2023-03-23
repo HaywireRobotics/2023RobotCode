@@ -27,7 +27,7 @@ public class AutoScore{
             new AutoArmToSetpoint(armSubsystem, armPath),
             new AutoDriveToTarget(drivetrainSubsystem, Statics.sumPoses(driveTarget, readCallableOffset(offset)))).andThen(
             new WaitCommand(1.0).andThen(
-            armSubsystem.m_manipulatorSubsystem.smartDropCommand()
+            armSubsystem.m_manipulatorSubsystem.dropCommand()
             )
             );
     }

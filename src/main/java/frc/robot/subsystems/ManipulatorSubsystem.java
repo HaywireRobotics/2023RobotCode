@@ -85,22 +85,16 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public void resetEncoder(){
         hingeMotor.setEncoder(0);
     }
-    public void intakeCone(){
-        rollerSubsystem.intakeCone();
+
+    public void intake(){
+        rollerSubsystem.intake();
     }
-    public void dropCone(){
-        rollerSubsystem.dropCone();
+    public void shoot() {
+        rollerSubsystem.shoot();
     }
 
-    public void intakeCube(){
-        rollerSubsystem.intakeCube();
-    }
-    public void shootCube() {
-        rollerSubsystem.shootCube();
-    }
-
-    public void dropCube(){
-        rollerSubsystem.dropCube();
+    public void drop(){
+        rollerSubsystem.drop();
     }
     
     public GamePieces getGamePiece(){
@@ -112,23 +106,17 @@ public class ManipulatorSubsystem extends SubsystemBase{
 
 
     /* Commands */
-    public Command intakeConeCommand(){
-        return rollerSubsystem.intakeConeCommand();
+    public Command intakeCommand(){
+        return rollerSubsystem.intakeCommand();
     }
-    public Command intakeCubeCommand(){
-        return rollerSubsystem.intakeCubeCommand();
+    public Command dropCommand(){
+        return rollerSubsystem.dropCommand();
     }
-    public Command shootCubeCommand(){
-        return rollerSubsystem.shootCubeCommand();
+    public Command timedDropCommand(){
+        return rollerSubsystem.timedDropCommand();
     }
-    public Command dropConeCommand(){
-        return rollerSubsystem.dropConeCommand();
-    }
-    public Command dropCubeCommand(){
-        return rollerSubsystem.dropCubeCommand();
-    }
-    public Command smartDropCommand(){
-        return rollerSubsystem.smartDropCommand();
+    public Command shootCommand(){
+        return rollerSubsystem.shootCommand();
     }
 
     public Command rawUpCommand(){

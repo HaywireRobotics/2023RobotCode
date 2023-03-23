@@ -64,8 +64,8 @@ public class ManualBalanceDrive extends CommandBase{
         m_subsystem.updateOdometry();
     }
     private void lockDrive(){
-        m_subsystem.setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
-        m_subsystem.setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
+        m_subsystem.setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
+        m_subsystem.setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
         m_subsystem.setFrontLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
         m_subsystem.setFrontRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
     }

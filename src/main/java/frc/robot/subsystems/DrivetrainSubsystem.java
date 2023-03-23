@@ -177,8 +177,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void lockDrive(){
-        setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
-        setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
+        setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
+        setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
         setFrontLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
         setFrontRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
     }

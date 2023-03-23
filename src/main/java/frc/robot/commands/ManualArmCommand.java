@@ -33,10 +33,10 @@ public class ManualArmCommand extends CommandBase {
         m_rightJoystick.button(3).whileTrue(rawManipulatorUp());
         m_rightJoystick.button(2).whileTrue(rawManipulatorDown());
 
-        m_leftJoystick.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeConeCommand());
-        m_leftJoystick.button(5).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCubeCommand());
+        m_leftJoystick.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCommand());
+        m_leftJoystick.button(5).whileTrue(m_armSubsystem.m_manipulatorSubsystem.dropCommand());
 
-        m_leftJoystick.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.shootCubeCommand());
+        m_leftJoystick.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.shootCommand());
 
         m_leftJoystick.button(1).onFalse(new InstantCommand(this::stabilizeArm));
         m_rightJoystick.button(1).onFalse(new InstantCommand(this::stabilizeArm));
@@ -158,13 +158,13 @@ public class ManualArmCommand extends CommandBase {
     }
 
     private Command pidIntakeCone(){
-        return m_armSubsystem.m_manipulatorSubsystem.intakeConeCommand().alongWith(new InstantCommand(() -> {
+        return m_armSubsystem.m_manipulatorSubsystem.intakeCommand().alongWith(new InstantCommand(() -> {
             hingePIDEnabled = true;
             m_armSubsystem.m_manipulatorSubsystem.setHingeTarget(70);
         }));
     }
     private Command pidIntakeCube(){
-        return m_armSubsystem.m_manipulatorSubsystem.intakeConeCommand().alongWith(new InstantCommand(() -> {
+        return m_armSubsystem.m_manipulatorSubsystem.intakeCommand().alongWith(new InstantCommand(() -> {
             hingePIDEnabled = true;
             m_armSubsystem.m_manipulatorSubsystem.setHingeTarget(70);
         }));

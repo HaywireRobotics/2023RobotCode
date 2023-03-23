@@ -15,10 +15,9 @@ import frc.robot.Constants.GamePieces;
 public class RollerSubsystem extends SubsystemBase{
     private final NEO rollerMotor;
 
-    private final double CONE_MOTOR_SPEED = -1.0;
-    private final double CUBE_MOTOR_SPEED = 1.0;
-    private final double SHOOT_CUBE_SPEED = -1.0;
-    private final double DROP_MOTOR_SPEED = 0.75;
+    private final double INTAKE_MOTOR_SPEED = 1.0;
+    private final double SHOOT_SPEED = -1.0;
+    private final double DROP_MOTOR_SPEED = -0.75;
     private final double DROP_TIME = 1.5;
 
     
@@ -29,26 +28,16 @@ public class RollerSubsystem extends SubsystemBase{
     }
     
     
-    public void intakeCone(){
-        rollerMotor.set(CONE_MOTOR_SPEED);
+    public void intake(){
+        rollerMotor.set(INTAKE_MOTOR_SPEED);
         gamePiece = GamePieces.CONE;
     }
-    public void dropCone(){
+    public void drop(){
         rollerMotor.set(-DROP_MOTOR_SPEED);
         gamePiece = GamePieces.NONE;
     }
-
-    public void intakeCube(){
-        rollerMotor.set(CUBE_MOTOR_SPEED);
-        gamePiece = GamePieces.CUBE;
-    }
-    public void shootCube() {
-        rollerMotor.set(SHOOT_CUBE_SPEED);
-        gamePiece = GamePieces.NONE;
-    }
-
-    public void dropCube(){
-        rollerMotor.set(DROP_MOTOR_SPEED);
+    public void shoot() {
+        rollerMotor.set(SHOOT_SPEED);
         gamePiece = GamePieces.NONE;
     }
     public GamePieces getGamePiece(){
@@ -58,60 +47,38 @@ public class RollerSubsystem extends SubsystemBase{
         gamePiece = GamePieces.NONE;
     }
 
-    public void smartDrop(){
-        if (gamePiece == GamePieces.CONE){
-            dropCone();
-        } else if (gamePiece == GamePieces.CUBE){
-            dropCube();
-        }
-    }
-
     public void stop(){
         rollerMotor.set(0);
     }
 
     /*Commands */
-    public Command intakeConeCommand(){
+    public Command intakeCommand(){
         return Commands.startEnd(
-            this::intakeCone,
+            this::intake,
             this::stop,
             this
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
-    public Command intakeCubeCommand(){
+    public Command dropCommand(){
         return Commands.startEnd(
-            this::intakeCube,
+            this::drop,
             this::stop,
             this
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
-    public Command shootCubeCommand(){
+    public Command timedDropCommand(){
+        return Commands.sequence(
+            new InstantCommand(this::drop, this),
+            new WaitCommand(DROP_TIME),
+            new InstantCommand(this::stop, this)
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+    }
+    public Command shootCommand(){
         return Commands.startEnd(
-            this::shootCube,
+            this::shoot,
             this::stop,
             this
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
-    }
-    public Command dropConeCommand(){
-        return Commands.sequence(
-            new InstantCommand(this::dropCone, this),
-            new WaitCommand(DROP_TIME),
-            new InstantCommand(this::stop, this)
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
-    }
-    public Command dropCubeCommand(){
-        return Commands.sequence(
-            new InstantCommand(this::dropCube, this),
-            new WaitCommand(DROP_TIME),
-            new InstantCommand(this::stop, this)
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
-    }
-    public Command smartDropCommand(){
-        return Commands.sequence(
-            new InstantCommand(this::smartDrop, this),
-            new WaitCommand(DROP_TIME),
-            new InstantCommand(this::stop, this)
-            );
     }
 }
 
