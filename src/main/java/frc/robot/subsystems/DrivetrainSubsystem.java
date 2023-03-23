@@ -108,6 +108,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public double getGyroRoll() {
         return navx.getRoll();
     }
+    public Vector getGyroHorizontalG(){
+        return new Vector(navx.getWorldLinearAccelX(), navx.getWorldLinearAccelY());
+    }
     
     public Command flipGyroCommand() {
         return new InstantCommand(() -> {setGyroOffset(180);});

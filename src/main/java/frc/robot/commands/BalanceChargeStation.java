@@ -5,6 +5,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.util.Statics;
+import frc.robot.util.Vector;
 
 public class BalanceChargeStation extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
@@ -29,6 +30,10 @@ public class BalanceChargeStation extends CommandBase {
 
     private double scaledError(double roll) {
         return Statics.map(Math.abs(roll), acceptedError/2, 45, 0, 0.5);
+    }
+
+    private Vector getUpwardVector(){
+        return m_drivetrainSubsystem.getGyroHorizontalG().scale(-1);
     }
 
     @Override

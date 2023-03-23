@@ -14,7 +14,7 @@ public class ManualBalanceDrive extends CommandBase{
 
     //the buffer not only affects the "deadzone", 
     // but also prohibits small angles near the x/y axis
-    private static final double JOYSTICK_DEADBAND = 0.2;
+    private static final double JOYSTICK_DEADBAND = 0.1;
     private static final double JOYSTICK_S = 0.1;
     private static final double JOYSTICK_T = 2.6;
     private static final double SPEED_SCALE = 0.25;
