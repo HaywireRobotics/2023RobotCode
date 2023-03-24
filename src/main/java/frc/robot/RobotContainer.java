@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoArmToSetpoint;
+import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ManualArmCommand;
@@ -122,7 +124,7 @@ public class RobotContainer {
         m_controller.b().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
         m_controller.a().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
         m_controller.x().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
-        m_controller.x().onTrue(m_advancedSetpoints.substationCommand());
+        // m_controller.x().onTrue(m_advancedSetpoints.substationCommand());
         m_controller.rightBumper().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW));
 
         m_rightJoystick.button(4).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
@@ -132,8 +134,8 @@ public class RobotContainer {
 
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
-        m_controller.rightTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0, 0, true));
-
+        // m_controller.rightTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0, 0, true));
+        m_controller.rightTrigger().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, Constants.DriveSetpoints.BlueSubstation[0]));
         m_controller.rightStick().onTrue(new InstantCommand(m_leds::toggleColor));
  
         // Uncomment to test auto scoring.
@@ -182,6 +184,8 @@ public class RobotContainer {
         //     m_leds.setSolid(Color.kYellow);
         // }
         m_leds.update();
+
+        SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
     }
 
     public void updateNetworkTables(){

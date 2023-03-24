@@ -101,7 +101,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public double getNavx() {
-        return m_gyro.getAngle() + headingOffset;
+        return -m_gyro.getAngle() + headingOffset;
     }
 
     public double getGyroRoll() {
@@ -124,7 +124,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public void driveVector(double speed, double direction, double aSpeed) {
         double driveSpeed = speed * Constants.MAX_SPEED;
-        double driveAngle = direction - getNavx();  // field-centric
+        double driveAngle = direction + getNavx();  // field-centric
 
         SwerveModuleState frontLeftDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
         SwerveModuleState frontRightDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
@@ -152,6 +152,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 
+    public void driveVectorMetersPerSecond(double speed, double direction, double aSpeed) {
+        double rpm = speed / Constants.WHEEL_DIAMETER;
+        driveVector(rpm, direction, aSpeed);
+    }
+
     public void driveXY(double xSpeed, double ySpeed, double aSpeed) {
         double speed = Math.sqrt(xSpeed*xSpeed + ySpeed*ySpeed);
         double direction = Math.toDegrees(Math.atan2(ySpeed, xSpeed));
@@ -170,7 +175,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         }
 
         if (!field_centric_drive) {
-            driveAngle += getNavx();
+            driveAngle -= getNavx();
         }
 
         double speed = Math.abs(Math.hypot(xSpeed, ySpeed));
@@ -230,13 +235,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backLeft.updateOdometry();
 
         frontLeftVelocity = frontLeft.getVelocity();
-        frontRightVelocity = frontLeft.getVelocity();
+        frontRightVelocity = frontRight.getVelocity();
         backLeftVelocity = backLeft.getVelocity();
-        backRightVelocity = backLeft.getVelocity();
+        backRightVelocity = backRight.getVelocity();
 
         // System.out.println("FR_V: "+frontLeftVelocity.toString());
         
-        heading = this.getNavx()+headingOffset;
+        heading = this.getNavx();
         SmartDashboard.putNumber("Gyro", getNavx());
         // System.out.println(this.getGyro());
 
@@ -264,7 +269,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                             ))).scale(0.25);
 
         Vector rotatedVector = vectorSum.copy();
-        rotatedVector.rotateByAngle(Math.toRadians(-heading));
+        rotatedVector.rotateByAngle(Math.toRadians(-heading+90));
 
         return rotatedVector;
     }

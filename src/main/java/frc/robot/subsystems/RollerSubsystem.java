@@ -15,9 +15,9 @@ import frc.robot.Constants.GamePieces;
 public class RollerSubsystem extends SubsystemBase{
     private final NEO rollerMotor;
 
-    private final double INTAKE_MOTOR_SPEED = 1.0;
-    private final double SHOOT_SPEED = -1.0;
-    private final double DROP_MOTOR_SPEED = -0.75;
+    private final double INTAKE_MOTOR_SPEED = -1.0;
+    private final double SHOOT_SPEED = 1.0;
+    private final double DROP_MOTOR_SPEED = 0.75;
     private final double DROP_TIME = 1.5;
 
     
@@ -33,7 +33,7 @@ public class RollerSubsystem extends SubsystemBase{
         gamePiece = GamePieces.CONE;
     }
     public void drop(){
-        rollerMotor.set(-DROP_MOTOR_SPEED);
+        rollerMotor.set(DROP_MOTOR_SPEED);
         gamePiece = GamePieces.NONE;
     }
     public void shoot() {

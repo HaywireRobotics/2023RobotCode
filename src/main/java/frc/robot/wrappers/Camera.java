@@ -112,7 +112,7 @@ public class Camera {
             if(poseArray[0] == 0 && poseArray[1] == 0 && poseArray[2] == 0){
                 System.out.println(cameraToTag.getX()+", "+cameraToTag.getY()+" "+ cameraToTag.getZ());
             }
-            estimatedPosePublisher.set(poseArray, 3);
+            // estimatedPosePublisher.set(poseArray, 3);
             // System.out.println(robotPose.getX()+", "+robotPose.getY()+" "+ robotPose.getZ());
             robotPositions[i] = robotPose;
             robotPoses[tagID-1] = robotPose;
@@ -179,8 +179,8 @@ public class Camera {
         lastT = timer.get();
 
         confidencePublisher.set(poseConfidence);
-        // double[] poseArray = {robotPose3d.getX(), robotPose3d.getY(), robotPose3d.getZ()};
-        // if(!(poseArray[0] == 0 && poseArray[1] == 0 && poseArray[2] == 0 )) estimatedPosePublisher.set(poseArray, 3);
+        double[] poseArray = {robotPose3d.getX(), robotPose3d.getY(), robotPose3d.getZ()};
+        if(!(poseArray[0] == 0 && poseArray[1] == 0 && poseArray[2] == 0 )) estimatedPosePublisher.set(poseArray, 3);
     }
 
     public Pose2d getRobotPose2d(){

@@ -55,8 +55,8 @@ public final class Constants {
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 17;
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 12;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 141.4; //139.8 // 156 (1/13/23) // 23.8 (10/24/22) // 156 (11/04/22)
-    public static final boolean FRONT_RIGHT_REVERSE_DRIVE = false;
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 321.4; // 141.4 (3/23/23) //139.8 // 156 (1/13/23) // 23.8 (10/24/22) // 156 (11/04/22)
+    public static final boolean FRONT_RIGHT_REVERSE_DRIVE = true;
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 7; 
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 8; 
@@ -67,8 +67,8 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 5; 
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 6; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 11;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 246.2; // 215 (1/13/23) // -37 (10/31/22) // 215 (11/04/22)
-    public static final boolean BACK_RIGHT_REVERSE_DRIVE = false;
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 66.2; // 246.2 (3/23/23) // 215 (1/13/23) // -37 (10/31/22) // 215 (11/04/22)
+    public static final boolean BACK_RIGHT_REVERSE_DRIVE = true;
 
     public static final double STEER_MOTOR_GEAR_RATIO = 12.8 / 1;
     public static final double DRIVE_MOTOR_GEAR_RATIO = 8.14 / 1; // could potentially be 6.75:1 depending on if it is L1 of L2
@@ -106,8 +106,8 @@ public final class Constants {
     };
 
     // to set y, set x, to set x set y, to set z set z
-    // public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(10, 5, 24), new Rotation3d(0, 0, 0))); // y-up System
-    public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(0, 0, 22.7), new Rotation3d(0, 0, 0))); // y-up System
+    public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(10, 5, 29), new Rotation3d(0, 0, 0))); // y-up System
+    // public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(0, 0, 22.7), new Rotation3d(0, 0, 0))); // y-up System
 
     /****** Arm Auto Paths ******/
     // public static enum ArmSetpoints {
@@ -123,7 +123,7 @@ public final class Constants {
         public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 43), 100);
         public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 35), 90);
         public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
-        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 125), 110); // 140
+        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 130), 110); // 140
         public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 10.5), 70);
         public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 9.5), 0);
         public static final ArmSetpoint FLOOR_PICKUP = new ArmSetpoint(new Vector(21, 0), 70);
@@ -230,7 +230,7 @@ public final class Constants {
 
     public static final class DriveSetpoints {
         private static final double scoringDistance = 24;
-        private static final double substationDistance = 42;
+        private static final double substationDistance = 45;
         public static final Pose2d[] BlueGrid = {
             Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 196.19), new Rotation2d(Math.PI))),
             Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 152.19), new Rotation2d(Math.PI))),

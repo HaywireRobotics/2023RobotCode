@@ -65,16 +65,17 @@ public class AutoFollowTrajectory extends CommandBase{
         double currentHeading = m_drivetrainSubsystem.getPose().getRotation().getDegrees();
         double headingOutput = headingPID.calculate(currentHeading, targetHeading);
 
-        m_drivetrainSubsystem.driveVector(driveVector.magnitude(), driveVector.direction(), headingOutput);
+        m_drivetrainSubsystem.driveVectorMetersPerSecond(driveVector.magnitude(), driveVector.direction(), headingOutput);
 
         lastPower = driveVector.magnitude();
 
         SmartDashboard.putNumber("Trajectory: Heading Error", headingOutput);
         SmartDashboard.putNumber("Trajectory: Position Error", positionError);
+        SmartDashboard.putNumber("Trajectory: kV*m/s", kV * state.velocityMetersPerSecond);
     }
 
     @Override
     public boolean isFinished() {
-        return timer.get() >= m_trajectory.getTotalTimeSeconds() && Math.abs(lastPower) < ON_TARGET_MAX_POWER;
+        return false;//timer.get() >= m_trajectory.getTotalTimeSeconds() && Math.abs(lastPower) < ON_TARGET_MAX_POWER;
     }
 }

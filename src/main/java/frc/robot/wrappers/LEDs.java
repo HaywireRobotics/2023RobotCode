@@ -21,10 +21,10 @@ public class LEDs {
 
     private final int numLeds = 150;
 
-    private Color gamepieceColor;
     private final Color coneColor = Color.kOrange;
     private final Color cubeColor = Color.kPurple;
-    private final Color allianceColor;
+    private Color gamepieceColor = coneColor;
+    public Color allianceColor;
 
     public LEDs(int port){
         leds = new AddressableLED(port);
@@ -39,9 +39,8 @@ public class LEDs {
         } else {
             allianceColor = Color.kBlue;
         }
-        gamepieceColor = allianceColor;
 
-        setSolid(gamepieceColor);
+        setSolid(allianceColor);
     }
 
     public void setAllToColor(Color c){

@@ -26,9 +26,9 @@ public class PositionAprilTag extends CommandBase {
 
     private final PIDController anglePID;
 
-    private final double ANGLE_KP = 0.0004;
+    private final double ANGLE_KP = 0.01;
     private final double ANGLE_KI = 0;
-    private final double ANGLE_KD = 0.0001;
+    private final double ANGLE_KD = 0.001;
 
     public PositionAprilTag(DrivetrainSubsystem drivetrainSubsystem, Camera camera, double xOffset, double yOffset, double angleOffset) {
         this(drivetrainSubsystem, camera, xOffset, yOffset, angleOffset, false);
@@ -87,8 +87,10 @@ public class PositionAprilTag extends CommandBase {
         SmartDashboard.putNumber("xOutput", xOutput);
 
         double angleRaw = target2D.getRotation().getDegrees();
+        double angleSign = (angleRaw/Math.abs(angleRaw));
+        double angle = angleSign * (180 - Math.abs(angleRaw));
         // double angleError = 0;
-        double angleError = (target2D.getRotation().getDegrees()) - angleOffset;
+        double angleError = angle - angleOffset;
         double angleOutput = anglePID.calculate(angleError, 0);
 
         if (xError < 0.05 && yError < 0.05 && angleError < 5) {
