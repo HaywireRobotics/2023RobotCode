@@ -138,7 +138,7 @@ public class RobotContainer {
 
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
-        // m_controller.rightTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0, 0, true));
+        m_controller.leftTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0));
         m_controller.rightTrigger().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, Constants.DriveSetpoints.BlueSubstation[0]));
         m_controller.rightStick().onTrue(new InstantCommand(m_leds::toggleColor));
  
