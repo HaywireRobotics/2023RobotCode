@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -9,9 +11,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.util.Vector;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathConstraints;
+
 public class AutoFollowTrajectory extends CommandBase{
     
     private final Trajectory m_trajectory;
+    // private final PathPlannerTrajectory m_pathPlannerTrajectory;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final ProfiledPIDController headingPID;
 
@@ -20,12 +27,13 @@ public class AutoFollowTrajectory extends CommandBase{
     private final Timer timer;
 
     private final double kP = 0.0; // Proportional gain
-    private final double kV = 0.1; // Velocity gain
+    private final double kV = 0.8; // Velocity gain
     private final double kA = 0.0; // Acceleration gain
 
     private final double HEADING_KP = 0.04;
     private final double HEADING_KI = 0;
     private final double HEADING_KD = 0;
+    private final double HEADING_KF = 0.9;
     private final double HEADING_MAX_ACC = 200.0;
     private final double HEADING_MAX_VEL = 300.0;
 
@@ -34,6 +42,7 @@ public class AutoFollowTrajectory extends CommandBase{
 
     public AutoFollowTrajectory(DrivetrainSubsystem drivetrainSubsystem, Trajectory trajectory, double targetHeading) {
         this.m_trajectory = trajectory;
+        // m_pathPlannerTrajectory = PathPlanner.loadPath("1p_3g_c", new PathConstraints(4, 3));
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         timer = new Timer();
         this.targetHeading = targetHeading;
@@ -54,7 +63,8 @@ public class AutoFollowTrajectory extends CommandBase{
     public void execute() {
         double time = Math.min(timer.get(), m_trajectory.getTotalTimeSeconds());
         Trajectory.State state = m_trajectory.sample(time);
-        
+        // PathPlannerState state = (PathPlannerState) m_pathPlannerTrajectory.sample(time);
+
         double velocityHeading = state.poseMeters.getRotation().getDegrees();
         double positionError = state.poseMeters.getTranslation().getDistance(m_drivetrainSubsystem.getPose().getTranslation());
 
@@ -64,6 +74,8 @@ public class AutoFollowTrajectory extends CommandBase{
 
         double currentHeading = m_drivetrainSubsystem.getPose().getRotation().getDegrees();
         double headingOutput = headingPID.calculate(currentHeading, targetHeading);
+        // double headingOutput = headingPID.calculate(currentHeading, state.holonomicRotation.getDegrees())+state.holonomicAngularVelocityRadPerSec*HEADING_KF;
+        
 
         m_drivetrainSubsystem.driveVectorMetersPerSecond(driveVector.magnitude(), driveVector.direction(), headingOutput);
 

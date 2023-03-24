@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -32,14 +30,14 @@ public class ManualBalanceDrive extends CommandBase{
 
     @Override
     public void execute() {
-        double rightX = controller.getRightX()*SPEED_SCALE;
-        double leftX = controller.getLeftX()*SPEED_SCALE;
-        double leftY = controller.getLeftY()*SPEED_SCALE;
+        double rightX = controller.getRightX();
+        double leftX = controller.getLeftX();
+        double leftY = controller.getLeftY();
 
-        rightX = applyAll(rightX);
+        rightX = applyAll(rightX)*SPEED_SCALE;
         leftX = Statics.applyDeadband(leftX, JOYSTICK_DEADBAND);
         leftY = Statics.applyDeadband(leftY, JOYSTICK_DEADBAND);
-        Vector leftVector = Statics.applySmoothing2D(new Vector(leftX, leftY), JOYSTICK_S, JOYSTICK_T);
+        Vector leftVector = Statics.applySmoothing2D(new Vector(leftX, leftY), JOYSTICK_S, JOYSTICK_T).scale(SPEED_SCALE);
         leftX = leftVector.x;
         leftY = leftVector.y;
         // System.out.println(leftVector.toString());
@@ -52,10 +50,8 @@ public class ManualBalanceDrive extends CommandBase{
         // leftX = leftVector.x;
         // leftY = leftVector.y;
 
-        m_subsystem.driveArcade(leftX, leftY, rightX);
-
         if(leftX == 0 && leftY == 0 && rightX == 0){
-            lockDrive();
+            m_subsystem.lockDrive();
          }else {
             m_subsystem.driveArcade(leftX, leftY, rightX);
         };
@@ -63,16 +59,10 @@ public class ManualBalanceDrive extends CommandBase{
         /* Odometry */
         m_subsystem.updateOdometry();
     }
-    private void lockDrive(){
-        m_subsystem.setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
-        m_subsystem.setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
-        m_subsystem.setFrontLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)));
-        m_subsystem.setFrontRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
-    }
 
     @Override
     public void end(boolean interrupted) {
-        lockDrive();
+        m_subsystem.lockDrive();
     }
 
     @Override

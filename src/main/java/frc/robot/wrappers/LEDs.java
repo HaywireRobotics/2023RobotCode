@@ -21,7 +21,7 @@ public class LEDs {
 
     private final int numLeds = 150;
 
-    private final Color coneColor = Color.kOrange;
+    private final Color coneColor = new Color(255, 136, 10);//Color.fromHSV(32, 255, 255);//Color.kOrange
     private final Color cubeColor = Color.kPurple;
     private Color gamepieceColor = coneColor;
     public Color allianceColor;
