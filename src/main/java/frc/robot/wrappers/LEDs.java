@@ -35,7 +35,7 @@ public class LEDs {
         leds.setData(buffer);
         leds.start();
 
-        setAllToColor(allianceColor);
+        setSolid(allianceColor);
     }
 
     public void setAllToColor(Color c){
