@@ -13,10 +13,8 @@ public class PositionAprilTag extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final Camera m_camera;
 
-    private final double xOffset;
-    private final double yOffset;
+    private final double distOffset;
     private final double angleOffset;
-    private final boolean onlyX;
 
     private final PIDController translationPID;
 
@@ -30,21 +28,15 @@ public class PositionAprilTag extends CommandBase {
     private final double ANGLE_KI = 0;
     private final double ANGLE_KD = 0.001;
 
-    public PositionAprilTag(DrivetrainSubsystem drivetrainSubsystem, Camera camera, double xOffset, double yOffset, double angleOffset) {
-        this(drivetrainSubsystem, camera, xOffset, yOffset, angleOffset, false);
-    }
-
-    public PositionAprilTag(DrivetrainSubsystem drivetrainSubsystem, Camera camera, double xOffset, double yOffset, double angleOffset, boolean onlyX) {
+    public PositionAprilTag(DrivetrainSubsystem drivetrainSubsystem, Camera camera, double distOffset, double angleOffset) {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_camera = camera;
 
         translationPID = new PIDController(TRANSLATION_KP, TRANSLATION_KI, TRANSLATION_KD);
         anglePID = new PIDController(ANGLE_KP, ANGLE_KI, ANGLE_KD);
 
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
+        this.distOffset = distOffset;
         this.angleOffset = angleOffset;
-        this.onlyX = onlyX;
 
         m_drivetrainSubsystem.aligning = true;
 
@@ -71,35 +63,25 @@ public class PositionAprilTag extends CommandBase {
             return;
         }
 
-        double yError = 0;
-        double yOutput = 0;
-        if (!onlyX) {
-            yError = target2D.getY() - yOffset;
-            yOutput = translationPID.calculate(yError, 0);
-        } else {
-            yOutput = 0;
-        }
+        double distError = target2D.getX() - distOffset;
+        double distOutput = translationPID.calculate(distError, 0);
 
-        double xError = target2D.getX() - xOffset;
-        double xOutput = translationPID.calculate(xError, 0);
-
-        SmartDashboard.putNumber("xError", xError);
-        SmartDashboard.putNumber("xOutput", xOutput);
+        SmartDashboard.putNumber("distError", distError);
+        SmartDashboard.putNumber("distOutput", distOutput);
 
         double angleRaw = target2D.getRotation().getDegrees();
         double angleSign = (angleRaw/Math.abs(angleRaw));
         double angle = angleSign * (180 - Math.abs(angleRaw));
-        // double angleError = 0;
         double angleError = angle - angleOffset;
         double angleOutput = anglePID.calculate(angleError, 0);
 
-        if (xError < 0.05 && yError < 0.05 && angleError < 5) {
+        if (distError < 0.05 && angleError < 5) {
             m_drivetrainSubsystem.aligned = true;
         } else {
             m_drivetrainSubsystem.aligned = false;
         }
 
-        m_drivetrainSubsystem.driveXY(xOutput, yOutput, angleOutput);
+        m_drivetrainSubsystem.driveVector(distOutput, angle, angleOutput);
     }
 
     @Override

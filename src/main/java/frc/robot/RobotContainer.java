@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -71,6 +72,8 @@ public class RobotContainer {
 
     public final LEDs m_leds = new LEDs(9);
 
+    public Alliance alliance = Alliance.Invalid;
+
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -93,6 +96,7 @@ public class RobotContainer {
         m_auto_chooser.addOption("Dock Drop Cube", m_autoCommands.DockCubeCommand());
         m_auto_chooser.addOption("Dock No Cube", m_autoCommands.DockNoCubeCommand());
         m_auto_chooser.addOption("NO Auto", m_drivetrainSubsystem.flipGyroCommand());
+        m_auto_chooser.addOption("High Cone", m_autoCommands.HighConeCommand());
         m_auto_chooser.addOption("testAuto", m_autoCommands.testAuto());
         m_auto_chooser.addOption("testTrajectory", m_autoCommands.testTrajectory());
 
@@ -134,7 +138,7 @@ public class RobotContainer {
 
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
-        // m_controller.rightTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0, 0, true));
+        m_controller.leftTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0));
         m_controller.rightTrigger().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, Constants.DriveSetpoints.BlueSubstation[0]));
         m_controller.rightStick().onTrue(new InstantCommand(m_leds::toggleColor));
  
@@ -184,8 +188,29 @@ public class RobotContainer {
         //     m_leds.setSolid(Color.kYellow);
         // }
         m_leds.update();
+    }
 
-        SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
+    // needed to handle the alliance being unknown until the driverstation connects
+    public void updateAlliance() {
+        Alliance actualAlliance = DriverStation.getAlliance();
+        if (alliance != actualAlliance) {
+            switch (actualAlliance) {
+                case Red:
+                    alliance = Alliance.Red;
+                    m_leds.setAllianceColor(Color.kRed);
+                    break;
+
+                case Blue:
+                    alliance = Alliance.Blue;
+                    m_leds.setAllianceColor(Color.kBlue);
+                    break;
+            
+                default:
+                    alliance = Alliance.Invalid;
+                    m_leds.setAllianceColor(Color.kPurple);
+                    break;
+            }
+        }
     }
 
     public void updateNetworkTables(){

@@ -21,10 +21,11 @@ public class LEDs {
 
     private final int numLeds = 150;
 
-    private final Color coneColor = new Color(255, 136, 10);//Color.fromHSV(32, 255, 255);//Color.kOrange
+    private final Color coneColor = new Color(255, 136, 10);
     private final Color cubeColor = Color.kPurple;
     private Color gamepieceColor = coneColor;
-    public Color allianceColor;
+    // starts ambiguous, will match alliance when driverstation connects
+    public Color allianceColor = Color.kPurple;
 
     public LEDs(int port){
         leds = new AddressableLED(port);
@@ -33,12 +34,6 @@ public class LEDs {
 
         leds.setData(buffer);
         leds.start();
-
-        if (DriverStation.getAlliance() == Alliance.Red) {
-            allianceColor = Color.kRed;
-        } else {
-            allianceColor = Color.kBlue;
-        }
 
         setSolid(allianceColor);
     }
@@ -86,6 +81,11 @@ public class LEDs {
     private void updateLEDs(){
         leds.setData(buffer);
         leds.start();
+    }
+
+    public void setAllianceColor(Color color) {
+        allianceColor = color;
+        setSolid(allianceColor);
     }
 
     public void toggleColor() {
