@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.PathConstraints;
+
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -77,7 +79,8 @@ public final class Constants {
 
     public static final double kMaxSpeedMetersPerSecond = 1.0;
     public static final double kMaxAccelerationMetersPerSecondSquared = 0.3;
-    public static final TrajectoryConfig TRAJECTORY_CONFIG = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,Constants.kMaxAccelerationMetersPerSecondSquared);
+    // public static final TrajectoryConfig TRAJECTORY_CONFIG = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,Constants.kMaxAccelerationMetersPerSecondSquared);
+    public static final PathConstraints TRAJECTORY_CONFIG = new PathConstraints(kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
 
     /****** Elevator ******/
     public static final int ELEVATOR_MOTOR = 9;
@@ -126,7 +129,9 @@ public final class Constants {
         public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 130), 110); // 140
         public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 10.5), 70);
         public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 9.5), 0);
-        public static final ArmSetpoint FLOOR_PICKUP = new ArmSetpoint(new Vector(21, 0), 70);
+        public static final ArmSetpoint TIPPED_PICKUP = new ArmSetpoint(new Vector(21, 1.5), 70);
+        public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(16, 3), 50);
+
     }
     public static final class BezierHandles{
         public static final Vector leaveStowed = new Vector(0, 8);
@@ -138,7 +143,7 @@ public final class Constants {
     public static final class ArmSetpointPaths {
         public static final ArmAutoPath CONE_HIGH = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
                                                                      ArmSetpoints.CONE_HIGH.armPosition, ArmSetpoints.CONE_HIGH.armPosition.add(BezierHandles.leaveHigh)),
-                                                                     ArmSetpoints.CONE_HIGH.manipulatorAngle, 0.5);
+                                                                     ArmSetpoints.CONE_HIGH.manipulatorAngle, 0.75);
         public static final ArmAutoPath CONE_MID = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
                                                                         ArmSetpoints.CONE_MID.armPosition, ArmSetpoints.CONE_MID.armPosition.add(BezierHandles.leaveMid)),
                                                                         ArmSetpoints.CONE_MID.manipulatorAngle, 0.5);
@@ -163,9 +168,13 @@ public final class Constants {
                                                                         ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed)),
                                                                         ArmSetpoints.STOWED.manipulatorAngle);
         
-        public static final ArmAutoPath FLOOR_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
-                                                                        ArmSetpoints.FLOOR_PICKUP.armPosition, ArmSetpoints.FLOOR_PICKUP.armPosition.add(BezierHandles.leaveGroundPickup)),
-                                                                        ArmSetpoints.FLOOR_PICKUP.manipulatorAngle, 0.5);
+        public static final ArmAutoPath TIPPED_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
+                                                                        ArmSetpoints.TIPPED_PICKUP.armPosition, ArmSetpoints.TIPPED_PICKUP.armPosition.add(BezierHandles.leaveGroundPickup)),
+                                                                        ArmSetpoints.TIPPED_PICKUP.manipulatorAngle, 0.5);
+
+        public static final ArmAutoPath CUBE_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
+                                                                        ArmSetpoints.CUBE_PICKUP.armPosition, ArmSetpoints.CUBE_PICKUP.armPosition.add(BezierHandles.leaveGroundPickup)),
+                                                                        ArmSetpoints.CUBE_PICKUP.manipulatorAngle, 0.5);
         
         public static ArmAutoPath getPathForSetpointPosition(SetpointPositions setpointPosition) {
             switch (setpointPosition) {
@@ -183,8 +192,10 @@ public final class Constants {
                     return SUBSTATION;
                 case STOW:
                     return STOW;
-                case FLOOR_PICKUP:
-                    return FLOOR_PICKUP;
+                case TIPPED_PICKUP:
+                    return TIPPED_PICKUP;
+                case CUBE_PICKUP:
+                    return CUBE_PICKUP;
                 default:
                     return GROUND;
             }
@@ -220,7 +231,8 @@ public final class Constants {
         GROUND,
         SUBSTATION,
         STOW,
-        FLOOR_PICKUP,
+        TIPPED_PICKUP,
+        CUBE_PICKUP,
     }
     public static enum ScoreRows {
         HIGH,

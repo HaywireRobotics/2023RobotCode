@@ -22,7 +22,7 @@ public class PulleySubsystem extends SubsystemBase{
     private final double PULLEY_KI = 0.01;
     private final double PULLEY_KD = 0.001;
 
-    private final double PULLEY_GEAR_RATIO = 84.0 / 1.0 * 26/18;
+    private final double PULLEY_GEAR_RATIO = 28.0 / 1.0 * 26/18;
     private final double PULLEY_ROTATIONS_TO_INCHES = 2.5*Math.PI;
     private final double PULLEY_MAX_EXTENSION_INCHES = 30.0; //PULLEY_DEGREES_TO_INCHES*55.5;
     private final double PULLEY_MIN_EXTENSION_INCHES = 0.0; //PULLEY_DEGREES_TO_INCHES*35.0;

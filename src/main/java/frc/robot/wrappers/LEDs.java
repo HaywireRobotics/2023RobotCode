@@ -21,7 +21,7 @@ public class LEDs {
 
     private final int numLeds = 150;
 
-    private final Color coneColor = new Color(255, 136, 10);
+    private final Color coneColor = new Color(255, 150, 0);
     private final Color cubeColor = Color.kPurple;
     private Color gamepieceColor = coneColor;
     // starts ambiguous, will match alliance when driverstation connects

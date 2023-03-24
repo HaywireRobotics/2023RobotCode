@@ -171,7 +171,7 @@ public class SwerveModule {
         this.rotationAngle = this.getRotation();
         this.driveAngle = this.driveMotor.getPosition();
 
-        double speed = this.driveAngle - this.pDriveAngle;
+        double speed = (this.driveAngle - this.pDriveAngle);
         double direction = (this.pRotationAngle/2 + this.rotationAngle/2);
 
         this.deltaPosition.x = Math.sin(Math.toRadians(direction))*speed;
@@ -183,7 +183,7 @@ public class SwerveModule {
     }
 
     public Vector getVelocity(){
-        return this.deltaPosition.scale(Constants.WHEEL_DIAMETER);
+        return this.deltaPosition.scale(Constants.WHEEL_DIAMETER * Math.PI).scale(1/Constants.DRIVE_MOTOR_GEAR_RATIO);
     }
 
     public void disable(){

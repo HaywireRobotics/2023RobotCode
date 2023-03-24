@@ -95,6 +95,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         headingOffset = 0;
         m_gyro.reset();
     }
+    public void resetGyroscope(double value) {
+        headingOffset = value;
+        m_gyro.reset();
+    }
 
     public void setGyroOffset(double x) {
         headingOffset = x;
@@ -154,7 +158,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public void driveVectorMetersPerSecond(double speed, double direction, double aSpeed) {
         double rpm = speed / Constants.WHEEL_DIAMETER;
-        driveVector(rpm, direction, aSpeed);
+        driveVector(rpm/Constants.MAX_SPEED, direction, aSpeed);
     }
 
     public void driveXY(double xSpeed, double ySpeed, double aSpeed) {
@@ -217,8 +221,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void resetPose(double x, double y, double a){
         this.translation.x = x;
         this.translation.y = y;
-        this.headingOffset = a-this.getNavx();
-        this.heading = a;
+        // this.headingOffset = a-this.getNavx();
+        resetGyroscope(a);
+        // this.heading = a;
     }
     public void resetPose(){
         resetPose(0, 0, 0);
@@ -269,7 +274,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                             ))).scale(0.25);
 
         Vector rotatedVector = vectorSum.copy();
-        rotatedVector.rotateByAngle(Math.toRadians(-heading+90));
+        rotatedVector.rotateByAngle(Math.toRadians(heading+90));
 
         return rotatedVector;
     }

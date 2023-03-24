@@ -109,6 +109,9 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public Command intakeCommand(){
         return rollerSubsystem.intakeCommand();
     }
+    public Command startIntakeCommand() {
+        return rollerSubsystem.startIntakeCommand();
+    }
     public Command dropCommand(){
         return rollerSubsystem.dropCommand();
     }

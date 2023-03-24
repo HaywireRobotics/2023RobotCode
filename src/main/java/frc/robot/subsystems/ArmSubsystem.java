@@ -30,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private Bezier targetPath;
     public double followT = 0.0;
-    private double followSpeed = 0.35; // Inches per second
+    private double followSpeed = 0.7; // 0.35 (3/24/23) // Inches per second
     private double tSpeed = 0.0;
 
     public ArmSubsystem(PulleySubsystem pulleySubsystem, ElevatorSubsystem elevatorSubsystem, ManipulatorSubsystem manipulatorSubsystem){

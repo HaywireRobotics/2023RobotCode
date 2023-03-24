@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -95,5 +96,17 @@ public class AdvancedSetpoints {
             }
         }
         return closest;
+    }
+
+    public Command IntakeCubeCommand() {
+        return Commands.sequence(
+            m_armSubsystem.m_manipulatorSubsystem.startIntakeCommand(),
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CUBE_PICKUP)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
+            m_armSubsystem.m_manipulatorSubsystem.intakeCommand()
+                .withTimeout(0.5),
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
+        );
     }
 }

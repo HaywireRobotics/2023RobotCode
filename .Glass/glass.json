@@ -11,9 +11,9 @@
         "open": true
       },
       "SmartDashboard": {
-        "open": true
-      },
-      "drive": {
+        "Field": {
+          "open": true
+        },
         "open": true
       }
     },

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.commands.AutoFollowTrajectory;
+import frc.robot.commands.AutoFollowWithCommands;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
@@ -94,25 +95,26 @@ public final class AutoCommands {
         //                 new Pose2d(3, 0, new Rotation2d(0)),
         //                 // Pass config
         //                 Constants.TRAJECTORY_CONFIG), 0.0);
-        return new AutoFollowTrajectory(m_drivetrainSubsystem, TrajectoryGenerator.generateTrajectory(
-                        // Start at the origin facing the +X direction
-                        new Pose2d(0, 0, new Rotation2d(0)),
-                        // Pass through these two interior waypoints, making an straight path
-                        List.of(new Translation2d(1, 0), new Translation2d(2, 0)),
-                        // End 3 meters straight ahead of where we started, facing forward
-                        new Pose2d(3, 0, new Rotation2d(0)),
-                        // Pass config
-                        Constants.TRAJECTORY_CONFIG), 0.0);
+        // return new AutoFollowTrajectory(m_drivetrainSubsystem, TrajectoryGenerator.generateTrajectory(
+        //                 // Start at the origin facing the +X direction
+        //                 new Pose2d(0, 0, new Rotation2d(0)),
+        //                 // Pass through these two interior waypoints, making an straight path
+        //                 List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+        //                 // End 3 meters straight ahead of where we started, facing forward
+        //                 new Pose2d(4, 0, new Rotation2d(0)),
+        //                 // Pass config
+        //                 Constants.TRAJECTORY_CONFIG));
+        return new AutoFollowWithCommands(m_drivetrainSubsystem).autoFollowWithCommands("1p_3g_c");
     }
 
     public Command HighConeCommand() {
         return Commands.sequence(
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
-            new WaitCommand(1),
+            new WaitCommand(0.1),
             m_manipulatorSubsystem.dropCommand()
-                .withTimeout(2),
-            new WaitCommand(1),
+                .withTimeout(1),
+            new WaitCommand(0.1),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
@@ -122,10 +124,10 @@ public final class AutoCommands {
         return Commands.sequence(
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
-            new WaitCommand(1),
+            new WaitCommand(0.1),
             m_manipulatorSubsystem.dropCommand()
-                .withTimeout(2),
-            new WaitCommand(1),
+                .withTimeout(1),
+            new WaitCommand(0.1),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );

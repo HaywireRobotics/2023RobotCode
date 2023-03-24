@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "SetConeH",
+          "SetConeHigh",
           "Drop",
           "Stow"
         ],
@@ -123,8 +123,9 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "DropCubeH",
-          "Stow"
+          "SetConeHigh",
+          "Stow",
+          "Drop"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",

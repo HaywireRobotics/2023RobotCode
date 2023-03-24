@@ -131,14 +131,14 @@ public class RobotContainer {
         // m_controller.x().onTrue(m_advancedSetpoints.substationCommand());
         m_controller.rightBumper().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW));
 
-        m_rightJoystick.button(4).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
-        m_rightJoystick.button(5).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
-        m_leftJoystick.button(3).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
-
+        m_rightJoystick.button(4).whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
+        m_rightJoystick.button(5).whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
+        m_leftJoystick.button(3).whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
+        m_leftJoystick.button(2).whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.TIPPED_PICKUP));
 
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
-        m_controller.leftTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0));
+        m_controller.leftTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0.0));
         m_controller.rightTrigger().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, Constants.DriveSetpoints.BlueSubstation[0]));
         m_controller.rightStick().onTrue(new InstantCommand(m_leds::toggleColor));
  
@@ -238,8 +238,8 @@ public class RobotContainer {
     public void enable(){
         m_drivetrainSubsystem.enable();
         m_armSubsystem.enable();
-        m_drivetrainSubsystem.resetGyroscope();
-        m_drivetrainSubsystem.resetPose();
+        // m_drivetrainSubsystem.resetGyroscope();
+        // m_drivetrainSubsystem.resetPose();
         // m_armSubsystem.resetEncoders();
     }
 }
