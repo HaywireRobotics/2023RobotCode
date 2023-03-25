@@ -77,8 +77,8 @@ public final class Constants {
                                                                   // see https://www.swervedrivespecialties.com/products/mk4-swerve-module?variant=39376675012721
     public static final double WHEEL_DIAMETER = 0.1016; // 4 inches
 
-    public static final double kMaxSpeedMetersPerSecond = 1.75;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.7;
+    public static final double kMaxSpeedMetersPerSecond = 2.0;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.9;
     // public static final TrajectoryConfig TRAJECTORY_CONFIG = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,Constants.kMaxAccelerationMetersPerSecondSquared);
     public static final PathConstraints TRAJECTORY_CONFIG = new PathConstraints(kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
 
@@ -131,6 +131,7 @@ public final class Constants {
         public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 9.5), 0);
         public static final ArmSetpoint TIPPED_PICKUP = new ArmSetpoint(new Vector(21, 1.5), 70);
         public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(30, 0), 60);
+        public static final ArmSetpoint CONE_PICKUP = new ArmSetpoint(new Vector(25, 0), 75);
 
     }
     public static final class BezierHandles{
@@ -140,6 +141,7 @@ public final class Constants {
         public static final Vector leaveSubstation = new Vector(-5, 10);
         public static final Vector leaveGroundPickup = new Vector(-4, 9);
         public static final Vector toCubePickup = new Vector(-4, 5);
+        public static final Vector toConePickup = new Vector(-2, 6);
         public static final Vector leaveCubePickup = new Vector(-2, 7);
     }
     public static final class ArmSetpointPaths {
@@ -176,10 +178,15 @@ public final class Constants {
 
         public static final ArmAutoPath CUBE_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed.scale(2.0)),
                                                                         ArmSetpoints.CUBE_PICKUP.armPosition, ArmSetpoints.CUBE_PICKUP.armPosition.add(BezierHandles.toCubePickup)),
-                                                                        ArmSetpoints.CUBE_PICKUP.manipulatorAngle, 0.5);
+                                                                        ArmSetpoints.CUBE_PICKUP.manipulatorAngle, 0.7);
+
+        public static final ArmAutoPath CONE_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed.scale(2.0)),
+                                                                        ArmSetpoints.CONE_PICKUP.armPosition, ArmSetpoints.CONE_PICKUP.armPosition.add(BezierHandles.toConePickup)),
+                                                                        ArmSetpoints.CONE_PICKUP.manipulatorAngle, 0.5);
+
         public static final ArmAutoPath FLOOR_STOW = new ArmAutoPath(new Bezier(ArmSetpoints.CUBE_PICKUP.armPosition,ArmSetpoints.CUBE_PICKUP.armPosition.add(BezierHandles.leaveCubePickup),
                                                                         ArmSetpoints.STOWED.armPosition,  ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed.scale(3.0))),
-                                                                        ArmSetpoints.STOWED.manipulatorAngle, 0.95);
+                                                                        ArmSetpoints.STOWED.manipulatorAngle, 0.5);
         
                                                                         
         public static ArmAutoPath getPathForSetpointPosition(SetpointPositions setpointPosition) {
@@ -202,8 +209,10 @@ public final class Constants {
                     return TIPPED_PICKUP;
                 case CUBE_PICKUP:
                     return CUBE_PICKUP;
+                case CONE_PICKUP:
+                    return CONE_PICKUP;
                 default:
-                    return GROUND;
+                    return STOW;
             }
         }
     }
@@ -239,6 +248,7 @@ public final class Constants {
         STOW,
         TIPPED_PICKUP,
         CUBE_PICKUP,
+        CONE_PICKUP
     }
     public static enum ScoreRows {
         HIGH,

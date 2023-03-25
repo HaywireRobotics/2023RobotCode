@@ -17,9 +17,9 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "SetConeH",
-          "Drop",
-          "Stow"
+          "setConeHigh",
+          "drop",
+          "stow"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -53,16 +53,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.308939660898693,
-        "y": 1.02014100151198
+        "x": 6.84502747496706,
+        "y": 0.9376717073475372
       },
       "prevControl": {
-        "x": 5.325952853635818,
-        "y": 1.2037487835999792
+        "x": 5.862040667704186,
+        "y": 1.1212794894355365
       },
       "nextControl": {
-        "x": 5.325952853635818,
-        "y": 1.2037487835999792
+        "x": 5.862040667704186,
+        "y": 1.1212794894355365
       },
       "holonomicAngle": -4.738708195740247,
       "isReversal": true,
@@ -70,9 +70,7 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [
-          "IntakeCube"
-        ],
+        "names": [],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
@@ -123,8 +121,8 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "Drop",
-          "Stow"
+          "drop",
+          "stow"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -147,21 +145,29 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "substation"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": 4.0,
-  "maxAcceleration": null,
+  "maxVelocity": 2.0,
+  "maxAcceleration": 0.7,
   "isReversed": null,
   "markers": [
     {
       "position": 3.0978892933238615,
       "names": [
-        "SetCubeH"
+        "setCubeHigh"
+      ]
+    },
+    {
+      "position": 1.6732177734375,
+      "names": [
+        "intakeCube"
       ]
     }
   ]

@@ -1,23 +1,14 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPlannerTrajectory.EventMarker;
-import com.pathplanner.lib.PathPlannerTrajectory.StopEvent;
-import com.pathplanner.lib.PathPlannerTrajectory.StopEvent.ExecutionBehavior;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.Constants;
 import frc.robot.pathutils.CoolAutoBuilder;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -28,21 +19,27 @@ public class AutoFollowWithCommands{
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final HashMap<String, Command> eventMap = new HashMap<>();
     private final AdvancedSetpoints m_advancedSetpoints;
+    private boolean requireDriveLock = false;
+
+    private Command drivingCommand;
 
     public AutoFollowWithCommands(DrivetrainSubsystem drivetrainSubsystem, AdvancedSetpoints advancedSetpoints){
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_advancedSetpoints = advancedSetpoints;
 
         eventMap.put("intakeCone", new PrintCommand("IntakeCone"));
+        eventMap.put("intakeCone", m_advancedSetpoints.IntakeConeCommand());
         eventMap.put("intakeCube", new PrintCommand("IntakeCube"));
         // eventMap.put("intakeCube", m_advancedSetpoints.IntakeCubeCommand());
         eventMap.put("setConeHigh", new PrintCommand("SetConeHigh"));
         // eventMap.put("setConeHigh", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.CONE_HIGH));
 
         eventMap.put("stow", new PrintCommand("Stow"));
-        // eventMap.put("stow", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW));
+        // eventMap.put("stow", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW).withTimeout(0.5));
         eventMap.put("drop", new PrintCommand("Drop"));
         // eventMap.put("drop", m_advancedSetpoints.DropGamePiece());
+        // eventMap.put("substation", new PrintCommand("Substation"));
+        eventMap.put("substation", enableDriveLock());
 
     }
 
@@ -68,6 +65,18 @@ public class AutoFollowWithCommands{
 
     public Command autoFollowFullPath(List<PathPlannerTrajectory> pathGroup){
         CoolAutoBuilder autoBuilder = new CoolAutoBuilder(m_drivetrainSubsystem, eventMap);
-        return autoBuilder.fullAuto(pathGroup);
+        drivingCommand =  autoBuilder.fullAuto(pathGroup).andThen(lockDriveIfRequired());
+        return drivingCommand;
+    }
+
+    private Command enableDriveLock(){
+        return new InstantCommand(() -> requireDriveLock=true).andThen(new InstantCommand(() -> drivingCommand.cancel()));
+    }
+    private Command lockDriveIfRequired(){
+        return new InstantCommand(() -> {
+            if(requireDriveLock){
+                m_drivetrainSubsystem.lockDrive();
+            }
+        });
     }
 }

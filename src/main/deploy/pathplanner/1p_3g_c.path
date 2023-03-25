@@ -17,9 +17,9 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "SetConeHigh",
-          "Drop",
-          "Stow"
+          "setConeHigh",
+          "drop",
+          "stow"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",

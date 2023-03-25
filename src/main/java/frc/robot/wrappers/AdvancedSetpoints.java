@@ -106,6 +106,18 @@ public class AdvancedSetpoints {
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
             m_armSubsystem.m_manipulatorSubsystem.intakeCommand()
                 .withTimeout(0.5),
+            new WaitCommand(0.5),
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
+        );
+    }
+    public Command IntakeConeCommand() {
+        return Commands.sequence(
+            m_armSubsystem.m_manipulatorSubsystem.startIntakeCommand(),
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_PICKUP)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
+            m_armSubsystem.m_manipulatorSubsystem.intakeCommand()
+                .withTimeout(0.5),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );

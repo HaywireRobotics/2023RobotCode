@@ -17,9 +17,9 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "SetConeH",
-          "Drop",
-          "Stow"
+          "setConeHigh",
+          "drop",
+          "stow"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -53,26 +53,24 @@
     },
     {
       "anchorPoint": {
-        "x": 6.25625539575357,
-        "y": 4.607981904175314
+        "x": 6.789041908623098,
+        "y": 4.8039294534535255
       },
       "prevControl": {
-        "x": 5.524018536591114,
-        "y": 5.598565796136328
+        "x": 5.989265577760757,
+        "y": 5.616391104296423
       },
       "nextControl": {
-        "x": 5.524018536591114,
-        "y": 5.598565796136328
+        "x": 5.989265577760757,
+        "y": 5.616391104296423
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": -22.67582652731868,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [
-          "IntakeCube"
-        ],
+        "names": [],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
@@ -123,8 +121,8 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "Drop",
-          "Stow"
+          "drop",
+          "stow"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -147,18 +145,29 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "substation"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
+  "maxVelocity": 2.0,
+  "maxAcceleration": 0.7,
+  "isReversed": null,
   "markers": [
     {
       "position": 2.7681107954545436,
       "names": [
-        "SetCubeH"
+        "setCubeHigh"
+      ]
+    },
+    {
+      "position": 1.7231445312500002,
+      "names": [
+        "intakeCube"
       ]
     }
   ]

@@ -47,9 +47,9 @@ public class AutoFollowTrajectory extends CommandBase{
         timer = new Timer();
         this.m_pathPlannerTrajectory = trajectory;
         double targetHeading = trajectory.getEndState().poseMeters.getRotation().getDegrees();
-        double smoothedHeadingVelocity = Math.abs(m_drivetrainSubsystem.getPose().getRotation().getDegrees() - targetHeading)/trajectory.getTotalTimeSeconds();
+        // double smoothedHeadingVelocity = Math.abs(m_drivetrainSubsystem.getPose().getRotation().getDegrees() - targetHeading)/trajectory.getTotalTimeSeconds();
 
-        TrapezoidProfile.Constraints headingProfile =  new TrapezoidProfile.Constraints(Math.min(HEADING_MAX_VEL, smoothedHeadingVelocity), HEADING_MAX_ACC);
+        TrapezoidProfile.Constraints headingProfile =  new TrapezoidProfile.Constraints(HEADING_MAX_VEL, HEADING_MAX_ACC); //Math.min(HEADING_MAX_VEL, smoothedHeadingVelocity)
         this.headingPID = new ProfiledPIDController(HEADING_KP, HEADING_KI, HEADING_KD,
                                                     headingProfile, 0.02);
 
@@ -59,13 +59,10 @@ public class AutoFollowTrajectory extends CommandBase{
         SmartDashboard.putNumber("Trajectory: Heading", 0);
         double[] positionErrorArray = {0,0};
         SmartDashboard.putNumberArray("Trajectory: Position Error", positionErrorArray);
-        SmartDashboard.putNumberArray("Trajectory: Target Position", positionErrorArray);
+        // SmartDashboard.putNumberArray("Trajectory: Target Position", positionErrorArray);
         SmartDashboard.putNumber("Trajectory: Time", 0);
 
         SmartDashboard.putNumber("Trajectory: mps", 0);
-    }
-
-    private void FollowPathWithEvents() {
     }
 
     @Override
@@ -110,7 +107,7 @@ public class AutoFollowTrajectory extends CommandBase{
         double[] positionErrorArray = {positionErrorTranslation.getX(), positionErrorTranslation.getY()};
         double[] targetPositionArray = {state.poseMeters.getTranslation().getX(), state.poseMeters.getTranslation().getY()};
         SmartDashboard.putNumberArray("Trajectory: Position Error", positionErrorArray);
-        SmartDashboard.putNumberArray("Trajectory: Target Position", targetPositionArray);
+        // SmartDashboard.putNumberArray("Trajectory: Target Position", targetPositionArray);
 
         SmartDashboard.putNumber("Trajectory: mps", state.velocityMetersPerSecond);
         
