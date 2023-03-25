@@ -139,6 +139,7 @@ public final class Constants {
         public static final Vector leaveMid = new Vector(-8, 3);
         public static final Vector leaveSubstation = new Vector(-5, 10);
         public static final Vector leaveGroundPickup = new Vector(-4, 9);
+        public static final Vector leaveCubePickup = new Vector(-4, 3);
     }
     public static final class ArmSetpointPaths {
         public static final ArmAutoPath CONE_HIGH = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
@@ -173,7 +174,7 @@ public final class Constants {
                                                                         ArmSetpoints.TIPPED_PICKUP.manipulatorAngle, 0.5);
 
         public static final ArmAutoPath CUBE_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
-                                                                        ArmSetpoints.CUBE_PICKUP.armPosition, ArmSetpoints.CUBE_PICKUP.armPosition.add(BezierHandles.leaveGroundPickup)),
+                                                                        ArmSetpoints.CUBE_PICKUP.armPosition, ArmSetpoints.CUBE_PICKUP.armPosition.add(BezierHandles.leaveCubePickup)),
                                                                         ArmSetpoints.CUBE_PICKUP.manipulatorAngle, 0.5);
         
         public static ArmAutoPath getPathForSetpointPosition(SetpointPositions setpointPosition) {
