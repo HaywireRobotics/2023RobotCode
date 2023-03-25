@@ -27,6 +27,19 @@ public class Bezier {
 
         return new Vector(tx, ty);
     }
+    public Vector gradientAt(double t){
+        double tt = t*t;
+
+        double q1 = -3.0*tt + 6.0*t -3.0;
+        double q2 = 9.0*tt - 12.0*t + 3.0;
+        double q3 = -9.0*tt + 6.0*t;
+        double q4 = 3.0*tt;
+
+        double tx = p1.x*q1 + h1.x*q2 + h2.x*q3 + p2.x*q4;
+        double ty = p1.y*q1 + h1.y*q2 + h2.y*q3 + p2.y*q4;
+
+        return new Vector(tx, ty);
+    }
 
     public double nearestT(Vector target, double resolution){
         double bestT = 0;
@@ -52,5 +65,9 @@ public class Bezier {
             last = point;
         }
         return length;
+    }
+
+    public Bezier getReversed(){
+        return new Bezier(p2, h2, p1, h1);
     }
 }

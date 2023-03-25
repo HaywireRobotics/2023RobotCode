@@ -30,8 +30,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     private Bezier targetPath;
     public double followT = 0.0;
-    private double followSpeed = 0.7; // 0.35 (3/24/23) // Inches per second
+    private double followSpeed = 0.6; // 0.35 (3/24/23) // Inches per second
     private double tSpeed = 0.0;
+
+    private final double kF = 0.3;
 
     public ArmSubsystem(PulleySubsystem pulleySubsystem, ElevatorSubsystem elevatorSubsystem, ManipulatorSubsystem manipulatorSubsystem){
         m_pulleySubsystem = pulleySubsystem;
@@ -51,6 +53,8 @@ public class ArmSubsystem extends SubsystemBase {
         if(targetPath != null && followT <= 1){
             double t = Statics.clamp(followT, 0.0, 1.0);
             Vector target = targetPath.at(t);
+            Vector tangent = targetPath.gradientAt(t).normalize().scale(tSpeed*kF);
+            if(t < 0.95) target = target.add(tangent);
             SmartDashboard.putString("Arm Goal", target.toString());
             setManipulator2dPosition(target.x, target.y);
             followT += tSpeed*(1/(getManipulator2dPosition().subtract(target).magnitude())+1);
@@ -200,9 +204,12 @@ public class ArmSubsystem extends SubsystemBase {
       }
       public Command adaptiveSetpointCommand(Constants.SetpointPositions scorePosition){
         ArmAutoPath path;
-        double distanceToHigh = Constants.ArmSetpoints.CONE_HIGH.armPosition.subtract(this.getManipulator2dPosition()).magnitude();
+        Vector armPosition = this.getManipulator2dPosition();
+        double distanceToHigh = Constants.ArmSetpoints.CONE_HIGH.armPosition.subtract(armPosition).magnitude();
         if(scorePosition == Constants.SetpointPositions.CONE_MID && distanceToHigh < 5){
           path = Constants.ArmSetpointPaths.CONE_HIGH_TO_MID;
+        }if(scorePosition == Constants.SetpointPositions.STOW && armPosition.y < 10){
+            path = Constants.ArmSetpointPaths.FLOOR_STOW;
         }else{
           path = Constants.ArmSetpointPaths.getPathForSetpointPosition(scorePosition);
         }

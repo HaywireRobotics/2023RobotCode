@@ -15,8 +15,8 @@ public class ManualArmCommand extends CommandBase {
     private final CommandJoystick m_leftJoystick;
     private final CommandXboxController m_drive_controller;
 
-    private boolean hingePIDEnabled = false;
-    private boolean armPIDEnabled = false;
+    private boolean hingePIDEnabled = true;
+    private boolean armPIDEnabled = true;
 
     public ManualArmCommand(ArmSubsystem subsystem, CommandXboxController xbox, CommandJoystick joystick1, CommandJoystick joystick2){
         m_armSubsystem = subsystem;

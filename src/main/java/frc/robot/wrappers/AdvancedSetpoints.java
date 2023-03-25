@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.SetpointPositions;
 import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.subsystems.ArmSubsystem;
@@ -108,5 +109,12 @@ public class AdvancedSetpoints {
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
+    }
+
+    public Command ArmToSetpoint(SetpointPositions setpoint){
+        return m_armSubsystem.adaptiveSetpointCommand(setpoint);
+    }
+    public Command DropGamePiece(){
+        return m_armSubsystem.m_manipulatorSubsystem.dropCommand();
     }
 }

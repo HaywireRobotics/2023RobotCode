@@ -64,8 +64,8 @@ public class RobotContainer {
     private final ArmTable m_armTable = new ArmTable(m_networkTable, m_armSubsystem);
 
     SendableChooser<Command> m_auto_chooser;
-    private final AutoCommands m_autoCommands = new AutoCommands(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem);
     private final AdvancedSetpoints m_advancedSetpoints = new AdvancedSetpoints(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem);
+    private final AutoCommands m_autoCommands = new AutoCommands(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem, m_advancedSetpoints);
 
     public final Camera m_limelight = new Camera(m_networkTable, "OV5647");
     public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
@@ -141,6 +141,8 @@ public class RobotContainer {
         m_controller.leftTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0.0));
         m_controller.rightTrigger().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, Constants.DriveSetpoints.BlueSubstation[0]));
         m_controller.rightStick().onTrue(new InstantCommand(m_leds::toggleColor));
+
+        m_controller.povLeft().onTrue(m_advancedSetpoints.IntakeCubeCommand());
  
         // Uncomment to test auto scoring.
         // m_controller.leftBumper().whileTrue(AutoScore.autoScoreCommand(m_drivetrainSubsystem, m_armSubsystem, Constants.Alliances.BLUE, Constants.ScorePositions.CONE_HEIGH, 0));

@@ -77,8 +77,8 @@ public final class Constants {
                                                                   // see https://www.swervedrivespecialties.com/products/mk4-swerve-module?variant=39376675012721
     public static final double WHEEL_DIAMETER = 0.1016; // 4 inches
 
-    public static final double kMaxSpeedMetersPerSecond = 1.0;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.3;
+    public static final double kMaxSpeedMetersPerSecond = 1.75;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.7;
     // public static final TrajectoryConfig TRAJECTORY_CONFIG = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,Constants.kMaxAccelerationMetersPerSecondSquared);
     public static final PathConstraints TRAJECTORY_CONFIG = new PathConstraints(kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
 
@@ -130,7 +130,7 @@ public final class Constants {
         public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 10.5), 70);
         public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 9.5), 0);
         public static final ArmSetpoint TIPPED_PICKUP = new ArmSetpoint(new Vector(21, 1.5), 70);
-        public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(16, 3), 50);
+        public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(30, 0), 60);
 
     }
     public static final class BezierHandles{
@@ -139,7 +139,8 @@ public final class Constants {
         public static final Vector leaveMid = new Vector(-8, 3);
         public static final Vector leaveSubstation = new Vector(-5, 10);
         public static final Vector leaveGroundPickup = new Vector(-4, 9);
-        public static final Vector leaveCubePickup = new Vector(-4, 3);
+        public static final Vector toCubePickup = new Vector(-4, 5);
+        public static final Vector leaveCubePickup = new Vector(-2, 7);
     }
     public static final class ArmSetpointPaths {
         public static final ArmAutoPath CONE_HIGH = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
@@ -173,10 +174,14 @@ public final class Constants {
                                                                         ArmSetpoints.TIPPED_PICKUP.armPosition, ArmSetpoints.TIPPED_PICKUP.armPosition.add(BezierHandles.leaveGroundPickup)),
                                                                         ArmSetpoints.TIPPED_PICKUP.manipulatorAngle, 0.5);
 
-        public static final ArmAutoPath CUBE_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed),
-                                                                        ArmSetpoints.CUBE_PICKUP.armPosition, ArmSetpoints.CUBE_PICKUP.armPosition.add(BezierHandles.leaveCubePickup)),
+        public static final ArmAutoPath CUBE_PICKUP = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed.scale(2.0)),
+                                                                        ArmSetpoints.CUBE_PICKUP.armPosition, ArmSetpoints.CUBE_PICKUP.armPosition.add(BezierHandles.toCubePickup)),
                                                                         ArmSetpoints.CUBE_PICKUP.manipulatorAngle, 0.5);
+        public static final ArmAutoPath FLOOR_STOW = new ArmAutoPath(new Bezier(ArmSetpoints.CUBE_PICKUP.armPosition,ArmSetpoints.CUBE_PICKUP.armPosition.add(BezierHandles.leaveCubePickup),
+                                                                        ArmSetpoints.STOWED.armPosition,  ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed.scale(3.0))),
+                                                                        ArmSetpoints.STOWED.manipulatorAngle, 0.95);
         
+                                                                        
         public static ArmAutoPath getPathForSetpointPosition(SetpointPositions setpointPosition) {
             switch (setpointPosition) {
                 case CONE_HIGH:

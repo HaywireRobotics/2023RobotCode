@@ -21,11 +21,17 @@ public final class AutoCommands {
     public final DrivetrainSubsystem m_drivetrainSubsystem;
     public final ArmSubsystem m_armSubsystem;
     public final ManipulatorSubsystem m_manipulatorSubsystem;
+    public final AdvancedSetpoints m_advancedSetpoints;
 
-    public AutoCommands(DrivetrainSubsystem drivetrainSubsystem, ArmSubsystem armSubsystem, ManipulatorSubsystem manipulatorSubsystem) {
+    private final AutoFollowWithCommands autoFollowWithCommands;
+
+    public AutoCommands(DrivetrainSubsystem drivetrainSubsystem, ArmSubsystem armSubsystem, ManipulatorSubsystem manipulatorSubsystem, AdvancedSetpoints advancedSetpoints) {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_armSubsystem = armSubsystem;
         m_manipulatorSubsystem = manipulatorSubsystem;
+        m_advancedSetpoints = advancedSetpoints;
+
+        autoFollowWithCommands = new AutoFollowWithCommands(m_drivetrainSubsystem, m_advancedSetpoints);
     }
 
     public Command resetGyroCommand() {
@@ -104,7 +110,7 @@ public final class AutoCommands {
         //                 new Pose2d(4, 0, new Rotation2d(0)),
         //                 // Pass config
         //                 Constants.TRAJECTORY_CONFIG));
-        return new AutoFollowWithCommands(m_drivetrainSubsystem).autoFollowWithCommands("1p_3g_c");
+        return autoFollowWithCommands.autoFollowWithCommands("3p_1g");
     }
 
     public Command HighConeCommand() {
