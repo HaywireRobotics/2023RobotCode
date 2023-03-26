@@ -6,10 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.util.ArmAutoPath;
@@ -32,6 +29,7 @@ public class ArmSubsystem extends SubsystemBase {
     public double followT = 0.0;
     private double followSpeed = 0.7; // 0.35 (3/24/23) // Inches per second
     private double tSpeed = 0.0;
+    public boolean isPathFollowing = false;
 
     private final double kF = 0.3;
 
@@ -124,6 +122,18 @@ public class ArmSubsystem extends SubsystemBase {
             m_manipulatorSubsystem.updateHingePID();
             m_pulleySubsystem.updatePID();
         }
+    }
+
+    public void stabilizeManipulator() {
+        m_manipulatorSubsystem.stablize();
+    }
+    public void stabilizeArm() {
+        m_elevatorSubsystem.stablize();
+        m_pulleySubsystem.stablize();
+    }
+    public void stabilizeAll() {
+        stabilizeManipulator();
+        stabilizeArm();
     }
 
     public double getArmAngle(){

@@ -43,23 +43,31 @@ public class ManualArmCommand extends CommandBase {
     }
     @Override
     public void execute() {
-        if(hingePIDEnabled){
+        if (hingePIDEnabled){
             m_armSubsystem.m_manipulatorSubsystem.updateHingePID();
         }
         if (armPIDEnabled){
             m_armSubsystem.m_elevatorSubsystem.updatePID();
             m_armSubsystem.m_pulleySubsystem.updatePID();
         }
+
+        boolean isManual = false;
         if (m_rightJoystick.button(1).getAsBoolean()) {
             pulleyJoystick();
+            isManual = true;
         } else if (!armPIDEnabled){
             m_armSubsystem.setPulleyPower(0);
         }
 
         if (m_leftJoystick.button(1).getAsBoolean()) {
             elevatorJoystick();
+            isManual = true;
         } else if (!armPIDEnabled){
             m_armSubsystem.setElevatorPower(0);
+        }
+
+        if (!m_armSubsystem.isPathFollowing && !isManual) {
+            stabilizeArm();
         }
     }
     // public Command elevatorJoystickCommand(){
@@ -108,15 +116,11 @@ public class ManualArmCommand extends CommandBase {
         hingePIDEnabled = false;
     }
     private void stabilizeManipulator() {
-        double currentAngle = m_armSubsystem.getManipulatorHingeAngle();
-        m_armSubsystem.m_manipulatorSubsystem.setHingeTarget(currentAngle);
+        m_armSubsystem.stabilizeManipulator();
         hingePIDEnabled = true;
     }
     private void stabilizeArm() {
-        double elevatorPosition = m_armSubsystem.getElevatorPosition();
-        double pulleyPosition = m_armSubsystem.getArmRawLength();
-        m_armSubsystem.setElevatorTarget(elevatorPosition);
-        m_armSubsystem.setPulleyTarget(pulleyPosition);
+        m_armSubsystem.stabilizeArm();
         armPIDEnabled = true;
     }
     private void stabilizeAll() {

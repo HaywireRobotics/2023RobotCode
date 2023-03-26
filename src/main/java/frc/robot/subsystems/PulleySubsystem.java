@@ -97,6 +97,11 @@ public class PulleySubsystem extends SubsystemBase{
         pulleyPID.reset();
     }
 
+    public void stablize() {
+        double currentPosition = getPositionInches();
+        setTargetInches(currentPosition);
+    }
+
     public boolean isAtSetpoint(){
         return pulleyPID.atSetpoint();
     }
