@@ -117,10 +117,8 @@ public final class AutoCommands {
         return Commands.sequence(
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
-            new WaitCommand(0.1),
             m_manipulatorSubsystem.dropCommand()
-                .withTimeout(1),
-            new WaitCommand(0.1),
+                .withTimeout(0.8),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
@@ -130,10 +128,8 @@ public final class AutoCommands {
         return Commands.sequence(
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
-            new WaitCommand(0.1),
             m_manipulatorSubsystem.dropCommand()
-                .withTimeout(1),
-            new WaitCommand(0.1),
+                .withTimeout(0.8),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
