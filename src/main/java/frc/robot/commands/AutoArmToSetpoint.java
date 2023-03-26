@@ -41,6 +41,7 @@ public class AutoArmToSetpoint extends CommandBase{
     @Override
     public void end(boolean interrupted) {
         m_armSubsystem.isPathFollowing = false;
+        m_armSubsystem.stabilizeArm();
     }
 
     @Override

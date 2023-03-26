@@ -51,23 +51,16 @@ public class ManualArmCommand extends CommandBase {
             m_armSubsystem.m_pulleySubsystem.updatePID();
         }
 
-        boolean isManual = false;
         if (m_rightJoystick.button(1).getAsBoolean()) {
             pulleyJoystick();
-            isManual = true;
         } else if (!armPIDEnabled){
             m_armSubsystem.setPulleyPower(0);
         }
 
         if (m_leftJoystick.button(1).getAsBoolean()) {
             elevatorJoystick();
-            isManual = true;
         } else if (!armPIDEnabled){
             m_armSubsystem.setElevatorPower(0);
-        }
-
-        if (!m_armSubsystem.isPathFollowing && !isManual) {
-            stabilizeArm();
         }
     }
     // public Command elevatorJoystickCommand(){
