@@ -26,7 +26,6 @@ public class AutoArmToSetpoint extends CommandBase{
     public void initialize(){
         m_armSubsystem.followPath(targetPath);
         m_armSubsystem.setManipulatorHingeTarget(startAngleTarget);
-        m_armSubsystem.isPathFollowing = true;
     }
 
     @Override
@@ -40,7 +39,7 @@ public class AutoArmToSetpoint extends CommandBase{
 
     @Override
     public void end(boolean interrupted) {
-        m_armSubsystem.isPathFollowing = false;
+        m_armSubsystem.endPath();
         m_armSubsystem.stabilizeArm();
     }
 

@@ -124,7 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setEncoder(inches*ELEVATOR_GEAR_RATIO/DEGREES_TO_INCHES);
         elevatorEncoder.setPositionOffset(inches*ELEVATOR_GEAR_RATIO/DEGREES_TO_INCHES-(elevatorEncoder.get()-elevatorEncoder.getPositionOffset()));
     }
-    public void stablize() {
+    public void stabilize() {
         double currentPosition = getPosition();
         setTarget(currentPosition);
     }
