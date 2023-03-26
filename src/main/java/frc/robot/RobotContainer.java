@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,9 +22,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.commands.AutoDriveToTarget;
+import frc.robot.commands.AutoScore;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.ManualArmCommand;
+import frc.robot.commands.ManualArmBindings;
 import frc.robot.commands.ManualBalanceDrive;
 import frc.robot.networktables.ArmPoseViz;
 import frc.robot.networktables.ArmTable;
@@ -86,7 +90,8 @@ public class RobotContainer {
         // Right stick X axis -> rotation
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
 
-        m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller, m_rightJoystick, m_leftJoystick));
+        m_armSubsystem.setDefaultCommand(new InstantCommand(m_armSubsystem::updateAllPID));
+        new ManualArmBindings(m_armSubsystem, m_controller, m_rightJoystick, m_leftJoystick);
         // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
         m_auto_chooser = new SendableChooser<>();
@@ -124,22 +129,23 @@ public class RobotContainer {
         m_controller.start().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
         m_controller.povDown().onTrue(new InstantCommand(()->{m_drivetrainSubsystem.resetGyroscope();}));
 
-        m_controller.y().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
-        m_controller.b().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
-        m_controller.a().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
-        m_controller.x().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
+        m_controller.y().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
+        m_controller.b().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
+        m_controller.a().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
+        m_controller.x().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
         // m_controller.x().onTrue(m_advancedSetpoints.substationCommand());
-        m_controller.rightBumper().whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW));
+        m_controller.rightBumper().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW));
 
-        m_rightJoystick.button(4).whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
-        m_rightJoystick.button(5).whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
-        m_leftJoystick.button(3).whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
-        m_leftJoystick.button(2).whileTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.TIPPED_PICKUP));
+        m_rightJoystick.button(4).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
+        m_rightJoystick.button(5).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
+        m_leftJoystick.button(3).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
+        m_leftJoystick.button(2).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.TIPPED_PICKUP));
 
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
-        m_controller.leftTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0.0));
-        m_controller.rightTrigger().whileTrue(new AutoDriveToTarget(m_drivetrainSubsystem, Constants.DriveSetpoints.BlueSubstation[0]));
+        // m_controller.leftTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0.0));
+        m_controller.rightTrigger().whileTrue(m_advancedSetpoints.gridCommand(() -> new Transform2d(new Translation2d(m_controller.getLeftX()*0.2, m_controller.getLeftY()*0.2), Rotation2d.fromDegrees(m_controller.getRightX()*10))));
+        m_controller.rightTrigger().whileTrue(m_advancedSetpoints.substationCommand());
         m_controller.rightStick().onTrue(new InstantCommand(m_leds::toggleColor));
 
         m_controller.povLeft().onTrue(m_advancedSetpoints.IntakeCubeCommand());

@@ -78,7 +78,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     public void resetPID(){
         hingePID.reset();
     }
-    public void stablize() {
+    public void stabilize() {
         double currentAngle = getHingeAngle();
         setHingeTarget(currentAngle);
     }
