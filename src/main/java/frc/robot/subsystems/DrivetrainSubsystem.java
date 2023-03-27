@@ -112,7 +112,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return navx.getRoll();
     }
     public Vector getGyroHorizontalG(){
-        return new Vector(navx.getWorldLinearAccelX(), navx.getWorldLinearAccelY());
+        return new Vector(navx.getRawAccelX()-navx.getWorldLinearAccelX(), navx.getRawAccelY()-navx.getWorldLinearAccelY());
     }
     
     public Command flipGyroCommand() {
@@ -126,9 +126,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backLeft.setState(backLeftState);
     }
 
-    public void driveVector(double speed, double direction, double aSpeed) {
+    public void driveVector(double speed, double direction, double aSpeed, boolean fieldCentric) {
         double driveSpeed = speed * Constants.MAX_SPEED;
-        double driveAngle = direction + getNavx();  // field-centric
+        double driveAngle = direction + (fieldCentric ? getNavx() : 0);  // field-centric
 
         SwerveModuleState frontLeftDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
         SwerveModuleState frontRightDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
@@ -147,6 +147,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         setFrontRight(this.addStates(frontRightDrive, frontRightRotate));
         setBackLeft(this.addStates(backLeftDrive, backLeftRotate));
         setBackRight(this.addStates(backRightDrive, backRightRotate));
+    }
+    public void driveVector(double speed, double direction, double aSpeed) {
+        driveVector(speed, direction, aSpeed, true);
     }
     public Command driveVectorCommand(double speed, double angle, double aSpeed) {
         return Commands.startEnd(

@@ -32,10 +32,6 @@ public class BalanceChargeStation extends CommandBase {
         return Statics.map(Math.abs(roll), acceptedError/2, 45, 0, 0.5);
     }
 
-    private Vector getUpwardVector(){
-        return m_drivetrainSubsystem.getGyroHorizontalG().scale(-1);
-    }
-
     @Override
     public void end(boolean interrupted) {
         m_drivetrainSubsystem.lockDrive();
