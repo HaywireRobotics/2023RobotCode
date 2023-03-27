@@ -1,6 +1,9 @@
 package frc.robot.wrappers;
 
+import java.util.concurrent.Callable;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,11 +38,11 @@ public class AdvancedSetpoints {
         Constants.Alliances alliance = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? Constants.Alliances.BLUE : Constants.Alliances.RED;
         Pose2d driveGoal = getNearestSubstation(alliance);
         return new SequentialCommandGroup(
-            // new ParallelCommandGroup(
-            //     new AutoDriveToTarget(m_drivetrainSubsystem, driveGoal),
+            new ParallelCommandGroup(
+                new AutoDriveToTarget(m_drivetrainSubsystem, driveGoal),
                 new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.SUBSTATION)
-                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
-            // ),
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
+            ),
             m_manipulatorSubsystem.intakeCommand(),
             new InstantCommand(() -> {m_armSubsystem.setManipulator2dPosition(Constants.ArmSetpoints.SUBSTATION.armPosition.x, Constants.ArmSetpoints.SUBSTATION.armPosition.y-5);}),
             m_manipulatorSubsystem.setHingeTargetCommand(150),
@@ -47,6 +50,33 @@ public class AdvancedSetpoints {
             m_manipulatorSubsystem.stopCommand(),
             new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOW)
         );
+    }
+    public Command gridCommand(Callable<Transform2d> offset){
+        Constants.Alliances alliance = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? Constants.Alliances.BLUE : Constants.Alliances.RED;
+        Pose2d driveGoal = getNearestGrid(alliance);
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new AutoDriveToTarget(m_drivetrainSubsystem, driveGoal.plus(readTransformCallable(offset))),
+                new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.SUBSTATION)
+                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
+            ),
+            m_manipulatorSubsystem.intakeCommand(),
+            new InstantCommand(() -> {m_armSubsystem.setManipulator2dPosition(Constants.ArmSetpoints.SUBSTATION.armPosition.x, Constants.ArmSetpoints.SUBSTATION.armPosition.y-5);}),
+            m_manipulatorSubsystem.setHingeTargetCommand(150),
+            new WaitCommand(0.5),
+            m_manipulatorSubsystem.stopCommand(),
+            new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOW)
+        );
+    }
+    public Command gridCommand(){
+        return gridCommand(() -> new Transform2d());
+    }
+    private Transform2d readTransformCallable(Callable<Transform2d> callable){
+        try{
+            return callable.call();
+        } catch (Exception e){
+            return new Transform2d();
+        }
     }
 
     private Pose2d getNearestDriveTarget(Constants.Alliances alliance){

@@ -29,7 +29,6 @@ public class ArmSubsystem extends SubsystemBase {
     public double followT = 0.0;
     private double followSpeed = 0.7; // 0.35 (3/24/23) // Inches per second
     private double tSpeed = 0.0;
-    public boolean isPathFollowing = false;
 
     private final double kF = 0.3;
 
@@ -63,6 +62,12 @@ public class ArmSubsystem extends SubsystemBase {
         targetPath = path;
         followT = path.nearestT(getManipulator2dPosition(), 0.01);
         tSpeed = followSpeed/targetPath.lengthEstimate(0.01);
+    }
+
+    public void endPath(){
+        targetPath = null;
+        followT = 0.0;
+        tSpeed = 0.0;
     }
 
     /* Raw Controls */
@@ -125,11 +130,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void stabilizeManipulator() {
-        m_manipulatorSubsystem.stablize();
+        m_manipulatorSubsystem.stabilize();
     }
     public void stabilizeArm() {
-        m_elevatorSubsystem.stablize();
-        m_pulleySubsystem.stablize();
+        m_elevatorSubsystem.stabilize();
+        m_pulleySubsystem.stabilize();
     }
     public void stabilizeAll() {
         stabilizeManipulator();
