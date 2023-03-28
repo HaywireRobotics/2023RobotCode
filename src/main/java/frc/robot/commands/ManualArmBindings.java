@@ -1,53 +1,49 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.util.Statics;
 
 public class ManualArmBindings{
 
     private final ArmSubsystem m_armSubsystem;
-    private final CommandJoystick m_rightJoystick;
-    private final CommandJoystick m_leftJoystick;
-    private final CommandXboxController m_drive_controller;
+    private final CommandXboxController m_manipulator_controller;
 
-    public ManualArmBindings(ArmSubsystem subsystem, CommandXboxController xbox, CommandJoystick joystick1, CommandJoystick joystick2){
+    public ManualArmBindings(ArmSubsystem subsystem, CommandXboxController manipulatorController){
         m_armSubsystem = subsystem;
-        m_rightJoystick = joystick1;
-        m_leftJoystick = joystick2;
-        m_drive_controller = xbox;
+        m_manipulator_controller = manipulatorController;
 
         configureButtonBindings();
     }
 
     private void configureButtonBindings() {
-        m_rightJoystick.button(3).whileTrue(rawManipulatorUp());
-        m_rightJoystick.button(2).whileTrue(rawManipulatorDown());
+        m_manipulator_controller.rightBumper().whileTrue(rawManipulatorUp());
+        m_manipulator_controller.rightTrigger().whileTrue(rawManipulatorDown());
 
-        m_leftJoystick.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCommand());
-        m_leftJoystick.button(5).whileTrue(m_armSubsystem.m_manipulatorSubsystem.dropCommand());
-        m_leftJoystick.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.shootCommand());
+        m_manipulator_controller.leftBumper().whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCommand());
+        m_manipulator_controller.leftTrigger().whileTrue(m_armSubsystem.m_manipulatorSubsystem.dropCommand());
+        // m_manipulator_controller.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.shootCommand());
 
-        m_rightJoystick.button(1).whileTrue(pulleyJoystickCommand());
-        m_leftJoystick.button(1).whileTrue(elevatorJoystickCommand());
+        m_manipulator_controller.rightStick().whileTrue(pulleyJoystickCommand());
+        m_manipulator_controller.leftStick().whileTrue(elevatorJoystickCommand());
     }
     
     private void elevatorJoystick(){
-        double yAxis2 = m_leftJoystick.getY();
-        if(yAxis2 < 0.05 && yAxis2 > -0.05) yAxis2 = 0;
+        double yAxis2 = m_manipulator_controller.getLeftY();
+        // if(yAxis2 < 0.05 && yAxis2 > -0.05) yAxis2 = 0;
+        yAxis2 = Statics.applyDeadband(yAxis2, 0.05);
         m_armSubsystem.setElevatorPower(yAxis2);
     }
     private Command elevatorJoystickCommand(){
         return Commands.startEnd(this::elevatorJoystick, this::stabilizeArm, m_armSubsystem.m_elevatorSubsystem).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
     }
     private void pulleyJoystick(){
-        double yAxis1 = m_rightJoystick.getY();
-        if(yAxis1 < 0.05 && yAxis1 > -0.05) yAxis1 = 0;
+        double yAxis1 = m_manipulator_controller.getRightY();
+        // if(yAxis1 < 0.05 && yAxis1 > -0.05) yAxis1 = 0;
+        yAxis1 = Statics.applyDeadband(yAxis1, 0.05);
         m_armSubsystem.setPulleyPower(-yAxis1);
     }
     private Command pulleyJoystickCommand(){

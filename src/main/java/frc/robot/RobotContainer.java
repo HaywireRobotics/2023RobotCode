@@ -60,8 +60,9 @@ public class RobotContainer {
     private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
 
     private final CommandXboxController m_controller = new CommandXboxController(0);
-    private final CommandJoystick m_rightJoystick = new CommandJoystick(1);
-    private final CommandJoystick m_leftJoystick = new CommandJoystick(2);
+    private final CommandXboxController m_manipulatorController = new CommandXboxController(1);
+    // private final CommandJoystick m_rightJoystick = new CommandJoystick(1);
+    // private final CommandJoystick m_leftJoystick = new CommandJoystick(2);
 
     private final NetworkTableInstance m_networkTable = NetworkTableInstance.getDefault();
     private final DriveOdometryTable m_drivetrainTable = new DriveOdometryTable(m_networkTable, m_drivetrainSubsystem);
@@ -91,7 +92,7 @@ public class RobotContainer {
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
 
         m_armSubsystem.setDefaultCommand(new InstantCommand(m_armSubsystem::updateAllPID));
-        new ManualArmBindings(m_armSubsystem, m_controller, m_rightJoystick, m_leftJoystick);
+        new ManualArmBindings(m_armSubsystem, m_manipulatorController);
         // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
         m_auto_chooser = new SendableChooser<>();
@@ -136,10 +137,11 @@ public class RobotContainer {
         // m_controller.x().onTrue(m_advancedSetpoints.substationCommand());
         m_controller.rightBumper().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW));
 
-        m_rightJoystick.button(4).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
-        m_rightJoystick.button(5).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
-        m_leftJoystick.button(3).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
-        m_leftJoystick.button(2).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.TIPPED_PICKUP));
+        m_manipulatorController.y().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
+        m_manipulatorController.b().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
+        m_manipulatorController.a().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
+        m_manipulatorController.x().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
+        m_manipulatorController.povDown().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.TIPPED_PICKUP));
 
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
