@@ -28,16 +28,16 @@ public class AutoFollowWithCommands{
         m_advancedSetpoints = advancedSetpoints;
 
         eventMap.put("intakeCone", new PrintCommand("IntakeCone"));
-        eventMap.put("intakeCone", m_advancedSetpoints.IntakeConeCommand());
+        // eventMap.put("intakeCone", m_advancedSetpoints.IntakeConeCommand());
         eventMap.put("intakeCube", new PrintCommand("IntakeCube"));
         // eventMap.put("intakeCube", m_advancedSetpoints.IntakeCubeCommand());
         eventMap.put("setConeHigh", new PrintCommand("SetConeHigh"));
         // eventMap.put("setConeHigh", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.CONE_HIGH));
 
         eventMap.put("stow", new PrintCommand("Stow"));
-        // eventMap.put("stow", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW).withTimeout(0.5));
+        // eventMap.put("stow", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW));
         eventMap.put("drop", new PrintCommand("Drop"));
-        // eventMap.put("drop", m_advancedSetpoints.DropGamePiece());
+        // eventMap.put("drop", m_advancedSetpoints.DropGamePiece().withTimeout(0.5));
         // eventMap.put("substation", new PrintCommand("Substation"));
         eventMap.put("substation", enableDriveLock());
 

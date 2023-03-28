@@ -128,7 +128,7 @@ public final class Constants {
         public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
         public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 130), 110); // 140
         public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 10.5), 70);
-        public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 9.5), 0);
+        public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 7.5), 0);
         public static final ArmSetpoint TIPPED_PICKUP = new ArmSetpoint(new Vector(21, 1.5), 70);
         public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(30, 0), 60);
         public static final ArmSetpoint CONE_PICKUP = new ArmSetpoint(new Vector(25, 0), 75);

@@ -115,9 +115,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return new Vector(navx.getRawAccelX()-navx.getWorldLinearAccelX(), navx.getRawAccelY()-navx.getWorldLinearAccelY());
     }
     
-    public Command flipGyroCommand() {
-        return new InstantCommand(() -> {setGyroOffset(180);});
-    }
+    // public Command flipGyroCommand() {
+    //     return new InstantCommand(() -> {setGyroOffset(180);});
+    // }
 
     public void periodic() {
         frontRight.setState(frontRightState);
@@ -152,8 +152,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         driveVector(speed, direction, aSpeed, true);
     }
     public Command driveVectorCommand(double speed, double angle, double aSpeed) {
+        return driveVectorCommand(speed, angle, aSpeed, true);
+    }
+    public Command driveVectorCommand(double speed, double angle, double aSpeed, boolean fieldCentric) {
         return Commands.startEnd(
-            () -> {this.driveVector(speed, angle, aSpeed);},
+            () -> {this.driveVector(speed, angle, aSpeed, fieldCentric);},
             this::lockDrive,
             this
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);

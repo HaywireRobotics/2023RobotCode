@@ -1,15 +1,16 @@
 package frc.robot.wrappers;
-import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.AutoDriveState;
 import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.commands.AutoFollowTrajectory;
 import frc.robot.commands.AutoFollowWithCommands;
@@ -34,20 +35,12 @@ public final class AutoCommands {
         autoFollowWithCommands = new AutoFollowWithCommands(m_drivetrainSubsystem, m_advancedSetpoints);
     }
 
-    public Command resetGyroCommand() {
-        return m_drivetrainSubsystem.flipGyroCommand();
-    }
-
     public Command NoDriveCubeCommand() {
-        return Commands.sequence(
-            m_drivetrainSubsystem.flipGyroCommand(),
-            m_armSubsystem.m_manipulatorSubsystem.shootCommand().withTimeout(2)
-        );
+        return m_armSubsystem.m_manipulatorSubsystem.shootCommand().withTimeout(2);
     }
 
     public Command DriveNoCubeCommand(double x, double y, double a) {
         return Commands.sequence(
-            m_drivetrainSubsystem.flipGyroCommand(),
             // new InstantCommand(() -> {m_drivetrainSubsystem.driveVector(speed, angle, 0);}),
             // m_drivetrainSubsystem.driveVectorCommand(speed, angle, 0).withTimeout(time)
             new AutoDriveToTarget(m_drivetrainSubsystem, new Pose2d(new Translation2d(x, y), Rotation2d.fromDegrees(a)))
@@ -58,11 +51,21 @@ public final class AutoCommands {
         );
     }
 
+    public Command TimeBasedDriveNoCubeCommand(double speed, double angle, double time) {
+        return Commands.sequence(
+            m_drivetrainSubsystem.driveVectorCommand(speed, angle, 0, false).withTimeout(time),
+            new InstantCommand(m_drivetrainSubsystem::lockDrive)
+        );
+    }
+
     public Command LeaveCommunityNoCubeCommand() {
         return Commands.sequence(
-            m_drivetrainSubsystem.flipGyroCommand(),
             DriveNoCubeCommand(0, 3, 0)
         );
+    }
+
+    public Command TimeBasedLeaveCommunityNoCubeCommand() {
+        return TimeBasedDriveNoCubeCommand(0.25, 180, 5);
     }
 
     public Command LeaveCommunityCubeCommand() {
@@ -74,10 +77,13 @@ public final class AutoCommands {
 
     public Command DockNoCubeCommand() {
         return Commands.sequence(
-            m_drivetrainSubsystem.flipGyroCommand(),
             DriveNoCubeCommand(0, 2.5, 0),
             new InstantCommand(m_drivetrainSubsystem::lockDrive)
         );
+    }
+
+    public Command TimeBasedDockNoCubeCommand() {
+        return TimeBasedDriveNoCubeCommand(0.25, 180, 3.5);
     }
 
     public Command DockCubeCommand() {
@@ -118,7 +124,7 @@ public final class AutoCommands {
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
             m_manipulatorSubsystem.dropCommand()
-                .withTimeout(0.8),
+                .withTimeout(0.5),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
@@ -129,7 +135,7 @@ public final class AutoCommands {
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
             m_manipulatorSubsystem.dropCommand()
-                .withTimeout(0.8),
+                .withTimeout(0.5),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );

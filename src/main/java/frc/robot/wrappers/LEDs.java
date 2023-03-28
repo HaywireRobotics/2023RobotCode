@@ -18,8 +18,9 @@ public class LEDs {
     private Color[] cycleColors = new Color[0];
     private int colorIndex = 0;
     // private Modes mode = Modes.SOLID;
+    private final double rainbowCycleSpeed = 0.1;
 
-    private final int numLeds = 150;
+    private final int numLeds = 95;
 
     private final Color coneColor = new Color(255, 150, 0);
     private final Color cubeColor = Color.kPurple;
@@ -34,6 +35,9 @@ public class LEDs {
 
         leds.setData(buffer);
         leds.start();
+
+        timer.reset();
+        timer.start();
 
         setSolid(allianceColor);
     }
@@ -62,6 +66,16 @@ public class LEDs {
         cycleColors = new Color[2];
         cycleColors[0] = c;
         cycleColors[1] = Color.kBlack;
+    }
+
+    public void rainbowBarf() {
+        double currentTime = timer.get();
+        int hueOffset = (int)Math.floor((currentTime/rainbowCycleSpeed) % 180);
+
+        for (int i = 0; i < numLeds; i++) {
+            buffer.setHSV(i, hueOffset+i % 180, 255, 255);
+        }
+        updateLEDs();
     }
 
     public void update(){

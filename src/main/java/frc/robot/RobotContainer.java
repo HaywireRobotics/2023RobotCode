@@ -18,6 +18,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoArmToSetpoint;
@@ -90,8 +91,8 @@ public class RobotContainer {
         // Left stick X axis -> left and right movement
         // Right stick X axis -> rotation
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
-
-        m_armSubsystem.setDefaultCommand(new InstantCommand(m_armSubsystem::updateAllPID));
+        Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem);
+        m_armSubsystem.setDefaultCommand(updateArmPIDs);
         new ManualArmBindings(m_armSubsystem, m_manipulatorController);
         // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
@@ -101,7 +102,7 @@ public class RobotContainer {
         m_auto_chooser.addOption("Leave Community No Cube", m_autoCommands.LeaveCommunityNoCubeCommand());
         m_auto_chooser.addOption("Dock Drop Cube", m_autoCommands.DockCubeCommand());
         m_auto_chooser.addOption("Dock No Cube", m_autoCommands.DockNoCubeCommand());
-        m_auto_chooser.addOption("NO Auto", m_drivetrainSubsystem.flipGyroCommand());
+        m_auto_chooser.addOption("NO Auto", new InstantCommand());
         m_auto_chooser.addOption("High Cone", m_autoCommands.HighConeCommand());
         m_auto_chooser.addOption("testAuto", m_autoCommands.testAuto());
         m_auto_chooser.addOption("testTrajectory", m_autoCommands.testTrajectory());
@@ -150,7 +151,7 @@ public class RobotContainer {
         m_controller.rightTrigger().whileTrue(m_advancedSetpoints.substationCommand());
         m_controller.rightStick().onTrue(new InstantCommand(m_leds::toggleColor));
 
-        m_controller.povLeft().onTrue(m_advancedSetpoints.IntakeCubeCommand());
+        // m_controller.povLeft().onTrue(m_advancedSetpoints.IntakeCubeCommand());
  
         // Uncomment to test auto scoring.
         // m_controller.leftBumper().whileTrue(AutoScore.autoScoreCommand(m_drivetrainSubsystem, m_armSubsystem, Constants.Alliances.BLUE, Constants.ScorePositions.CONE_HEIGH, 0));
@@ -200,6 +201,10 @@ public class RobotContainer {
         m_leds.update();
     }
 
+    public void rainbowBarf() {
+        m_leds.rainbowBarf();
+    }
+
     // needed to handle the alliance being unknown until the driverstation connects
     public void updateAlliance() {
         Alliance actualAlliance = DriverStation.getAlliance();
@@ -232,7 +237,8 @@ public class RobotContainer {
         m_drivetrainSubsystem.resetPose();
     }
     public void zeroGyro(){
-        m_drivetrainSubsystem.resetGyroscope();
+        // m_drivetrainSubsystem.resetGyroscope();
+        m_drivetrainSubsystem.resetGyroscope(DriverStation.getAlliance() == DriverStation.Alliance.Blue ? 0 : 180);
     }
 
     public void resetEncoders(){

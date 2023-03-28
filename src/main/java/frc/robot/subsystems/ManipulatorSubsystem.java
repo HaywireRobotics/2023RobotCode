@@ -32,7 +32,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     private final double MANIPULATOR_HINGE_MAX_POWER = 0.85;
     private final double MANIPULATOR_HINGE_MIN_POWER = -0.25;
 
-    private final double MANIPULATOR_HINGE_GEAR_RATIO = 84.0/1.0;
+    private final double MANIPULATOR_HINGE_GEAR_RATIO = 81.0/1.0;
 
 
     public ManipulatorSubsystem(){
