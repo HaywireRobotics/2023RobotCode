@@ -81,6 +81,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             // resetPID();
         }
         elevatorMotor.set(_power);
+
+        SmartDashboard.putNumber("Arm Elevator Power", _power);
     }
 
     private boolean getLimitSwitch(){

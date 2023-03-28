@@ -84,6 +84,8 @@ public class PulleySubsystem extends SubsystemBase{
         }
 
         pulleyMotor.set(_power);
+
+        SmartDashboard.putNumber("Arm Pulley Power", _power);
     }
     private boolean getLimitSwitch(){
         return pulleyLimitSwitch.get();

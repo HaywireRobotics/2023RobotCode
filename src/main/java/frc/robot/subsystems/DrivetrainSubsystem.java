@@ -297,6 +297,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
     public void mergeCameraPose(Pose2d cameraPose1, Pose2d cameraPose2, double confidence1, double confidence2){
         double totalConfidence = confidence1 + confidence2;
+        if (totalConfidence == 0) return;
         Pose2d cameraPose = Statics.sumPoses(cameraPose1.times(confidence1), cameraPose2.times(confidence2)).times(1.0/totalConfidence);
         
         Vector newTranslation = translation.scale( 1-totalConfidence ).add(

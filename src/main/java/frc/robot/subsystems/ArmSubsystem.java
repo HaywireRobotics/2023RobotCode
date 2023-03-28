@@ -27,10 +27,11 @@ public class ArmSubsystem extends SubsystemBase {
 
     private Bezier targetPath;
     public double followT = 0.0;
-    private double followSpeed = 0.7; // 0.35 (3/24/23) // Inches per second
+    private double followSpeed = 0.6; // 0.35 (3/24/23) // Inches per second (JK)
     private double tSpeed = 0.0;
 
-    private final double kF = 0.3;
+    private final double kV = 0.3;
+    private final double kP = 0.1;
 
     public ArmSubsystem(PulleySubsystem pulleySubsystem, ElevatorSubsystem elevatorSubsystem, ManipulatorSubsystem manipulatorSubsystem){
         m_pulleySubsystem = pulleySubsystem;
@@ -49,12 +50,23 @@ public class ArmSubsystem extends SubsystemBase {
 
         if(targetPath != null && followT <= 1){
             double t = Statics.clamp(followT, 0.0, 1.0);
+            Vector manipulatorPosition = getManipulator2dPosition();
             Vector target = targetPath.at(t);
-            Vector tangent = targetPath.gradientAt(t).normalize().scale(tSpeed*kF);
-            if(t < 0.95) target = target.add(tangent);
+            double closest = targetPath.nearestT(manipulatorPosition, t+0.05, 0.005, 0.1);
+            Vector closestPoint = targetPath.at(closest);
+            Vector tangent = targetPath.gradientAt(closest).normalize().scale(tSpeed*kV);
+
+            if(t < 0.98) target = target.add(tangent);
+            target.add(closestPoint.subtract(manipulatorPosition).scale(kP));
+
             SmartDashboard.putString("Arm Goal", target.toString());
             setManipulator2dPosition(target.x, target.y);
-            followT += tSpeed*(1/(getManipulator2dPosition().subtract(target).magnitude())+1);
+            followT += tSpeed*(1/(manipulatorPosition.subtract(target).magnitude())+1);
+
+            if(followT < closest) followT = closest;
+
+            double[] errorArray = {manipulatorPosition.subtract(target).x, manipulatorPosition.subtract(target).y};
+            SmartDashboard.putNumberArray("Arm Error", errorArray);
         }
     }
 
@@ -217,19 +229,19 @@ public class ArmSubsystem extends SubsystemBase {
         path = Constants.ArmSetpointPaths.getPathForSetpointPosition(scorePosition);
         return new AutoArmToSetpoint(this, path);
       }
-      public Command adaptiveSetpointCommand(Constants.SetpointPositions scorePosition){
+    public Command adaptiveSetpointCommand(Constants.SetpointPositions scorePosition){
         ArmAutoPath path;
         Vector armPosition = this.getManipulator2dPosition();
         double distanceToHigh = Constants.ArmSetpoints.CONE_HIGH.armPosition.subtract(armPosition).magnitude();
         if(scorePosition == Constants.SetpointPositions.CONE_MID && distanceToHigh < 5){
-          path = Constants.ArmSetpointPaths.CONE_HIGH_TO_MID;
+            path = Constants.ArmSetpointPaths.CONE_HIGH_TO_MID;
         }if(scorePosition == Constants.SetpointPositions.STOW && armPosition.y < 10){
             path = Constants.ArmSetpointPaths.FLOOR_STOW;
         }else{
-          path = Constants.ArmSetpointPaths.getPathForSetpointPosition(scorePosition);
+            path = Constants.ArmSetpointPaths.getPathForSetpointPosition(scorePosition);
         }
         return new AutoArmToSetpoint(this, path);
-      }
+    }
 
     public void disable(){
         enabled = false;

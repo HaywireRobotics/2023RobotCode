@@ -43,12 +43,18 @@ public class AdvancedSetpoints {
                 new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.SUBSTATION)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
             ),
+            grabSubstationConeCommand(),
+            new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOW)
+        );
+    }
+    public Command grabSubstationConeCommand(){
+        return new SequentialCommandGroup(
             m_manipulatorSubsystem.intakeCommand(),
-            new InstantCommand(() -> {m_armSubsystem.setManipulator2dPosition(Constants.ArmSetpoints.SUBSTATION.armPosition.x, Constants.ArmSetpoints.SUBSTATION.armPosition.y-5);}),
+            new InstantCommand(() -> {m_armSubsystem.setManipulator2dPosition(Constants.ArmSetpoints.SUBSTATION.armPosition.x, Constants.ArmSetpoints.SUBSTATION.armPosition.y-6);}),
             m_manipulatorSubsystem.setHingeTargetCommand(150),
             new WaitCommand(0.5),
             m_manipulatorSubsystem.stopCommand(),
-            new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOW)
+            new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.SUBSTATION)
         );
     }
     public Command gridCommand(Callable<Transform2d> offset){

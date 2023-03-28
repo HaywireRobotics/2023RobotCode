@@ -54,6 +54,19 @@ public class Bezier {
             }
         }
         return bestT;
+    }public double nearestT(Vector target, double start, double stride, double scanSize){
+        double bestT = 0;
+        double bestDist2 = Double.MAX_VALUE;
+        for(double t = Statics.clamp(start, 0, 1); Math.abs(t-start) < Math.abs(scanSize) && t >= 0 && t <= 1; t+=stride){
+            Vector point = at(t);
+            Vector error = target.subtract(point);
+            double distance2 = error.x*error.x + error.y*error.y;
+            if(distance2 < bestDist2){
+                bestDist2 = distance2;
+                bestT = t;
+            }
+        }
+        return bestT;
     }
     public double lengthEstimate(double resolution){
         double length = 0;
