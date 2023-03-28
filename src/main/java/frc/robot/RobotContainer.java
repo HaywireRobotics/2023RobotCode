@@ -128,7 +128,7 @@ public class RobotContainer {
         // m_controller.b().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
         m_controller.back().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
         m_controller.start().onTrue(new InstantCommand(m_drivetrainSubsystem::resetPose));
-        m_controller.povDown().onTrue(new InstantCommand(()->{m_drivetrainSubsystem.resetGyroscope();}));
+        m_controller.povDown().onTrue(new InstantCommand(()->{m_drivetrainSubsystem.resetGyroscope(DriverStation.getAlliance() == DriverStation.Alliance.Blue ? 0 : 180);}));
 
         m_controller.y().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
         m_controller.b().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));

@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -51,7 +52,9 @@ public class DefaultDriveCommand extends CommandBase {
         leftY = leftVector.y;
         // System.out.println(leftVector.toString());
 
-        m_subsystem.driveArcade(leftX, leftY, rightX);
+        double mirrorField = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? 1.0 : -1.0;
+
+        m_subsystem.driveArcade(leftX*mirrorField, leftY*mirrorField, rightX);
       
         /* Odometry */
         m_subsystem.updateOdometry();
