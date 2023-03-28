@@ -39,6 +39,8 @@ public class Camera {
     private double CONFIDENCE_ALTITUDE = 7.0; // confidence lost per meter the robot is above/below the ground
     private double CONFIDENCE_PAST = 0.1;
 
+    private Pose3d cameraMountPose;
+
     private Timer timer = new Timer();
 
     private double lastT = 0.0;
@@ -54,8 +56,9 @@ public class Camera {
     private IntegerPublisher numTagsPublisher;
     private DoubleArrayPublisher estimatedPosePublisher;
 
-    public Camera(NetworkTableInstance nt, String name) {
+    public Camera(NetworkTableInstance nt, String name, Pose3d cameraMountPose) {
         camera = new PhotonCamera(name);
+        this.cameraMountPose = cameraMountPose;
         timer.start();
 
         table = nt.getTable("AprilTagPipeline");
@@ -98,7 +101,7 @@ public class Camera {
             if (tagID > Constants.aprilTags.length || tagID < 1) continue;
             
             Transform3d cameraToTag = target.getBestCameraToTarget();
-            Transform3d cameraToRobot = new Transform3d(Constants.cameraPose.getTranslation(), Constants.cameraPose.getRotation());//.inverse();
+            Transform3d cameraToRobot = new Transform3d(cameraMountPose.getTranslation(), cameraMountPose.getRotation());//.inverse();
             // Transform3d robotToTag = cameraToRobot.plus(cameraToTag);
 
             // Transform3d tagToCamera = cameraToTag.inverse();

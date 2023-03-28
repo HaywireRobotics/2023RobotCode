@@ -65,9 +65,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Elevator Limit", getLimitSwitch());
         SmartDashboard.putNumber("Elevator REV Encoder", getEncoder());
 
-        if(getLimitSwitch()){
-            resetEncoder(MAX_HEIGHT);
-        }
     }
     public void setMotorPower(double power){
         double _power = Statics.clamp(power, -MAX_LOWER_POWER, MAX_RAISE_POWER);

@@ -73,7 +73,8 @@ public class RobotContainer {
     private final AdvancedSetpoints m_advancedSetpoints = new AdvancedSetpoints(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem);
     private final AutoCommands m_autoCommands = new AutoCommands(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem, m_advancedSetpoints);
 
-    public final Camera m_limelight = new Camera(m_networkTable, "OV5647");
+    public final Camera m_limelightLemon = new Camera(m_networkTable, "OV5647", Constants.LEMON_POSE);
+    public final Camera m_limelightBanana = new Camera(m_networkTable, "OV5674", Constants.BANANA_POSE);
     public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
 
     public final LEDs m_leds = new LEDs(9);
@@ -171,10 +172,11 @@ public class RobotContainer {
     }
     
     public void updateCamera(){
-        m_limelight.update();
+        m_limelightLemon.update();
+        m_limelightBanana.update();
     }
     public void mergeCameraPose(){
-        m_drivetrainSubsystem.mergeCameraPose(m_limelight.getRobotPose2d(), m_limelight.getPoseConfidence()/10);//, m_limelight.getPoseConfidence());
+        m_drivetrainSubsystem.mergeCameraPose(m_limelightLemon.getRobotPose2d(), m_limelightBanana.getRobotPose2d(), m_limelightLemon.getPoseConfidence()/10, m_limelightBanana.getPoseConfidence());//, m_limelight.getPoseConfidence());
     }
 
     public void updateLEDs() {

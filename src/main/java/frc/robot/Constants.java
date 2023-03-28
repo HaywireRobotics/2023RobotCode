@@ -109,8 +109,9 @@ public final class Constants {
     };
 
     // to set y, set x, to set x set y, to set z set z
-    public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(10, 5, 29), new Rotation3d(0, 0, 0))); // y-up System
+    public static final Pose3d BANANA_POSE = Statics.poseToMeters(new Pose3d(new Translation3d(10, 5, 29), new Rotation3d(0, 0, 0))); // y-up System
     // public static final Pose3d cameraPose = Statics.poseToMeters(new Pose3d(new Translation3d(0, 0, 22.7), new Rotation3d(0, 0, 0))); // y-up System
+    public static final Pose3d LEMON_POSE = Statics.poseToMeters(new Pose3d(new Translation3d(-10, 5, 29), new Rotation3d(0, 0, 0)));
 
     /****** Arm Auto Paths ******/
     // public static enum ArmSetpoints {

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.util.Statics;
 import frc.robot.util.Vector;
 import frc.robot.wrappers.SwerveModule;
 import com.kauailabs.navx.frc.AHRS;
@@ -290,6 +291,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
                       Vector.fromTranslation(cameraPose.getTranslation().times( confidence )));
         
         double headingConfidence = confidence * 0; //0.5;
+        double newHeading  = ( heading * (1.0-headingConfidence) ) + ( cameraPose.getRotation().getDegrees() * headingConfidence );
+        // System.out.println(newTranslation.toString()+", "+newHeading);
+        if(newTranslation.x != 0) resetPose(newTranslation.x, newTranslation.y, newHeading);
+    }
+    public void mergeCameraPose(Pose2d cameraPose1, Pose2d cameraPose2, double confidence1, double confidence2){
+        double totalConfidence = confidence1 + confidence2;
+        Pose2d cameraPose = Statics.sumPoses(cameraPose1.times(confidence1), cameraPose2.times(confidence2)).times(1.0/totalConfidence);
+        
+        Vector newTranslation = translation.scale( 1-totalConfidence ).add(
+                      Vector.fromTranslation(cameraPose.getTranslation().times( totalConfidence )));
+        
+        double headingConfidence = totalConfidence * 0; //0.5;
         double newHeading  = ( heading * (1.0-headingConfidence) ) + ( cameraPose.getRotation().getDegrees() * headingConfidence );
         // System.out.println(newTranslation.toString()+", "+newHeading);
         if(newTranslation.x != 0) resetPose(newTranslation.x, newTranslation.y, newHeading);
