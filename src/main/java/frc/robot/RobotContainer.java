@@ -27,6 +27,7 @@ import frc.robot.commands.AutoScore;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ManualArmBindings;
+import frc.robot.commands.ManualArmCommand;
 import frc.robot.commands.ManualBalanceDrive;
 import frc.robot.networktables.ArmPoseViz;
 import frc.robot.networktables.ArmTable;
@@ -91,9 +92,11 @@ public class RobotContainer {
         // Left stick X axis -> left and right movement
         // Right stick X axis -> rotation
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
-        Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem, m_armSubsystem.m_manipulatorSubsystem, m_armSubsystem.m_elevatorSubsystem, m_armSubsystem.m_pulleySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+
+        // Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem, m_armSubsystem.m_manipulatorSubsystem, m_armSubsystem.m_elevatorSubsystem, m_armSubsystem.m_pulleySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         // m_armSubsystem.setDefaultCommand(updateArmPIDs);
-        new ManualArmBindings(m_armSubsystem, m_manipulatorController);
+        // new ManualArmBindings(m_armSubsystem, m_manipulatorController);
+        m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller, m_manipulatorController));
         // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
         m_auto_chooser = new SendableChooser<Integer>();
