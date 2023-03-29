@@ -6,6 +6,7 @@ import java.util.List;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -60,6 +61,9 @@ public class AutoFollowWithCommands{
     
     public Command autoFollowWithCommands(String name) {
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(name, Constants.TRAJECTORY_CONFIG);
+        for(int i = 0; i < pathGroup.size(); i++){
+            pathGroup.set(i, PathPlannerTrajectory.transformTrajectoryForAlliance(pathGroup.get(i), DriverStation.getAlliance()));
+        };
         return autoFollowFullPath(pathGroup);
     }
 
