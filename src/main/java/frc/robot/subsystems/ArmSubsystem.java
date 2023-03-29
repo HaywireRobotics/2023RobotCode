@@ -29,6 +29,7 @@ public class ArmSubsystem extends SubsystemBase {
     public double followT = 0.0;
     private double followSpeed = 0.6; // 0.35 (3/24/23) // Inches per second (JK)
     private double tSpeed = 0.0;
+    public boolean isPathFollowing = false;
 
     private final double kV = 0.3;
     private final double kP = 0.1;

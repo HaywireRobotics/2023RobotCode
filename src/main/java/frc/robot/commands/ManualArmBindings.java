@@ -24,13 +24,11 @@ public class ManualArmBindings{
     private void configureButtonBindings() {
         m_manipulator_controller.rightBumper().whileTrue(rawManipulatorUp());
         m_manipulator_controller.rightBumper().onFalse(new InstantCommand(this::stabilizeManipulator));
-        // m_leftController.rightBumper().whileTrue(rawManipulatorUp());
         m_manipulator_controller.rightTrigger().whileTrue(rawManipulatorDown());
         m_manipulator_controller.rightTrigger().onFalse(new InstantCommand(this::stabilizeManipulator));
 
         m_manipulator_controller.leftBumper().whileTrue(m_armSubsystem.m_manipulatorSubsystem.dropCommand());
         m_manipulator_controller.leftTrigger().whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCommand());
-        // m_manipulator_controller.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.shootCommand());
 
         m_manipulator_controller.rightStick().whileTrue(pulleyJoystickCommand());
         m_manipulator_controller.rightStick().onFalse(new InstantCommand(this::stabilizeArm));
