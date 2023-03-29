@@ -116,7 +116,7 @@ public final class AutoCommands {
         //                 new Pose2d(4, 0, new Rotation2d(0)),
         //                 // Pass config
         //                 Constants.TRAJECTORY_CONFIG));
-        return autoFollowWithCommands.autoFollowWithCommands("3p_1g");
+        return autoFollowWithCommands.autoFollowWithCommands("test_path");
     }
 
     public Command HighConeCommand() {

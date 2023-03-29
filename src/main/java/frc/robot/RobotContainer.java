@@ -19,6 +19,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoArmToSetpoint;
@@ -69,12 +70,12 @@ public class RobotContainer {
     private final DriveOdometryTable m_drivetrainTable = new DriveOdometryTable(m_networkTable, m_drivetrainSubsystem);
     private final ArmTable m_armTable = new ArmTable(m_networkTable, m_armSubsystem);
 
-    SendableChooser<Command> m_auto_chooser;
+    SendableChooser<Integer> m_auto_chooser;
     private final AdvancedSetpoints m_advancedSetpoints = new AdvancedSetpoints(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem);
     private final AutoCommands m_autoCommands = new AutoCommands(m_drivetrainSubsystem, m_armSubsystem, m_manipulatorSubsystem, m_advancedSetpoints);
 
-    public final Camera m_limelightLemon = new Camera(m_networkTable, "OV5647", Constants.LEMON_POSE);
-    public final Camera m_limelightBanana = new Camera(m_networkTable, "OV5674", Constants.BANANA_POSE);
+    public final Camera m_limelightLemon = new Camera(m_networkTable, "OV5648", Constants.LEMON_POSE);
+    public final Camera m_limelightBanana = new Camera(m_networkTable, "OV5647", Constants.BANANA_POSE);
     public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
 
     public final LEDs m_leds = new LEDs(9);
@@ -92,21 +93,21 @@ public class RobotContainer {
         // Left stick X axis -> left and right movement
         // Right stick X axis -> rotation
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
-        Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem);
-        m_armSubsystem.setDefaultCommand(updateArmPIDs);
+        Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem, m_armSubsystem.m_manipulatorSubsystem, m_armSubsystem.m_elevatorSubsystem, m_armSubsystem.m_pulleySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        // m_armSubsystem.setDefaultCommand(updateArmPIDs);
         new ManualArmBindings(m_armSubsystem, m_manipulatorController);
         // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
-        m_auto_chooser = new SendableChooser<>();
-        m_auto_chooser.setDefaultOption("Cube Auto", m_autoCommands.NoDriveCubeCommand());
-        m_auto_chooser.addOption("Leave Community Drop Cube", m_autoCommands.LeaveCommunityCubeCommand());
-        m_auto_chooser.addOption("Leave Community No Cube", m_autoCommands.LeaveCommunityNoCubeCommand());
-        m_auto_chooser.addOption("Dock Drop Cube", m_autoCommands.DockCubeCommand());
-        m_auto_chooser.addOption("Dock No Cube", m_autoCommands.DockNoCubeCommand());
-        m_auto_chooser.addOption("NO Auto", new InstantCommand());
-        m_auto_chooser.addOption("High Cone", m_autoCommands.HighConeCommand());
-        m_auto_chooser.addOption("testAuto", m_autoCommands.testAuto());
-        m_auto_chooser.addOption("testTrajectory", m_autoCommands.testTrajectory());
+        m_auto_chooser = new SendableChooser<Integer>();
+        m_auto_chooser.setDefaultOption("Cube Auto", 0);
+        m_auto_chooser.addOption("Leave Community Drop Cube", 1);
+        m_auto_chooser.addOption("Leave Community No Cube", 2);
+        m_auto_chooser.addOption("Dock Drop Cube", 3);
+        m_auto_chooser.addOption("Dock No Cube", 4);
+        m_auto_chooser.addOption("NO Auto", 5);
+        m_auto_chooser.addOption("High Cone", 6);
+        m_auto_chooser.addOption("testAuto", 7);
+        m_auto_chooser.addOption("testTrajectory", 8);
 
         SmartDashboard.putData(m_auto_chooser);
 
@@ -166,8 +167,30 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // return new AutoTestModuleCommand(m_drivetrainSubsystem.frontLeftState);
         // return new AutoTestDrivetrain(m_drivetrainSubsystem);
-        return m_auto_chooser.getSelected();
+        // return m_auto_chooser.getSelected();
         // return new InstantCommand();
+        switch (m_auto_chooser.getSelected()) {
+            case 0:
+                return m_autoCommands.NoDriveCubeCommand();
+            case 1:
+                return m_autoCommands.LeaveCommunityCubeCommand();
+            case 2:
+                return m_autoCommands.LeaveCommunityNoCubeCommand();
+            case 3:
+                return m_autoCommands.DockCubeCommand();
+            case 4:
+                return m_autoCommands.DockNoCubeCommand();
+            case 5:
+                return new InstantCommand();
+            case 6:
+                return m_autoCommands.HighConeCommand();
+            case 7:
+                return m_autoCommands.testAuto();
+            case 8:
+                return m_autoCommands.testTrajectory();        
+            default:
+                return new InstantCommand();
+        }
         
     }
     

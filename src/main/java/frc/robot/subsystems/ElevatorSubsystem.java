@@ -72,7 +72,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             _power = Math.min(_power, 0.0);
         }
         double currentPosition = getPosition();
-        if(currentPosition >= MAX_HEIGHT && _power > 0){
+        // don't ask why its =3, don't worry about it it is to satisfy some encoder problems.
+        if(currentPosition >= MAX_HEIGHT+3 && _power > 0){
             _power = 0;
             // resetPID();
         }

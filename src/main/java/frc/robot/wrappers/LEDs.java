@@ -18,7 +18,7 @@ public class LEDs {
     private Color[] cycleColors = new Color[0];
     private int colorIndex = 0;
     // private Modes mode = Modes.SOLID;
-    private final double rainbowCycleSpeed = 0.1;
+    private final double rainbowCycleSpeed = 0.05;
 
     private final int numLeds = 95;
 
