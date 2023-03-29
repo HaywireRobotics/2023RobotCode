@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDs {
@@ -25,8 +24,6 @@ public class LEDs {
     private final Color coneColor = new Color(255, 150, 0);
     private final Color cubeColor = Color.kPurple;
     private Color gamepieceColor = coneColor;
-    // starts ambiguous, will match alliance when driverstation connects
-    public Color allianceColor = Color.kPurple;
 
     public LEDs(int port){
         leds = new AddressableLED(port);
@@ -39,7 +36,8 @@ public class LEDs {
         timer.reset();
         timer.start();
 
-        setSolid(allianceColor);
+        // setSolid(gamepieceColor);
+        rainbowBarf();
     }
 
     public void setAllToColor(Color c){
@@ -95,11 +93,6 @@ public class LEDs {
     private void updateLEDs(){
         leds.setData(buffer);
         leds.start();
-    }
-
-    public void setAllianceColor(Color color) {
-        allianceColor = color;
-        setSolid(allianceColor);
     }
 
     public void toggleColor() {

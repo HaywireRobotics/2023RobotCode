@@ -47,21 +47,6 @@ public class AutoFollowWithCommands{
         eventMap.put("substation", enableDriveLock());
 
     }
-
-    // public Command autoFollowWithCommands(String name){
-    //     ArrayList<PathPlannerTrajectory> path = PathPlanner.loadPathGroup(name, Constants.TRAJECTORY_CONFIG);
-    //     System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    //     System.out.println(eventMap.toString());
-    //     for (EventMarker event : path.getMarkers()) {
-    //         System.out.println(event.names.toString());
-    //     }
-    //     return new FollowPathWithEvents(
-    //         new AutoFollowTrajectory(m_drivetrainSubsystem, path),
-    //         path.getMarkers(),
-    //         eventMap
-    //     );
-    // }
-
     
     public Command autoFollowWithCommands(String name) {
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(name, Constants.TRAJECTORY_CONFIG);
