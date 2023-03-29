@@ -118,6 +118,9 @@ public final class AutoCommands {
         //                 Constants.TRAJECTORY_CONFIG));
         return autoFollowWithCommands.autoFollowWithCommands("test_path");
     }
+    public Command runTrajectory(String name){
+        return autoFollowWithCommands.autoFollowWithCommands(name);
+    }
 
     public Command HighConeCommand() {
         return Commands.sequence(

@@ -14,14 +14,12 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.commands.AutoDriveToTarget;
@@ -38,7 +36,6 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.PulleySubsystem;
-import frc.robot.util.ArmAutoPath;
 import frc.robot.wrappers.AdvancedSetpoints;
 import frc.robot.wrappers.AutoCommands;
 import frc.robot.wrappers.Camera;
@@ -108,7 +105,13 @@ public class RobotContainer {
         m_auto_chooser.addOption("NO Auto", 5);
         m_auto_chooser.addOption("High Cone", 6);
         m_auto_chooser.addOption("testAuto", 7);
-        m_auto_chooser.addOption("testTrajectory", 8);
+        m_auto_chooser.addOption("Grid2+GrabCube+Dock", 8);
+        m_auto_chooser.addOption("Grid1+ScoreCube+Dock", 9);
+        m_auto_chooser.addOption("Grid3+Dock", 10);
+        m_auto_chooser.addOption("Grid6+ScoreCube+Dock", 11);
+
+        m_auto_chooser.addOption("testTrajectory", 12);
+
 
         SmartDashboard.putData(m_auto_chooser);
 
@@ -186,9 +189,17 @@ public class RobotContainer {
             case 6:
                 return m_autoCommands.HighConeCommand();
             case 7:
-                return m_autoCommands.testAuto();
+                return m_autoCommands.testAuto();     
             case 8:
-                return m_autoCommands.testTrajectory();        
+                return m_autoCommands.runTrajectory("1.5p_2g_c");
+            case 9:
+                return m_autoCommands.runTrajectory("2p_1g_c");
+            case 10:
+                return m_autoCommands.runTrajectory("1p_2g_c");
+            case 11:
+                return m_autoCommands.runTrajectory("2p_6g_c");
+            case 12:
+                return m_autoCommands.testTrajectory();  
             default:
                 return new InstantCommand();
         }
