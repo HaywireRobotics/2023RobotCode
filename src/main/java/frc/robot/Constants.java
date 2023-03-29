@@ -78,7 +78,7 @@ public final class Constants {
     public static final double WHEEL_DIAMETER = 0.1016; // 4 inches
 
     public static final double kMaxSpeedMetersPerSecond = 2.0;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.9;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.20;
     // public static final TrajectoryConfig TRAJECTORY_CONFIG = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,Constants.kMaxAccelerationMetersPerSecondSquared);
     public static final PathConstraints TRAJECTORY_CONFIG = new PathConstraints(kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
 

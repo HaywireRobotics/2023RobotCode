@@ -105,12 +105,14 @@ public class RobotContainer {
         m_auto_chooser.addOption("NO Auto", 5);
         m_auto_chooser.addOption("High Cone", 6);
         m_auto_chooser.addOption("testAuto", 7);
-        m_auto_chooser.addOption("Grid2+GrabCube+Dock", 8);
-        m_auto_chooser.addOption("Grid1+ScoreCube+Dock", 9);
-        m_auto_chooser.addOption("Grid3+Dock", 10);
-        m_auto_chooser.addOption("Grid6+ScoreCube+Dock", 11);
+        m_auto_chooser.addOption("1: Grid2+GrabCube+Dock", 8); // p1.5_g2_c
+        m_auto_chooser.addOption("2: Grid1+ScoreCube+Dock", 9); // p2_g1_c
+        m_auto_chooser.addOption("3: Grid1+ScoreCube", 10); // p2_g1
+        m_auto_chooser.addOption("4: Grid3+Dock", 11); // 1p_3g_c
+        m_auto_chooser.addOption("5: Grid6+ScoreCube+Dock", 12); // p2_g6_c
+        m_auto_chooser.addOption("6: Grid6+ScoreCube", 13); // p2_g6
 
-        m_auto_chooser.addOption("testTrajectory", 12);
+        m_auto_chooser.addOption("testTrajectory", 14);
 
 
         SmartDashboard.putData(m_auto_chooser);
@@ -195,10 +197,14 @@ public class RobotContainer {
             case 9:
                 return m_autoCommands.runTrajectory("2p_1g_c");
             case 10:
-                return m_autoCommands.runTrajectory("1p_2g_c");
+                return m_autoCommands.runTrajectory("2p_1g");
             case 11:
-                return m_autoCommands.runTrajectory("2p_6g_c");
+                return m_autoCommands.runTrajectory("1p_3g_c");
             case 12:
+                return m_autoCommands.runTrajectory("2p_6g_c");
+            case 13:
+                return m_autoCommands.runTrajectory("2p_6g");
+            case 14:
                 return m_autoCommands.testTrajectory();  
             default:
                 return new InstantCommand();

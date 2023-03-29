@@ -110,15 +110,12 @@
         "x": 2.3992883581997595,
         "y": 4.446514508987554
       },
-      "nextControl": {
-        "x": 2.3992883581997595,
-        "y": 4.446514508987554
-      },
+      "nextControl": null,
       "holonomicAngle": 180.0,
-      "isReversal": true,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [
           "drop",
@@ -128,46 +125,19 @@
         "waitBehavior": "none",
         "waitTime": 0
       }
-    },
-    {
-      "anchorPoint": {
-        "x": 3.8447456621475746,
-        "y": 3.2463917892516774
-      },
-      "prevControl": {
-        "x": 1.6315801454792367,
-        "y": 3.0189450695957283
-      },
-      "nextControl": null,
-      "holonomicAngle": 180.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [
-          "substation"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
     }
   ],
-  "maxVelocity": 2.0,
-  "maxAcceleration": 1.2,
-  "isReversed": null,
   "markers": [
     {
-      "position": 2.7681107954545436,
+      "position": 1.72,
       "names": [
-        "setCubeHigh"
+        "intakeCube"
       ]
     },
     {
-      "position": 1.7231445312500002,
+      "position": 2.77,
       "names": [
-        "intakeCube"
+        "setCubeHigh"
       ]
     }
   ]
