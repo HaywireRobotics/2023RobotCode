@@ -20,7 +20,7 @@ public class CoolAutoBuilder extends BaseAutoBuilder {
     private final Map<String, Command> eventMap;
     
     public CoolAutoBuilder(DrivetrainSubsystem drivetrainSubsystem, Map<String, Command> eventMap){
-        super(() -> {return new Pose2d();}, (pose) -> {}, eventMap, DrivetrainType.HOLONOMIC, false);
+        super(() -> {return new Pose2d();}, (pose) -> {}, eventMap, DrivetrainType.HOLONOMIC, true);
 
         m_drivetrainSubsystem = drivetrainSubsystem;
         this.eventMap = eventMap;
