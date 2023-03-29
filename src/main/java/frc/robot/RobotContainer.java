@@ -79,8 +79,6 @@ public class RobotContainer {
 
     public final LEDs m_leds = new LEDs(9);
 
-    public Alliance alliance = Alliance.Invalid;
-
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -249,29 +247,6 @@ public class RobotContainer {
 
     public void rainbowBarf() {
         m_leds.rainbowBarf();
-    }
-
-    // needed to handle the alliance being unknown until the driverstation connects
-    public void updateAlliance() {
-        Alliance actualAlliance = DriverStation.getAlliance();
-        if (alliance != actualAlliance) {
-            switch (actualAlliance) {
-                case Red:
-                    alliance = Alliance.Red;
-                    m_leds.setAllianceColor(Color.kRed);
-                    break;
-
-                case Blue:
-                    alliance = Alliance.Blue;
-                    m_leds.setAllianceColor(Color.kBlue);
-                    break;
-            
-                default:
-                    alliance = Alliance.Invalid;
-                    m_leds.setAllianceColor(Color.kPurple);
-                    break;
-            }
-        }
     }
 
     public void updateNetworkTables(){

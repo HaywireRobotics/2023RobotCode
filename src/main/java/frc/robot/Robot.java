@@ -51,7 +51,6 @@ public class Robot extends TimedRobot {
         m_robotContainer.updateLEDs();
         m_robotContainer.updateCamera();
         // m_robotContainer.mergeCameraPose();
-        m_robotContainer.updateAlliance();
 
         // var result = m_robotContainer.m_camera.getTarget2D();
         // System.out.println(result);
@@ -77,7 +76,6 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         m_robotContainer.zeroGyro();
         m_robotContainer.enable();
-        System.out.println(DriverStation.getAlliance().toString());
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)

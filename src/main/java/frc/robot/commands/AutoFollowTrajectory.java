@@ -71,7 +71,6 @@ public class AutoFollowTrajectory extends CommandBase{
         timer.start();
         m_drivetrainSubsystem.updateOdometry();
         PathPlannerState startSample = (PathPlannerState) m_pathPlannerTrajectory.getInitialState();
-        m_drivetrainSubsystem.resetGyroscope(0);
         m_drivetrainSubsystem.resetPose(startSample.poseMeters.getX(), startSample.poseMeters.getY(), startSample.holonomicRotation.getDegrees());
     }
 
