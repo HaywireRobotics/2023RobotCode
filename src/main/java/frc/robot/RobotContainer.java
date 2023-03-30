@@ -222,17 +222,9 @@ public class RobotContainer {
     }
 
     public void updateLEDs() {
-        if (m_drivetrainSubsystem.aligning) {
-            if (m_drivetrainSubsystem.aligned) {
-                m_leds.setSolidGamePieceColor();
-            } else {
-                m_leds.blinkGamePieceColor();
-            }
+        if (m_armSubsystem.isAllAtSetpoint()) {
+            m_leds.setSolid(Color.kGreen);
         }
-
-        // if (m_armSubsystem.isAllAtSetpoint()) {
-        //     m_leds.setSolid(Color.kGreen);
-        // }
 
         // if(m_limelight.getPoseConfidence() < 0.25){
         //     m_leds.setSolid(Color.kRed);
