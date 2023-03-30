@@ -88,8 +88,8 @@ public final class Constants {
     public static final int ELEVATOR_ENCODER = 2;
 
     /****** Manipulator ******/
-    public static final int MANIPULATOR_ROLLER_MOTOR = 15;
-    public static final int MANIPULATOR_HINGE_MOTOR = 16;
+    public static final int MANIPULATOR_ROLLER_MOTOR = 16;
+    public static final int MANIPULATOR_HINGE_MOTOR = 15;
 
     /****** Arm ******/
     public static final int PULLEY_MOTOR = 10;
@@ -127,17 +127,17 @@ public final class Constants {
         public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 43), 100);
         public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 35), 90);
         public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
-        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 130), 110); // 140
-        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(12, 10.5), 70);
-        public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(12, 10), 0);
+        public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 62), 90); // 140
+        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(10.5, 9), 70);
+        public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(10.5, 9), 0);
         public static final ArmSetpoint TIPPED_PICKUP = new ArmSetpoint(new Vector(21, 1.5), 70);
         public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(30, 0), 60);
         public static final ArmSetpoint CONE_PICKUP = new ArmSetpoint(new Vector(25, 0), 75);
-
     }
     public static final class BezierHandles{
         public static final Vector leaveStowed = new Vector(0, 8);
-        public static final Vector leaveHigh = new Vector(-8, 5);
+        // public static final Vector leaveHigh = new Vector(-8, 5);
+        public static final Vector leaveHigh = new Vector(-5, 10);
         public static final Vector leaveMid = new Vector(-8, 3);
         public static final Vector leaveSubstation = new Vector(-5, 10);
         public static final Vector leaveGroundPickup = new Vector(-4, 9);
@@ -259,7 +259,7 @@ public final class Constants {
 
     public static final class DriveSetpoints {
         private static final double scoringDistance = 24;
-        private static final double substationDistance = 45;
+        private static final double substationDistance = 40;
         public static final Pose2d[] BlueGrid = {
             Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 196.19), new Rotation2d(Math.PI))),
             Statics.poseToMeters(new Pose2d(new Translation2d(56+scoringDistance, 152.19), new Rotation2d(Math.PI))),

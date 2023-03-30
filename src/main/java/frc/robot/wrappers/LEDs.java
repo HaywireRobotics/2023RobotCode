@@ -79,6 +79,8 @@ public class LEDs {
     public void update(){
         double currentTime = timer.get();
 
+        if(cycleColors.length == 0) return;
+
         if (currentTime - lastTime > blinkRate) {
             setAllToColor(cycleColors[colorIndex]);
             colorIndex++;

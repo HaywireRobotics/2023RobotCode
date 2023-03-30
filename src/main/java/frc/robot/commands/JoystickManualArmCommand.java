@@ -36,8 +36,6 @@ public class JoystickManualArmCommand extends CommandBase {
         m_leftJoystick.button(4).whileTrue(m_armSubsystem.m_manipulatorSubsystem.intakeCommand());
         m_leftJoystick.button(5).whileTrue(m_armSubsystem.m_manipulatorSubsystem.dropCommand());
 
-        m_leftJoystick.button(3).whileTrue(m_armSubsystem.m_manipulatorSubsystem.shootCommand());
-
         m_leftJoystick.button(1).onFalse(new InstantCommand(this::stabilizeArm));
         m_rightJoystick.button(1).onFalse(new InstantCommand(this::stabilizeArm));
     }
@@ -56,10 +54,17 @@ public class JoystickManualArmCommand extends CommandBase {
             pulleyJoystick();
             isManual = true;
         }
-
         if (m_leftJoystick.button(1).getAsBoolean()) {
             elevatorJoystick();
             isManual = true;
+        }
+        if (m_rightJoystick.button(2).getAsBoolean() || m_rightJoystick.button(3).getAsBoolean()) {
+            isManual = true;
+        }
+
+        if (isManual) {
+            m_armSubsystem.endPath();
+            m_armSubsystem.isPathFollowing = false;
         }
 
         if (!m_armSubsystem.isPathFollowing && !isManual) {

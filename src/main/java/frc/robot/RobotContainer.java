@@ -20,12 +20,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoArmToSetpoint;
 import frc.robot.commands.AutoDriveToTarget;
 import frc.robot.commands.AutoScore;
 import frc.robot.commands.PositionAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.JoystickManualArmCommand;
 import frc.robot.commands.ManualArmBindings;
 import frc.robot.commands.ManualArmCommand;
 import frc.robot.commands.ManualBalanceDrive;
@@ -61,9 +63,9 @@ public class RobotContainer {
     private final ArmPoseViz m_armPoseViz = new ArmPoseViz(m_armSubsystem);
 
     private final CommandXboxController m_controller = new CommandXboxController(0);
-    private final CommandXboxController m_manipulatorController = new CommandXboxController(1);
-    // private final CommandJoystick m_rightJoystick = new CommandJoystick(1);
-    // private final CommandJoystick m_leftJoystick = new CommandJoystick(2);
+    // private final CommandXboxController m_manipulatorController = new CommandXboxController(1);
+    private final CommandJoystick m_rightJoystick = new CommandJoystick(1);
+    private final CommandJoystick m_leftJoystick = new CommandJoystick(2);
 
     private final NetworkTableInstance m_networkTable = NetworkTableInstance.getDefault();
     private final DriveOdometryTable m_drivetrainTable = new DriveOdometryTable(m_networkTable, m_drivetrainSubsystem);
@@ -94,7 +96,8 @@ public class RobotContainer {
         // Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem, m_armSubsystem.m_manipulatorSubsystem, m_armSubsystem.m_elevatorSubsystem, m_armSubsystem.m_pulleySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         // m_armSubsystem.setDefaultCommand(updateArmPIDs);
         // new ManualArmBindings(m_armSubsystem, m_manipulatorController);
-        m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller, m_manipulatorController));
+        // m_armSubsystem.setDefaultCommand(new ManualArmCommand(m_armSubsystem, m_controller, m_manipulatorController));
+        m_armSubsystem.setDefaultCommand(new JoystickManualArmCommand(m_armSubsystem, m_controller, m_rightJoystick, m_leftJoystick));
         // m_armSubsystem.setDefaultCommand(new AutoArmToSetpoint(m_armSubsystem, Constants.ArmSetpointPaths.STOWED));
 
         m_auto_chooser = new SendableChooser<Integer>();
@@ -114,6 +117,12 @@ public class RobotContainer {
         m_auto_chooser.addOption("6: Grid6+ScoreCube", 13); // p2_g6
 
         m_auto_chooser.addOption("testTrajectory", 14);
+
+        // Time Based backup autos
+        m_auto_chooser.addOption("Time Based: High Cone Leave Community", 15);
+        m_auto_chooser.addOption("Time Based: High Cone Dock", 16);
+        m_auto_chooser.addOption("Time Based: Mid Cone Leave Community", 17);
+        m_auto_chooser.addOption("Time Based: Mid Cone Dock", 18);
 
 
         SmartDashboard.putData(m_auto_chooser);
@@ -147,11 +156,16 @@ public class RobotContainer {
         // m_controller.x().onTrue(m_advancedSetpoints.substationCommand());
         m_controller.rightBumper().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW));
 
-        m_manipulatorController.y().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
-        m_manipulatorController.b().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
-        m_manipulatorController.a().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
-        m_manipulatorController.x().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
-        m_manipulatorController.povDown().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.TIPPED_PICKUP));
+        // m_manipulatorController.y().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
+        // m_manipulatorController.b().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
+        // m_manipulatorController.a().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
+        // m_manipulatorController.x().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
+        // m_manipulatorController.povDown().onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.TIPPED_PICKUP));
+
+        m_rightJoystick.button(4).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_HIGH));
+        m_rightJoystick.button(5).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CONE_MID));
+        m_leftJoystick.button(2).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.GROUND));
+        m_leftJoystick.button(3).onTrue(m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.SUBSTATION));
 
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
@@ -206,7 +220,15 @@ public class RobotContainer {
             case 13:
                 return m_autoCommands.runTrajectory("2p_6g");
             case 14:
-                return m_autoCommands.testTrajectory();  
+                return m_autoCommands.testTrajectory();
+            case 15:
+                return m_autoCommands.TimeBasedHighConeLeaveCommunityCommand();  
+            case 16:
+                return m_autoCommands.TimeBasedHighConeDockCommand();  
+            case 17:
+                return m_autoCommands.TimeBasedMidConeLeaveCommunityCommand();  
+            case 18:
+                return m_autoCommands.TimeBasedMidConeDockCommand(); 
             default:
                 return new InstantCommand();
         }
@@ -222,9 +244,9 @@ public class RobotContainer {
     }
 
     public void updateLEDs() {
-        if (m_armSubsystem.isAllAtSetpoint()) {
-            m_leds.setSolid(Color.kGreen);
-        }
+        // if (m_armSubsystem.isAllAtSetpoint()) {
+        //     m_leds.setSolid(Color.kGreen);
+        // }
 
         // if(m_limelight.getPoseConfidence() < 0.25){
         //     m_leds.setSolid(Color.kRed);

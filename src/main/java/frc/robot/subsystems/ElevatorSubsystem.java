@@ -24,8 +24,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final double ELEVATOR_GEAR_RATIO = 36.0/1.0; // Gear ratio of the elevator
     private final double DEGREES_TO_INCHES = 2 * Math.PI; //1.5 // Inches of elevator movement per degree of motor rotation
     private final double ENCODER_DEGREES_TO_INCHES = -4.75 * Math.PI; //1.5 // Inches of elevator movement per degree of motor rotation
-    private final double ENCODER_ZERO_ANGLE = 0.08;
-    private final double MAX_HEIGHT = 26;//19.5; // Inches the elevator can extend
+    private final double ENCODER_ZERO_ANGLE = 0.01;
+    private final double MAX_HEIGHT = 29;//19.5; // Inches the elevator can extend
     private final double MIN_HEIGHT = 0; // Length when fully collapsed
     private final double MAX_RAISE_POWER = 1;
     private final double MAX_LOWER_POWER = 0.9;
@@ -34,9 +34,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final double PIVOT_TO_TOP_SPROCKET = 26;//23.75;
     private final double PIVOT_TO_CHAIN_ATTACHMENT = 23.5;
     private final double PIVOT_TO_TOP_ANGLE = 40.7;
-    private final double CHAIN_WHEN_AT_TOP = 6;
+    private final double CHAIN_WHEN_AT_TOP = 3;
 
-    private final double EXTENSION_KP = 0.5;
+    private final double EXTENSION_KP = 0.6;
     private final double EXTENSION_KI = 0.008;
     private final double EXTENSION_KD = 0.001;
     private final double AT_SETPOINT_POSITION_TOLERANCE = 1.5;
@@ -73,7 +73,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
         double currentPosition = getPosition();
         // don't ask why its =3, don't worry about it it is to satisfy some encoder problems.
-        if(currentPosition >= MAX_HEIGHT+3 && _power > 0){
+        if(currentPosition >= MAX_HEIGHT && _power > 0){
             _power = 0;
             // resetPID();
         }

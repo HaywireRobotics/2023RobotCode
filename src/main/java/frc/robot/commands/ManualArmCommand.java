@@ -69,6 +69,10 @@ public class ManualArmCommand extends CommandBase {
             isManual = true;
         }
 
+        if (m_manipulator_controller.rightBumper().getAsBoolean() || m_manipulator_controller.rightTrigger().getAsBoolean()) {
+            isManual = true;
+        }
+
         if (!m_armSubsystem.isPathFollowing && !isManual) {
             armPIDEnabled = true;
             hingePIDEnabled = true;
@@ -82,7 +86,7 @@ public class ManualArmCommand extends CommandBase {
     private void elevatorJoystick(){
         double yAxis2 = m_manipulator_controller.getLeftY();
         if(yAxis2 < 0.05 && yAxis2 > -0.05) yAxis2 = 0;
-        m_armSubsystem.setElevatorPower(-yAxis2);
+        m_armSubsystem.setElevatorPower(yAxis2);
 
         armPIDEnabled = false;
     }

@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.AutoDriveState;
@@ -35,6 +36,10 @@ public final class AutoCommands {
         autoFollowWithCommands = new AutoFollowWithCommands(m_drivetrainSubsystem, m_advancedSetpoints);
     }
 
+    public Command autoResetGyro() {
+        return new InstantCommand(() -> {m_drivetrainSubsystem.resetGyroscope(180);});
+    }
+
     public Command NoDriveCubeCommand() {
         return m_armSubsystem.m_manipulatorSubsystem.shootCommand().withTimeout(2);
     }
@@ -53,7 +58,7 @@ public final class AutoCommands {
 
     public Command TimeBasedDriveNoCubeCommand(double speed, double angle, double time) {
         return Commands.sequence(
-            m_drivetrainSubsystem.driveVectorCommand(speed, angle, 0, false).withTimeout(time),
+            m_drivetrainSubsystem.driveVectorCommand(-speed, angle, 0, false).withTimeout(time),
             new InstantCommand(m_drivetrainSubsystem::lockDrive)
         );
     }
@@ -141,6 +146,37 @@ public final class AutoCommands {
                 .withTimeout(0.5),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
+        );
+    }
+
+    public Command TimeBasedHighConeDockCommand() {
+        return Commands.sequence(
+            HighConeCommand(),
+            TimeBasedDockNoCubeCommand(),
+            new InstantCommand(m_drivetrainSubsystem::lockDrive).withTimeout(1),
+            autoResetGyro()
+        );
+    }
+    public Command TimeBasedHighConeLeaveCommunityCommand() {
+        return Commands.sequence(
+            HighConeCommand(),
+            TimeBasedLeaveCommunityNoCubeCommand(),
+            autoResetGyro()
+        );
+    }
+    public Command TimeBasedMidConeDockCommand() {
+        return Commands.sequence(
+            MidConeCommand(),
+            TimeBasedDockNoCubeCommand(),
+            new InstantCommand(m_drivetrainSubsystem::lockDrive).withTimeout(1),
+            autoResetGyro()
+        );
+    }
+    public Command TimeBasedMidConeLeaveCommunityCommand() {
+        return Commands.sequence(
+            MidConeCommand(),
+            TimeBasedLeaveCommunityNoCubeCommand(),
+            autoResetGyro()
         );
     }
 }

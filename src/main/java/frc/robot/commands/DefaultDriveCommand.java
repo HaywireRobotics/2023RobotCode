@@ -21,6 +21,8 @@ public class DefaultDriveCommand extends CommandBase {
     private static final double JOYSTICK_S = 0.2;
     private static final double JOYSTICK_T = 1.4;
 
+    private final double teleopSpeedMultiplier = 1.6;
+
     public DefaultDriveCommand(DrivetrainSubsystem subsystem, CommandXboxController xboxController) {
         this.m_subsystem = subsystem;
         this.controller = xboxController;
@@ -54,7 +56,7 @@ public class DefaultDriveCommand extends CommandBase {
 
         double mirrorField = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? 1.0 : -1.0;
 
-        m_subsystem.driveArcade(leftX*mirrorField, leftY*mirrorField, rightX);
+        m_subsystem.driveArcade(teleopSpeedMultiplier*leftX*mirrorField, teleopSpeedMultiplier*leftY*mirrorField, rightX);
       
         /* Odometry */
         m_subsystem.updateOdometry();

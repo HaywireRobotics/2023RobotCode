@@ -47,7 +47,7 @@ public class AutoArmToSetpoint extends CommandBase{
 
     @Override
     public boolean isFinished(){
-        return m_armSubsystem.isAllAtSetpoint();
+        return m_armSubsystem.isAllAtSetpoint() || !m_armSubsystem.isPathFollowing;
     }
     
 }
