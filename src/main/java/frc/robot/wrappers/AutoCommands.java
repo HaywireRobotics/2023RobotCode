@@ -133,6 +133,7 @@ public final class AutoCommands {
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
             m_manipulatorSubsystem.dropCommand()
                 .withTimeout(0.5),
+            TimeBasedDriveNoCubeCommand(0.25, 0, 0.3),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );

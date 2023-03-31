@@ -125,7 +125,7 @@ public final class Constants {
     public static final class ArmSetpoints {
         public static final ArmSetpoint CONE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 57), 90);
         public static final ArmSetpoint CONE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 43), 100);
-        public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+30, 35), 90);
+        public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+22, 35), 90);
         public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
         public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 62), 90); // 140
         public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(10.5, 9), 70);
@@ -135,9 +135,9 @@ public final class Constants {
         public static final ArmSetpoint CONE_PICKUP = new ArmSetpoint(new Vector(25, 0), 75);
     }
     public static final class BezierHandles{
-        public static final Vector leaveStowed = new Vector(0, 8);
+        public static final Vector leaveStowed = new Vector(0, 18);
         // public static final Vector leaveHigh = new Vector(-8, 5);
-        public static final Vector leaveHigh = new Vector(-5, 10);
+        public static final Vector leaveHigh = new Vector(-12, 12);
         public static final Vector leaveMid = new Vector(-8, 3);
         public static final Vector leaveSubstation = new Vector(-5, 10);
         public static final Vector leaveGroundPickup = new Vector(-4, 9);

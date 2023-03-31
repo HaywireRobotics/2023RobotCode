@@ -28,7 +28,6 @@ public class ArmSubsystem extends SubsystemBase {
     private Bezier targetPath;
     public double followT = 0.0;
     private double followSpeed = 0.7; // 0.35 (3/24/23) // Inches per second (JK)
-    private final double allowableError = 3;
     private double tSpeed = 0.0;
     public boolean isPathFollowing = false;
 
@@ -65,12 +64,10 @@ public class ArmSubsystem extends SubsystemBase {
             setManipulator2dPosition(target.x, target.y);
             Vector targetError = manipulatorPosition.subtract(target);
             // followT += tSpeed*( 1 / ( 1 + Math.abs(targetError.x*0.7) + Math.abs(targetError.y*0.5) ) );
-            if (targetError.magnitude() <= allowableError) {
-                followT += tSpeed*0.5;
-            }
-            // followT += tSpeed*0.4;
+            
+            followT += tSpeed;
 
-            if(followT < closest) followT = closest;
+            // if(followT < closest) followT = closest;
 
             double[] errorArray = {targetError.x, targetError.y};
             SmartDashboard.putNumberArray("Arm Error", errorArray);
@@ -80,6 +77,7 @@ public class ArmSubsystem extends SubsystemBase {
     public void followPath(Bezier path){
         targetPath = path;
         followT = path.nearestT(getManipulator2dPosition(), 0.01);
+        // followT = 0.0;
         tSpeed = followSpeed/targetPath.lengthEstimate(0.01);
     }
 
@@ -188,12 +186,18 @@ public class ArmSubsystem extends SubsystemBase {
         return m_elevatorSubsystem.isAtSetpoint() && m_pulleySubsystem.isAtSetpoint();
     }
     public boolean isArmAtSetpoint(){
-        if(targetPath != null){
-            return followT >= 1 && subsystemsAtSetpoints();
+        // return false;
+        if(targetPath != null && subsystemsAtSetpoints()){
+            return true;
         }
         else{
             return subsystemsAtSetpoints();
         }
+        // if (targetPath != null) {
+        //     return subsystemsAtSetpoints() && followT >= 0.99;
+        // } else {
+        //     return subsystemsAtSetpoints();
+        // }
     }
     public boolean isManipulatorAtSetpoint(){
         return m_manipulatorSubsystem.isHingeAtSetpoint();

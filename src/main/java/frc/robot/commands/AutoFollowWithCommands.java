@@ -40,7 +40,7 @@ public class AutoFollowWithCommands{
 
         // eventMap.put("stow", new PrintCommand("Stow"));
         // eventMap.put("stow", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW));
-        eventMap.put("stow", new ScheduleCommand( m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW) ).andThen( new WaitCommand(1.5) ));
+        eventMap.put("stow", new ScheduleCommand( m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW) ));//.andThen( new WaitCommand(1.5) ));
         // eventMap.put("drop", new PrintCommand("Drop"));
         eventMap.put("drop", m_advancedSetpoints.DropGamePiece().withTimeout(0.5));
         // eventMap.put("substation", new PrintCommand("Substation"));
