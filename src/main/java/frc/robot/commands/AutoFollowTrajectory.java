@@ -28,9 +28,9 @@ public class AutoFollowTrajectory extends CommandBase{
 
     private final Timer timer;
 
-    private final double kP = 0.4;//0.5; // Proportional gain
-    private final double kV = 0.40; // Velocity gain
-    private final double kA = 0.15; // Acceleration gain
+    private final double kP = 0.8;//0.5; // Proportional gain
+    private final double kV = 0.42; // Velocity gain
+    private final double kA = 0.17; // Acceleration gain
 
     private final double HEADING_KP = 0.04;
     private final double HEADING_KI = 0;
@@ -46,7 +46,7 @@ public class AutoFollowTrajectory extends CommandBase{
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         timer = new Timer();
         this.m_pathPlannerTrajectory = trajectory;
-        double targetHeading = trajectory.getEndState().poseMeters.getRotation().getDegrees();
+        // double targetHeading = trajectory.getEndState().poseMeters.getRotation().getDegrees();
         // double smoothedHeadingVelocity = Math.abs(m_drivetrainSubsystem.getPose().getRotation().getDegrees() - targetHeading)/trajectory.getTotalTimeSeconds();
 
         TrapezoidProfile.Constraints headingProfile =  new TrapezoidProfile.Constraints(HEADING_MAX_VEL, HEADING_MAX_ACC); //Math.min(HEADING_MAX_VEL, smoothedHeadingVelocity)
@@ -114,6 +114,6 @@ public class AutoFollowTrajectory extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return false;//timer.get() >= m_trajectory.getTotalTimeSeconds() && Math.abs(lastPower) < ON_TARGET_MAX_POWER;
+        return timer.get() >= m_pathPlannerTrajectory.getTotalTimeSeconds() && Math.abs(lastPower) < ON_TARGET_MAX_POWER;
     }
 }

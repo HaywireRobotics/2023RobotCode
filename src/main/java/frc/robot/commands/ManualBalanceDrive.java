@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -50,10 +51,14 @@ public class ManualBalanceDrive extends CommandBase{
         // leftX = leftVector.x;
         // leftY = leftVector.y;
 
+        
+        double mirrorField = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? 1.0 : -1.0;
+
+        
         if(leftX == 0 && leftY == 0 && rightX == 0){
             m_subsystem.lockDrive();
          }else {
-            m_subsystem.driveArcade(leftX, leftY, rightX);
+            m_subsystem.driveArcade(mirrorField*leftX, mirrorField*leftY, rightX);
         };
       
         /* Odometry */

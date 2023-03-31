@@ -76,7 +76,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void followPath(Bezier path){
         targetPath = path;
-        followT = path.nearestT(getManipulator2dPosition(), 0.01);
+        followT = path.nearestT(getManipulator2dPosition(), 0.002);
         // followT = 0.0;
         tSpeed = followSpeed/targetPath.lengthEstimate(0.01);
     }
@@ -244,13 +244,13 @@ public class ArmSubsystem extends SubsystemBase {
         ArmAutoPath path;
         Vector armPosition = this.getManipulator2dPosition();
         double distanceToHigh = Constants.ArmSetpoints.CONE_HIGH.armPosition.subtract(armPosition).magnitude();
-        if(scorePosition == Constants.SetpointPositions.CONE_MID && distanceToHigh < 5){
-            path = Constants.ArmSetpointPaths.CONE_HIGH_TO_MID;
-        }if(scorePosition == Constants.SetpointPositions.STOW && armPosition.y < 10){
-            path = Constants.ArmSetpointPaths.FLOOR_STOW;
-        }else{
+        // if(scorePosition == Constants.SetpointPositions.CONE_MID && distanceToHigh < 5){
+        //     path = Constants.ArmSetpointPaths.CONE_HIGH_TO_MID;
+        // }else if(scorePosition == Constants.SetpointPositions.STOW && armPosition.y < 10){
+        //     path = Constants.ArmSetpointPaths.FLOOR_STOW;
+        // }else{
             path = Constants.ArmSetpointPaths.getPathForSetpointPosition(scorePosition);
-        }
+        // }
         return new AutoArmToSetpoint(this, path);
     }
 

@@ -141,7 +141,7 @@ public class AdvancedSetpoints {
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CUBE_PICKUP)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
             m_armSubsystem.m_manipulatorSubsystem.intakeCommand()
-                .withTimeout(1.25),
+                .withTimeout(1.5),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );

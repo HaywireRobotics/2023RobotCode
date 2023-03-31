@@ -58,7 +58,7 @@ public final class AutoCommands {
 
     public Command TimeBasedDriveNoCubeCommand(double speed, double angle, double time) {
         return Commands.sequence(
-            m_drivetrainSubsystem.driveVectorCommand(-speed, angle, 0, false).withTimeout(time),
+            m_drivetrainSubsystem.driveVectorCommand(speed, angle, 0, false).withTimeout(time),
             new InstantCommand(m_drivetrainSubsystem::lockDrive)
         );
     }
@@ -70,7 +70,7 @@ public final class AutoCommands {
     }
 
     public Command TimeBasedLeaveCommunityNoCubeCommand() {
-        return TimeBasedDriveNoCubeCommand(0.25, 180, 5);
+        return TimeBasedDriveNoCubeCommand(-0.5, 180, 4.8);
     }
 
     public Command LeaveCommunityCubeCommand() {
@@ -88,7 +88,7 @@ public final class AutoCommands {
     }
 
     public Command TimeBasedDockNoCubeCommand() {
-        return TimeBasedDriveNoCubeCommand(0.25, 180, 3.5);
+        return TimeBasedDriveNoCubeCommand(-0.5, 180, 3.0);
     }
 
     public Command DockCubeCommand() {
@@ -133,7 +133,6 @@ public final class AutoCommands {
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
             m_manipulatorSubsystem.dropCommand()
                 .withTimeout(0.5),
-            TimeBasedDriveNoCubeCommand(0.25, 0, 0.3),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
                 .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
