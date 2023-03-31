@@ -123,6 +123,7 @@ public class RobotContainer {
         m_auto_chooser.addOption("Time Based: High Cone Dock", 16);
         m_auto_chooser.addOption("Time Based: Mid Cone Leave Community", 17);
         m_auto_chooser.addOption("Time Based: Mid Cone Dock", 18);
+        m_auto_chooser.addOption("Test: pickup cube", 19);
 
 
         SmartDashboard.putData(m_auto_chooser);
@@ -229,6 +230,8 @@ public class RobotContainer {
                 return m_autoCommands.TimeBasedMidConeLeaveCommunityCommand();  
             case 18:
                 return m_autoCommands.TimeBasedMidConeDockCommand(); 
+            case 19:
+                return m_advancedSetpoints.IntakeCubeCommand();
             default:
                 return new InstantCommand();
         }
@@ -281,6 +284,16 @@ public class RobotContainer {
         m_armSubsystem.m_manipulatorSubsystem.resetEncoder();
         m_armSubsystem.m_pulleySubsystem.resetEncoder(0.0);
     }
+
+    public void armDefaultPIDs() {
+        Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem, m_armSubsystem.m_manipulatorSubsystem, m_armSubsystem.m_elevatorSubsystem, m_armSubsystem.m_pulleySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        m_armSubsystem.setDefaultCommand(updateArmPIDs);
+    }
+
+    public void armDefaultManual() {
+        m_armSubsystem.setDefaultCommand(new JoystickManualArmCommand(m_armSubsystem, m_controller, m_rightJoystick, m_leftJoystick));
+    }
+
 
     public void disable(){
         m_drivetrainSubsystem.disable();

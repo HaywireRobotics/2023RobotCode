@@ -131,11 +131,11 @@ public final class Constants {
         public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(10.5, 9), 70);
         public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(10.5, 9), 0);
         public static final ArmSetpoint TIPPED_PICKUP = new ArmSetpoint(new Vector(21, 1.5), 70);
-        public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(30, 0), 60);
+        public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(30, -0.5), 60);
         public static final ArmSetpoint CONE_PICKUP = new ArmSetpoint(new Vector(25, 0), 75);
     }
     public static final class BezierHandles{
-        public static final Vector leaveStowed = new Vector(0, 18);
+        public static final Vector leaveStowed = new Vector(0, 16);
         // public static final Vector leaveHigh = new Vector(-8, 5);
         public static final Vector leaveHigh = new Vector(-12, 12);
         public static final Vector leaveMid = new Vector(-8, 3);

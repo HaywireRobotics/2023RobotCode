@@ -121,7 +121,7 @@ public final class AutoCommands {
         //                 new Pose2d(4, 0, new Rotation2d(0)),
         //                 // Pass config
         //                 Constants.TRAJECTORY_CONFIG));
-        return autoFollowWithCommands.autoFollowWithCommands("test_path");
+        return autoFollowWithCommands.autoFollowWithCommands("test_path2");
     }
     public Command runTrajectory(String name){
         return autoFollowWithCommands.autoFollowWithCommands(name);

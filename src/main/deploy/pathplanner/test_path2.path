@@ -27,43 +27,18 @@
     },
     {
       "anchorPoint": {
-        "x": 3.4871286824424197,
-        "y": 4.735581855505348
+        "x": 3.953079507582504,
+        "y": 4.944784266792733
       },
       "prevControl": {
-        "x": 2.697865039858195,
-        "y": 4.716563454479222
+        "x": 3.0877422608937755,
+        "y": 4.944784266792733
       },
       "nextControl": {
-        "x": 4.84248955284111,
-        "y": 4.768241153587245
+        "x": 4.20371367179486,
+        "y": 4.944784266792733
       },
-      "holonomicAngle": -173.88449643371456,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.720256856883822,
-        "y": 4.592943847809404
-      },
-      "prevControl": {
-        "x": 5.968790524403146,
-        "y": 5.051698013776609
-      },
-      "nextControl": {
-        "x": 6.934178611314301,
-        "y": 4.462349180032295
-      },
-      "holonomicAngle": -15.4306143272847,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -79,15 +54,15 @@
     },
     {
       "anchorPoint": {
-        "x": 3.8876096396941056,
-        "y": 3.2911847726364725
+        "x": 5.87393801122122,
+        "y": 4.897238264227418
       },
       "prevControl": {
-        "x": 6.62452993648113,
-        "y": 3.036882984003774
+        "x": 3.667803492190616,
+        "y": 5.077913073975614
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -102,20 +77,17 @@
       }
     }
   ],
-  "maxVelocity": 2.0,
-  "maxAcceleration": 0.9,
-  "isReversed": null,
   "markers": [
-    {
-      "position": 1.3818181818181712,
-      "names": [
-        "intakeCube"
-      ]
-    },
     {
       "position": 0.05,
       "names": [
         "stow"
+      ]
+    },
+    {
+      "position": 0.7151515151515762,
+      "names": [
+        "intakeCube"
       ]
     }
   ]

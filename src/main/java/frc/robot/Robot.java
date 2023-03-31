@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         m_robotContainer.zeroGyro();
         m_robotContainer.enable();
+        m_robotContainer.armDefaultPIDs();
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
@@ -97,6 +98,7 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
+        m_robotContainer.armDefaultManual();
         m_robotContainer.m_leds.setSolidGamePieceColor();
         m_robotContainer.enable();
     }
