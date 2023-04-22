@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -138,12 +139,10 @@ public class AdvancedSetpoints {
     public Command IntakeCubeCommand() {
         return Commands.sequence(
             m_armSubsystem.m_manipulatorSubsystem.startIntakeCommand(),
-            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CUBE_PICKUP)
-                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier()),
+            m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.CUBE_PICKUP),
             m_armSubsystem.m_manipulatorSubsystem.intakeCommand()
                 .withTimeout(1.5),
             m_armSubsystem.adaptiveSetpointCommand(Constants.SetpointPositions.STOW)
-                .until(m_armSubsystem.isAllAtSetpointBooleanSupplier())
         );
     }
     public Command IntakeConeCommand() {
@@ -163,5 +162,10 @@ public class AdvancedSetpoints {
     }
     public Command DropGamePiece(){
         return m_armSubsystem.m_manipulatorSubsystem.dropCommand();
+    }
+
+    
+    public void setArmPIDDefault(){
+        m_armSubsystem.setDefaultCommand(new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem));
     }
 }

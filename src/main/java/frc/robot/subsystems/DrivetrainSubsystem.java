@@ -125,6 +125,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         frontLeft.setState(frontLeftState);
         backRight.setState(backRightState);
         backLeft.setState(backLeftState);
+
+        frontRight.putRawRotationSmartDashboard();
+        frontLeft.putRawRotationSmartDashboard();
+        backRight.putRawRotationSmartDashboard();
+        backLeft.putRawRotationSmartDashboard();
     }
 
     public void driveVector(double speed, double direction, double aSpeed, boolean fieldCentric) {
@@ -183,6 +188,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
             if (driveAngle < 0) {
                 driveAngle += 360;
             }
+
+            // if (xSpeed == 0) {
+            //     driveAngle = 0;
+            // } else if (ySpeed == 0) {
+            //     driveAngle = 90;
+            // }
         }
 
         if (!field_centric_drive) {

@@ -50,7 +50,7 @@ public class ManipulatorSubsystem extends SubsystemBase{
     }
 
     public void setHingeTarget(double angle){
-        hingePID.setSetpoint(Statics.clamp(angle, MANIPULATOR_UP_ANGLE, MANIPULATOR_DOWN_ANGLE));
+        hingePID.setSetpoint(angle);//Statics.clamp(angle, MANIPULATOR_UP_ANGLE, MANIPULATOR_DOWN_ANGLE));
     }
     public void setHingeUp(){
         hingePID.setSetpoint(MANIPULATOR_UP_ANGLE);

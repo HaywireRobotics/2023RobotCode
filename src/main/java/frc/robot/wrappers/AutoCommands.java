@@ -88,7 +88,7 @@ public final class AutoCommands {
     }
 
     public Command TimeBasedDockNoCubeCommand() {
-        return TimeBasedDriveNoCubeCommand(-0.5, 180, 3.0);
+        return TimeBasedDriveNoCubeCommand(-0.45, 180, 2.75);
     }
 
     public Command DockCubeCommand() {
@@ -121,7 +121,7 @@ public final class AutoCommands {
         //                 new Pose2d(4, 0, new Rotation2d(0)),
         //                 // Pass config
         //                 Constants.TRAJECTORY_CONFIG));
-        return autoFollowWithCommands.autoFollowWithCommands("test_path2");
+        return autoFollowWithCommands.autoFollowWithCommands("test_path");
     }
     public Command runTrajectory(String name){
         return autoFollowWithCommands.autoFollowWithCommands(name);

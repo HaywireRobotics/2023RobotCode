@@ -101,6 +101,10 @@ public class SwerveModule {
                 // System.out.println(rotationMotor.getID() + "RotateCalc: " + rotateCalc + "\t" + this.getRotation() + "\t" + state.angle.getDegrees() + "\t" + encoderOffset);
             //     this.printCount = 1000;
             // };
+
+            if (Math.abs(driveCalc) <= 0.01 && Math.abs(rotateCalc) <= 0.01) {
+                zeroEncoders();
+            }
             driveMotor.set(driveCalc*Math.cos(Math.toRadians(rotationController.getPositionError())));
             rotationMotor.set(-rotateCalc);
         }
@@ -121,6 +125,9 @@ public class SwerveModule {
 
     public double getRotationAbsolute() {
         return rotationEncoder.getAbsolutePosition() - OFFSET;
+    }
+    public double getRawRotationAbsolute() {
+        return rotationEncoder.getAbsolutePosition();
     }
     public double getNeoRotation(){
         return this.rotationMotor.getPosition()*encoderScale;
@@ -161,6 +168,10 @@ public class SwerveModule {
 
     public int getID() {
         return rotationEncoder.getDeviceID();
+    }
+
+    public void putRawRotationSmartDashboard() {
+        SmartDashboard.putNumber("CANCoder " + getID() + " Raw Rotation", getRawRotationAbsolute());
     }
 
     /* Odometry */

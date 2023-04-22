@@ -21,7 +21,7 @@ public class DefaultDriveCommand extends CommandBase {
     private static final double JOYSTICK_S = 0.2;
     private static final double JOYSTICK_T = 1.4;
 
-    private final double teleopSpeedMultiplier = 1.6;
+    public double teleopSpeedMultiplier = 1.6;
 
     public DefaultDriveCommand(DrivetrainSubsystem subsystem, CommandXboxController xboxController) {
         this.m_subsystem = subsystem;

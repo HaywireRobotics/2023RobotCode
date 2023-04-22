@@ -14,6 +14,11 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -80,8 +85,12 @@ public class RobotContainer {
     public final DriverCamera m_driverCamera = new DriverCamera("Driver Camera", 0);
 
     public final LEDs m_leds = new LEDs(9);
+    
+    public final DoubleSubscriber driveSpeedScale;
+    public final BooleanSubscriber disableArm;
+    public final BooleanSubscriber demoDriver;
 
-
+    public final DefaultDriveCommand defaultDriveCommand;
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -91,7 +100,8 @@ public class RobotContainer {
         // Left stick Y axis -> forward and backwards movement
         // Left stick X axis -> left and right movement
         // Right stick X axis -> rotation
-        m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(m_drivetrainSubsystem, m_controller));
+        defaultDriveCommand = new DefaultDriveCommand(m_drivetrainSubsystem, m_controller);
+        m_drivetrainSubsystem.setDefaultCommand(defaultDriveCommand);
 
         // Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem, m_armSubsystem.m_manipulatorSubsystem, m_armSubsystem.m_elevatorSubsystem, m_armSubsystem.m_pulleySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         // m_armSubsystem.setDefaultCommand(updateArmPIDs);
@@ -115,6 +125,7 @@ public class RobotContainer {
         m_auto_chooser.addOption("4: Grid3+Dock", 11); // 1p_3g_c
         m_auto_chooser.addOption("5: Grid6+ScoreCube+Dock", 12); // p2_g6_c
         m_auto_chooser.addOption("6: Grid6+ScoreCube", 13); // p2_g6
+        m_auto_chooser.addOption("7: Grid1+GrabCube", 20); // p2_g6
 
         m_auto_chooser.addOption("testTrajectory", 14);
 
@@ -127,6 +138,15 @@ public class RobotContainer {
 
 
         SmartDashboard.putData(m_auto_chooser);
+
+        NetworkTable demoTable = m_networkTable.getTable("demo");
+        demoTable.getDoubleTopic("Speed Scale").publish().set(1);
+        demoTable.getBooleanTopic("Disable Arm").publish().set(false);
+        demoTable.getBooleanTopic("Demo Driver Controlls").publish().set(false);
+
+        driveSpeedScale = demoTable.getDoubleTopic("Speed Scale").subscribe(1);
+        disableArm = demoTable.getBooleanTopic("Disable Arm").subscribe(false);
+        demoDriver = demoTable.getBooleanTopic("Demo Driver Controlls").subscribe(false);
 
         // m_manipulatorSubsystem.setDefaultCommand(new DefaultManipulatorCommand(m_manipulatorSubsystem, m_controller));
         // Configure the button bindings
@@ -171,9 +191,11 @@ public class RobotContainer {
         // m_controller.leftStick().toggleOnTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         m_controller.leftBumper().whileTrue(new ManualBalanceDrive(m_drivetrainSubsystem, m_controller));
         // m_controller.leftTrigger().whileTrue(new PositionAprilTag(m_drivetrainSubsystem, m_limelight, 1.4, 0.0));
-        m_controller.rightTrigger().whileTrue(m_advancedSetpoints.gridCommand(() -> new Transform2d(new Translation2d(m_controller.getLeftX()*0.2, m_controller.getLeftY()*0.2), Rotation2d.fromDegrees(m_controller.getRightX()*10))));
-        m_controller.rightTrigger().whileTrue(m_advancedSetpoints.substationCommand());
+        // m_controller.rightTrigger().whileTrue(m_advancedSetpoints.gridCommand(() -> new Transform2d(new Translation2d(m_controller.getLeftX()*0.2, m_controller.getLeftY()*0.2), Rotation2d.fromDegrees(m_controller.getRightX()*10))));
+        // m_controller.rightTrigger().whileTrue(m_advancedSetpoints.substationCommand());
         m_controller.rightStick().onTrue(new InstantCommand(m_leds::toggleColor));
+
+        m_controller.povRight().whileTrue(new RunCommand(() -> m_drivetrainSubsystem.setAllToState(new SwerveModuleState()), m_drivetrainSubsystem));
 
         // m_controller.povLeft().onTrue(m_advancedSetpoints.IntakeCubeCommand());
  
@@ -232,6 +254,8 @@ public class RobotContainer {
                 return m_autoCommands.TimeBasedMidConeDockCommand(); 
             case 19:
                 return m_advancedSetpoints.IntakeCubeCommand();
+            case 20:
+                return m_autoCommands.runTrajectory("1p_1g");
             default:
                 return new InstantCommand();
         }
@@ -286,7 +310,7 @@ public class RobotContainer {
     }
 
     public void armDefaultPIDs() {
-        Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem, m_armSubsystem.m_manipulatorSubsystem, m_armSubsystem.m_elevatorSubsystem, m_armSubsystem.m_pulleySubsystem).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        Command updateArmPIDs = new RunCommand(m_armSubsystem::updateAllPID, m_armSubsystem);
         m_armSubsystem.setDefaultCommand(updateArmPIDs);
     }
 
@@ -301,9 +325,18 @@ public class RobotContainer {
     }
     public void enable(){
         m_drivetrainSubsystem.enable();
-        m_armSubsystem.enable();
+        if(demoDriver.get()){
+            m_armSubsystem.setDefaultCommand(new JoystickManualArmCommand(m_armSubsystem, m_controller, m_rightJoystick, m_leftJoystick));
+        }else if(disableArm.get()){
+            m_armSubsystem.removeDefaultCommand();
+        }else{
+            m_armSubsystem.enable();
+            m_armSubsystem.setDefaultCommand(new JoystickManualArmCommand(m_armSubsystem, m_controller, m_rightJoystick, m_leftJoystick));
+        }
         // m_drivetrainSubsystem.resetGyroscope();
         // m_drivetrainSubsystem.resetPose();
         // m_armSubsystem.resetEncoders();
+
+        defaultDriveCommand.teleopSpeedMultiplier = driveSpeedScale.get(1);
     }
 }

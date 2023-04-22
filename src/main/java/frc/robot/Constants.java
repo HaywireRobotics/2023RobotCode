@@ -63,14 +63,14 @@ public final class Constants {
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 7; 
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 8; 
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 14; 
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = 243.8; // 218 (1/13/23) // -37 (10/26/2022) // 218 (11/04/22)
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = 21; // 243.8 // 218 (1/13/23) // -37 (10/26/2022) // 218 (11/04/22)
     public static final boolean BACK_LEFT_REVERSE_DRIVE = true;
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 5; 
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 6; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 11;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 66.2; // 246.2 (3/23/23) // 215 (1/13/23) // -37 (10/31/22) // 215 (11/04/22)
-    public static final boolean BACK_RIGHT_REVERSE_DRIVE = true;
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -68.5; // 111.5 // 66.2  // 246.2 (3/23/23) // 215 (1/13/23) // -37 (10/31/22) // 215 (11/04/22)
+    public static final boolean BACK_RIGHT_REVERSE_DRIVE = false;
 
     public static final double STEER_MOTOR_GEAR_RATIO = 12.8 / 1;
     public static final double DRIVE_MOTOR_GEAR_RATIO = 8.14 / 1; // could potentially be 6.75:1 depending on if it is L1 of L2
@@ -128,10 +128,10 @@ public final class Constants {
         public static final ArmSetpoint CUBE_HIGH = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+22, 35), 90);
         public static final ArmSetpoint CUBE_MID = new ArmSetpoint(new Vector(DriveSetpoints.scoringDistance+7, 21), 100);
         public static final ArmSetpoint SUBSTATION = new ArmSetpoint(new Vector(DriveSetpoints.substationDistance, 62), 90); // 140
-        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(10.5, 9), 70);
+        public static final ArmSetpoint GROUND = new ArmSetpoint(new Vector(24, -1.6), 60);
         public static final ArmSetpoint STOWED = new ArmSetpoint(new Vector(10, 9), 0);
         public static final ArmSetpoint TIPPED_PICKUP = new ArmSetpoint(new Vector(21, 1.5), 70);
-        public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(30, -0.5), 60);
+        public static final ArmSetpoint CUBE_PICKUP = new ArmSetpoint(new Vector(30, -1.6), 60);
         public static final ArmSetpoint CONE_PICKUP = new ArmSetpoint(new Vector(25, 0), 75);
     }
     public static final class BezierHandles{
@@ -166,8 +166,8 @@ public final class Constants {
                                                                         ArmSetpoints.SUBSTATION.armPosition, ArmSetpoints.SUBSTATION.armPosition.add(BezierHandles.leaveSubstation)),
                                                                         ArmSetpoints.SUBSTATION.manipulatorAngle, 0.75); // .95
         
-        public static final ArmAutoPath GROUND = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HIGH.armPosition, ArmSetpoints.CONE_HIGH.armPosition.add(BezierHandles.leaveHigh),
-                                                                        ArmSetpoints.GROUND.armPosition, ArmSetpoints.GROUND.armPosition.add(BezierHandles.leaveStowed)),
+        public static final ArmAutoPath GROUND = new ArmAutoPath(new Bezier(ArmSetpoints.STOWED.armPosition, ArmSetpoints.STOWED.armPosition.add(BezierHandles.leaveStowed.scale(0.8)),
+                                                                        ArmSetpoints.GROUND.armPosition, ArmSetpoints.GROUND.armPosition.add(BezierHandles.leaveCubePickup)),
                                                                         ArmSetpoints.GROUND.manipulatorAngle, 0.5);
         
         public static final ArmAutoPath STOW = new ArmAutoPath(new Bezier(ArmSetpoints.CONE_HIGH.armPosition, ArmSetpoints.CONE_HIGH.armPosition.add(BezierHandles.leaveHigh),

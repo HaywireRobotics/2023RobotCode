@@ -33,21 +33,24 @@ public class AutoFollowWithCommands{
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_advancedSetpoints = advancedSetpoints;
 
-        eventMap.put("intakeCone", new PrintCommand("IntakeCone"));
-        // eventMap.put("intakeCone", m_advancedSetpoints.IntakeConeCommand());
-        eventMap.put("intakeCube", new PrintCommand("IntakeCube"));
-        // eventMap.put("intakeCube", m_advancedSetpoints.IntakeCubeCommand());
-        eventMap.put("setConeHigh", new PrintCommand("SetConeHigh"));
-        // eventMap.put("setConeHigh", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.CONE_HIGH));
+        // eventMap.put("intakeCone", new PrintCommand("IntakeCone"));
+        eventMap.put("intakeCone", m_advancedSetpoints.IntakeConeCommand().asProxy());
+        // eventMap.put("intakeCube", new PrintCommand("IntakeCube"));
+        eventMap.put("intakeCube", m_advancedSetpoints.IntakeCubeCommand().asProxy());
+        // eventMap.put("setConeHigh", new PrintCommand("SetConeHigh"));
+        eventMap.put("setConeHigh", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.CONE_HIGH).asProxy());
 
-        eventMap.put("stow", new PrintCommand("Stow"));
-        // eventMap.put("stow", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW));
+        // eventMap.put("stow", new PrintCommand("Stow"));
+        eventMap.put("stow", m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW).asProxy());
         // eventMap.put("stow", new ProxyCommand(new ScheduleCommand( m_advancedSetpoints.ArmToSetpoint(Constants.SetpointPositions.STOW)) ));//.andThen( new WaitCommand(1.5) ));
-        eventMap.put("drop", new PrintCommand("Drop"));
-        // eventMap.put("drop", m_advancedSetpoints.DropGamePiece().withTimeout(0.5));
+        // eventMap.put("drop", new PrintCommand("Drop"));
+        eventMap.put("drop", m_advancedSetpoints.DropGamePiece().withTimeout(0.5).asProxy());
         // eventMap.put("substation", new PrintCommand("Substation"));
-        eventMap.put("substation", enableDriveLock());
+        // eventMap.put("substation", enableDriveLock());
+        eventMap.put("substation", lockDriveCommand().asProxy());
         eventMap.put("noEvent", new InstantCommand());
+
+        m_advancedSetpoints.setArmPIDDefault();
 
     }
     

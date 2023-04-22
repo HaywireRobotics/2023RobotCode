@@ -28,7 +28,7 @@ public class AutoFollowTrajectory extends CommandBase{
 
     private final Timer timer;
 
-    private final double kP = 0.8;//0.5; // Proportional gain
+    private final double kP = 1.5;//0.5; // Proportional gain
     private final double kV = 0.42; // Velocity gain
     private final double kA = 0.17; // Acceleration gain
 
